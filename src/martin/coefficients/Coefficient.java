@@ -37,5 +37,15 @@ public abstract class Coefficient {
 		}
 
 	}
+	
+	public static Coefficient fromString(String input) {
+		input = input.trim();
+		
+		try {
+			return new CoeffNumber(Double.parseDouble(input));
+		} catch (Exception e) {
+			return new CoeffSymbol(input);
+		}
+	}
 
 }

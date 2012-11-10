@@ -11,31 +11,31 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		
-		quantumTeleport() ;
+		//quantumTeleport() ;
 		
-//		SystemMatrix m = new SystemMatrix(4);
-//		
-//		int[] b = {1, 1, 1};
-//		
-//		m.perform(
-//				new Z(3, b[1]),
-//				new X(3, b[2]),
-//				
-//				new M(2, b[1], b[1], new CoeffSymbol("gama"), b[2]),
-//				new M(1, 0, b[0], new CoeffSymbol("beta"), b[1]),
-//				new M(0, 0, 0, new CoeffSymbol("alpha"), b[0]),
-//				
-//				new E(2, 3), // entangle 2 and 3
-//				new E(1, 2), // entangle 1 and 2
-//				new E(0, 1), // entangle 0 and 1
-//				
-//				new N(3), // qubit 3 in state |+>
-//				new N(2), // qubit 2 in state |+>
-//				new N(1), // qubit 1 in state |+>
-//				new N(0, new CoeffSymbol("a"), new CoeffSymbol("b")) // my input qubit 0 in state a|0>+b|1>
-//				);
-//		
-//		System.out.println(m);
+		SystemMatrix m = new SystemMatrix(4);
+		
+		int[] b = {1, 1, 1};
+		
+		m.perform(
+				new Z(3, b[1]),
+				new X(3, b[2]),
+				
+				new M(2, b[1], b[1], new CoeffSymbol("gama"), b[2]),
+				new M(1, 0, b[0], new CoeffSymbol("beta"), b[1]),
+				new M(0, 0, 0, new CoeffSymbol("alpha"), b[0]),
+				
+				new E(2, 3), // entangle 2 and 3
+				new E(1, 2), // entangle 1 and 2
+				new E(0, 1), // entangle 0 and 1
+				
+				new N(3), // qubit 3 in state |+>
+				new N(2), // qubit 2 in state |+>
+				new N(1), // qubit 1 in state |+>
+				new N(0, new CoeffSymbol("a"), new CoeffSymbol("b")) // my input qubit 0 in state a|0>+b|1>
+				);
+		
+		System.out.println(m);
 
 	}
 	

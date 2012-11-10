@@ -2,7 +2,7 @@ package martin.coefficients;
 
 public class CoeffNumber extends Coefficient {
 	
-	private int number;
+	private double number;
 	private boolean unity = false;
 	
 	public CoeffNumber() {
@@ -10,7 +10,7 @@ public class CoeffNumber extends Coefficient {
 		unity = true;
 	}
 	
-	public CoeffNumber(int number) {
+	public CoeffNumber(double number) {
 		this.number = number;
 	}
 

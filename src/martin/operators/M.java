@@ -36,7 +36,7 @@ public class M implements Operator {
 			int state1 = (i >> (sm.mNumbQubits - qubitId - 1)) & 1;
 
 			if (state1 == 1) {
-				
+				// 1/sqrt(2)
 				sm.coeff[i].multiply(new CoeffExp( new CoeffSymbol( (s == 1 ? "-" : "") +"i " + alpha + (t == 1 ? " + " + Pi : "") ) )); // TODO handle addition
 				
 				if (b == 1) // if negative branch
