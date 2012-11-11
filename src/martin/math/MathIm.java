@@ -89,7 +89,7 @@ public class MathIm extends MathFunction {
 		if (m instanceof MathIm) {
 			final MathIm im = (MathIm) m;
 			
-			return real == im.real ? expr.add(im.expr.clone()) : false;
+			return real == im.real ? expr.add(im.expr) : false;
 		}
 		
 		return false;
@@ -97,6 +97,9 @@ public class MathIm extends MathFunction {
 
 	@Override
 	public MathsItem clone() {
+		if (expr.isZero())
+			return new MathNumber(0);
+			
 		if (real) {
 			final MathsItem clone = expr.clone();
 			if (negative) {
@@ -115,7 +118,7 @@ public class MathIm extends MathFunction {
 			return "( ["+name+"; "+(negative ? "-" : "+")+"; "+(real? "Re" : "Im")+"]"+expr+")";
 		
 		if (real) {
-			if (expr instanceof Expr2) {
+			if (expr instanceof MathExpression) {
 				if (negative)
 					return "-Re"+expr;
 				else

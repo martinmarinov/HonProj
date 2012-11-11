@@ -8,21 +8,21 @@ import martin.quantum.tools.Tuple;
 
 public class MathFract implements MathsItem {
 	
-	private Expr2 num, den;
+	private MathExpression num, den;
 	
 	public MathFract(final MathsItem num, final MathsItem den) {
-		if (num instanceof Expr2)
-			this.num = (Expr2) num;
+		if (num instanceof MathExpression)
+			this.num = (MathExpression) num;
 		else {
-			final Expr2 e = new Expr2();
+			final MathExpression e = new MathExpression();
 			e.add(num);
 			this.num = e;
 		}
 		
-		if (den instanceof Expr2)
-			this.den = (Expr2) den;
+		if (den instanceof MathExpression)
+			this.den = (MathExpression) den;
 		else {
-			final Expr2 e = new Expr2();
+			final MathExpression e = new MathExpression();
 			e.add(den);
 			this.den = e;
 		}
@@ -91,7 +91,9 @@ public class MathFract implements MathsItem {
 			den.multiply(mul.den.clone());
 			
 			return true;
-		}
+		} //else if (m instanceof MathsItem)
+			//return num.multiply(((MathsItem) m).clone());
+					
 		return false;
 	}
 
@@ -104,16 +106,16 @@ public class MathFract implements MathsItem {
 			if (ad.den.equals(den))
 				return num.add(ad.num.clone());
 			
-			final Expr2 nD = (Expr2) den.clone();
+			final MathExpression nD = (MathExpression) den.clone();
 			nD.multiply(ad.den.clone());
 			
-			final Expr2 nN1 = (Expr2) num.clone();
+			final MathExpression nN1 = (MathExpression) num.clone();
 			nN1.multiply(ad.den.clone());
 			
-			final Expr2 nN2 = (Expr2) ad.num.clone();
+			final MathExpression nN2 = (MathExpression) ad.num.clone();
 			nN2.multiply(den.clone());
 			
-			final Expr2 nN = new Expr2();
+			final MathExpression nN = new MathExpression();
 			nN.add(nN1);
 			nN.add(nN2);
 			
@@ -138,6 +140,12 @@ public class MathFract implements MathsItem {
 	
 	@Override
 	public boolean equals(Object obj) {
+		if (obj instanceof MathFract) {
+			final MathFract mf = (MathFract) obj;
+			return num.equals(mf.num) && den.equals(mf.den);
+		} else if (obj instanceof MathsItem)
+			return getValue(null).equals(((MathsItem) obj).getValue(null));
+		
 		return false;
 	};
 

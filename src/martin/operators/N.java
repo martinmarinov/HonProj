@@ -1,22 +1,22 @@
 package martin.operators;
 
-import martin.coefficients.CoeffFraction;
-import martin.coefficients.CoeffNumber;
-import martin.coefficients.CoeffSqrt;
-import martin.coefficients.Coefficient;
+import martin.math.MathFract;
+import martin.math.MathNumber;
+import martin.math.MathSqrt;
+import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
 
 public class N implements Operator {
 
 	private final int qubitId;
-	private Coefficient st1 = new CoeffFraction(new CoeffNumber(1), new CoeffSqrt(new CoeffNumber(2)));
-	private Coefficient st2 = new CoeffFraction(new CoeffNumber(1), new CoeffSqrt(new CoeffNumber(2)));
+	private MathsItem st1 = new MathFract(new MathNumber(1), new MathSqrt(new MathNumber(2)));
+	private MathsItem st2 = new MathFract(new MathNumber(1), new MathSqrt(new MathNumber(2)));
 
 	public N(int qubitId) {
 		this.qubitId = qubitId;
 	}
 	
-	public N(int qubitId, Coefficient st1, Coefficient st2) {
+	public N(int qubitId, MathsItem st1, MathsItem st2) {
 		this.qubitId = qubitId;
 		this.st1 = st1;
 		this.st2 = st2;
@@ -30,8 +30,10 @@ public class N implements Operator {
 		if (qubitId > s.mNumbQubits)
 			throw new Exception("This qubit does not exist in this system matrix!");
 
-		for (int i = 0; i < s.size; i++)
+		for (int i = 0; i < s.size; i++) {
 			s.coeff[i].multiply( ((i >> (s.mNumbQubits - qubitId - 1)) & 1) == 0 ? st1.clone() : st2.clone());
+			s.coeff[i].simplify();
+		}
 
 	}
 

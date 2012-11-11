@@ -2,7 +2,6 @@ package martin.quantum;
 
 import java.util.ArrayList;
 
-import martin.coefficients.Coefficient;
 import martin.operators.E;
 import martin.operators.N;
 import martin.operators.Operator;
@@ -49,7 +48,7 @@ public class SimulationRunner {
 			
 			final String[] csv = m.split(",");
 			
-			al.add(new N( Integer.parseInt(csv[0].trim()), Coefficient.fromString(csv[1]), Coefficient.fromString(csv[2]) ));
+			//TODO! al.add(new N( Integer.parseInt(csv[0].trim()), Coefficient.fromString(csv[1]), Coefficient.fromString(csv[2]) ));
 		}
 	}
 	

@@ -17,7 +17,7 @@ public class MathsParser {
 	/**
 	 * The classes ordered by precedence
 	 */
-	private static final Class<?>[] CLASSES = {Expr2.class, MathNumber.class, MathExp.class, MathIm.class, MathSqrt.class, MathFract.class, MathSymbol.class};
+	private static final Class<?>[] CLASSES = {MathExpression.class, MathNumber.class, MathExp.class, MathIm.class, MathSqrt.class, MathFract.class, MathSymbol.class};
 	
 	/**
 	 * The private static function that each of the classes in {@link #CLASSES} must implement

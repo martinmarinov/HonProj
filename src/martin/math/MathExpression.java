@@ -7,10 +7,11 @@ import java.util.HashSet;
 import martin.quantum.tools.Tools;
 import martin.quantum.tools.Tuple;
 
-public class Expr2 implements MathsItem {
+public class MathExpression implements MathsItem {
 	
 	private final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
 	public static boolean simplify = true;
+	public static boolean deep_simplify = false;
 
 	@Override
 	public boolean hasNegativeSign() {
@@ -73,8 +74,8 @@ public class Expr2 implements MathsItem {
 			
 				outer:for (final MathsItem m : hs)
 					for (final MathsItem m2 : hs)
-						if (m != m2 && m2.multiply(m)) { // should we have m.getClass().equals(m2.getClass())  here?
-							toremove.add(m);
+						if (m != m2 && m.multiply(m2)) { // should we have m.getClass().equals(m2.getClass())  here?
+							toremove.add(m2);
 							happened = true;
 							break outer;
 						}
@@ -108,9 +109,9 @@ public class Expr2 implements MathsItem {
 
 				for (final MathsItem it : hs) {
 
-					if (it instanceof Expr2) {
+					if (it instanceof MathExpression) {
 
-						final Expr2 h = (Expr2) it;
+						final MathExpression h = (MathExpression) it;
 						
 						for (final HashSet<MathsItem> hs2 : h.items) {
 							final HashSet<MathsItem> nmult = new HashSet<MathsItem>();
@@ -192,9 +193,20 @@ public class Expr2 implements MathsItem {
 			for (final MathsItem m : hs)
 				if (m.isOne())
 					toremove.add(m);
-
-			for (final MathsItem m : toremove)
-				hs.remove(m);
+			
+			if (toremove.size() == hs.size()) {
+				int i = 0;
+				for (final MathsItem m : toremove) {
+					if (i != 0) hs.remove(m);
+					i++;
+				}
+				
+				if (i <= 1)
+					continue;
+			} else {
+				for (final MathsItem m : toremove)
+					hs.remove(m);
+			}
 			
 			happened |= !toremove.isEmpty();
 		}
@@ -215,8 +227,27 @@ public class Expr2 implements MathsItem {
 				}
 		}
 		
-		for (final HashSet<MathsItem> m : toremove)
-			items.remove(m);
+		if (toremove.size() == items.size()) {
+			int i = 0;
+			
+			for (final HashSet<MathsItem> m : toremove) {
+				if (i != 0)
+					items.remove(m);
+				else {
+					// if we are to leave a zero element, put it to zero
+					m.clear();
+					m.add(new MathNumber(0));
+				}
+				i++;
+			}
+			
+			if (i <= 1)
+				return false;
+			
+		} else {
+			for (final HashSet<MathsItem> m : toremove)
+				items.remove(m);
+		}
 		
 		return !toremove.isEmpty();
 	}
@@ -302,6 +333,8 @@ public class Expr2 implements MathsItem {
 		
 			happened = false;
 			
+			if (deep_simplify) deepSimplify();
+			
 			happened |= removeAllZeros();
 			happened |= removeAllOnes();
 			happened |= simplifyMultiplicators();
@@ -312,12 +345,19 @@ public class Expr2 implements MathsItem {
 		}
 		
 	}
+	
+	private void deepSimplify() {
+		final HashSet<HashSet<MathsItem>> e = new HashSet<HashSet<MathsItem>>();
+		cloneItems(e);
+		items.clear();
+		items.addAll(e);
+	}
 
 	@Override
 	public boolean multiply(MathsItem m) {
 
-		if (m instanceof Expr2) {
-			final Expr2 remote = (Expr2) m;
+		if (m instanceof MathExpression) {
+			final MathExpression remote = (MathExpression) m;
 
 			final HashSet<HashSet<MathsItem>> itclone = new HashSet<HashSet<MathsItem>>();
 			cloneItems(itclone);
@@ -352,8 +392,8 @@ public class Expr2 implements MathsItem {
 	@Override
 	public boolean add(MathsItem m) {
 		
-		if (m instanceof Expr2) {
-			for (HashSet<MathsItem> multiples : ((Expr2) m).items) {
+		if (m instanceof MathExpression) {
+			for (HashSet<MathsItem> multiples : ((MathExpression) m).items) {
 				final HashSet<MathsItem> clone = new HashSet<MathsItem>();
 				
 				for (MathsItem it : multiples)
@@ -374,7 +414,7 @@ public class Expr2 implements MathsItem {
 	
 	@Override
 	public MathsItem clone() {
-		final Expr2 e = new Expr2();
+		final MathExpression e = new MathExpression();
 		
 		cloneItems(e.items);
 		
@@ -436,7 +476,7 @@ public class Expr2 implements MathsItem {
 		return ans.toString();
 	}
 	
-	public static Expr2 fromString(final String input) throws Exception {
+	public static MathExpression fromString(final String input) throws Exception {
 		
 		final ArrayList<Tuple<char[], String>> els = Tools.splitByTopLevel(input, new char[]{'+', '-'}, true);
 	
@@ -453,7 +493,7 @@ public class Expr2 implements MathsItem {
 		
 		//if (els.size() < 2) return null;
 		
-		final Expr2 ans = new Expr2();
+		final MathExpression ans = new MathExpression();
 
 		for (final Tuple<char[], String> ms : els)
 			ans.items.add(parsemultiples(ms));
@@ -490,6 +530,14 @@ public class Expr2 implements MathsItem {
 		}
 		
 		return forstore;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MathsItem)
+			return getValue(null).equals(((MathsItem) obj).getValue(null));
+		
+		return false;
 	}
 
 }

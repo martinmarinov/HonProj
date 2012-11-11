@@ -1,20 +1,25 @@
 package martin.operators;
 
-import martin.coefficients.CoeffExp;
-import martin.coefficients.CoeffNumber;
-import martin.coefficients.CoeffSymbol;
-import martin.coefficients.Coefficient;
+import martin.math.MathExpression;
+import martin.math.MathExp;
+import martin.math.MathFract;
+import martin.math.MathIm;
+import martin.math.MathNumber;
+import martin.math.MathSqrt;
+import martin.math.MathSymbol;
+import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
 
 public class M implements Operator {
 	
-	private final static Coefficient Pi = new CoeffSymbol("Pi"); // TODO BETTER WAY OF HANDLING?
-	private final static Coefficient MINUS_ONE = new CoeffNumber(-1);
+	private final static MathsItem Pi = new MathSymbol("Pi"); // TODO BETTER WAY OF HANDLING?
+	private final static MathsItem MINUS_ONE = new MathNumber(-1);
+	private final static MathsItem ONE_OVER_SQRT_2 = new MathFract(new MathNumber(1), new MathSqrt(new MathNumber(2)));;
 
 	private final int t, s, qubitId, b;
-	private final Coefficient alpha;
+	private final MathsItem alpha;
 
-	public M(int qubitId, int t, int s, Coefficient alpha, int b) {
+	public M(int qubitId, int t, int s, MathsItem alpha, int b) {
 		this.alpha = alpha;
 		this.t = t;
 		this.s = s;
@@ -37,11 +42,24 @@ public class M implements Operator {
 
 			if (state1 == 1) {
 				// 1/sqrt(2)
-				sm.coeff[i].multiply(new CoeffExp( new CoeffSymbol( (s == 1 ? "-" : "") +"i " + alpha + (t == 1 ? " + " + Pi : "") ) )); // TODO handle addition
+				
+				final MathExpression angle = new MathExpression();
+				angle.add(alpha);
+				if (s == 1)
+					angle.multiply(MINUS_ONE);
+				if (t == 1)
+					angle.add(Pi);
+				
+				sm.coeff[i].multiply(new MathExp( new MathIm(angle) )); // TODO handle addition
 				
 				if (b == 1) // if negative branch
 					sm.coeff[i].multiply(MINUS_ONE.clone());
-			}
+				
+				sm.coeff[i].multiply(ONE_OVER_SQRT_2);
+			} else
+				sm.coeff[i].multiply(ONE_OVER_SQRT_2);
+			
+			sm.coeff[i].simplify();
 		}
 	}
 

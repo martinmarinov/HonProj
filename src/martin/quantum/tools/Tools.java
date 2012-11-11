@@ -45,6 +45,8 @@ public class Tools {
 			char c = input.charAt(i);
 			
 			if (c == ')' || c == '(') start += c == ')' ? -1 : 1;
+			
+			if (start < 0) return false;
 		}
 		return start == 0;
 	}

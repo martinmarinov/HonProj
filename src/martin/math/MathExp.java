@@ -70,6 +70,9 @@ public class MathExp extends MathFunction {
 	
 	@Override
 	public MathsItem clone() {
+		if (expr.isZero())
+			return new MathNumber(1);
+		
 		return new MathExp(expr.clone(), negative);
 	}
 

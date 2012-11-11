@@ -60,7 +60,7 @@ public class MathSqrt extends MathFunction {
 	public boolean multiply(MathsItem m) {
 		if (m instanceof MathSqrt) {
 			final MathSqrt me = (MathSqrt) m;
-			return expr.add(me.expr);
+			return expr.multiply(me.expr);
 		}
 		
 		return false;
@@ -76,12 +76,8 @@ public class MathSqrt extends MathFunction {
 		
 		final Complex value = getValue(null);
 		
-		if (!value.isNaN() && value.I == 0) {
-			final double sqrt = Math.sqrt(value.R);
-			
-			if (sqrt*sqrt == value.R)
-				return new MathNumber(sqrt);
-		}
+		if (!value.isNaN() && value.I == 0 && value.R == (int) value.R)
+				return new MathNumber(value.R);
 		
 		return new MathSqrt(expr.clone(), negative);
 	}

@@ -87,7 +87,7 @@ public class MathSymbol implements MathsItem {
 			return new MathNumber(0);
 		
 		if (negative) {
-			final Expr2 e = new Expr2();
+			final MathExpression e = new MathExpression();
 			e.add(new MathSymbol(symbol, false, false));
 			e.multiply(new MathNumber(-1));
 			return e;

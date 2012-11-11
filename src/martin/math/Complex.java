@@ -54,4 +54,18 @@ public class Complex {
 		else
 			return "("+real+"+"+im+")";
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Complex) {
+			
+			final Complex c = (Complex) obj;
+			
+			if (isNaN() || c.isNaN())
+				return false;
+			
+			return c.R == R && c.I == I;
+		}
+		return false;
+	}
 }

@@ -1,6 +1,6 @@
 package martin.operators;
 
-import martin.coefficients.Coefficient;
+import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
 
 public class X implements Operator {
@@ -34,7 +34,7 @@ public class X implements Operator {
 				
 				int second_id = i | mask;
 				
-				final Coefficient temp = s.coeff[i];
+				final MathsItem temp = s.coeff[i];
 				s.coeff[i] = s.coeff[second_id];
 				s.coeff[second_id] = temp;
 			}

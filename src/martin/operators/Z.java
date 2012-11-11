@@ -1,12 +1,11 @@
 package martin.operators;
 
-import martin.coefficients.CoeffNumber;
-import martin.coefficients.Coefficient;
+import martin.math.MathNumber;
 import martin.quantum.SystemMatrix;
 
 public class Z implements Operator {
 	
-	private final static Coefficient MINUS_ONE = new CoeffNumber(-1);
+	private final static MathNumber MINUS_ONE = new MathNumber(-1);
 	final int qubitId;
 	final boolean skip;
 	
@@ -28,8 +27,10 @@ public class Z implements Operator {
 		
 		if (skip) return;
 		
-		for (int i = 0; i < s.size; i++)
+		for (int i = 0; i < s.size; i++) {
 			if ( ( ( i >> ( s.mNumbQubits - qubitId - 1 ) ) & 1) == 1) s.coeff[i].multiply(MINUS_ONE.clone());
+			s.coeff[i].simplify();
+		}
 
 	}
 

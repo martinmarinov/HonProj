@@ -1,13 +1,13 @@
 package martin.operators;
 
-import martin.coefficients.CoeffNumber;
-import martin.coefficients.Coefficient;
+import martin.math.MathNumber;
+import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
 
 public class E implements Operator {
 	
 	private final int bitId1, bitId2;
-	private final static Coefficient MINUS_ONE = new CoeffNumber(-1);
+	private final static MathsItem MINUS_ONE = new MathNumber(-1);
 	
 	public E(int bitId1, int bitId2) {
 		this.bitId1 = bitId1;
@@ -26,6 +26,7 @@ public class E implements Operator {
 			if (state1 == 1 && state2 == 1)
 				s.coeff[i].multiply(MINUS_ONE.clone());
 			
+			s.coeff[i].simplify();
 		}
 	}
 	

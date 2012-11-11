@@ -8,16 +8,16 @@ import martin.quantum.tools.Tuple;
 public abstract class MathFunction implements MathsItem {
 	
 	protected final String name;
-	protected final Expr2 expr;
+	protected final MathExpression expr;
 	protected boolean negative = false;
 	
 	public MathFunction(final String name, final MathsItem expr) {
 		this.name = name;
 		
-		if (expr instanceof Expr2)
-			this.expr = (Expr2) expr;
+		if (expr instanceof MathExpression)
+			this.expr = (MathExpression) expr;
 		else {
-			final Expr2 e = new Expr2();
+			final MathExpression e = new MathExpression();
 			e.add(expr);
 			this.expr = e;
 		}
@@ -66,7 +66,7 @@ public abstract class MathFunction implements MathsItem {
 	@Override
 	public String toString() {
 		
-		if (expr instanceof Expr2) {
+		if (expr instanceof MathExpression) {
 			if (negative)
 				return "-"+name+expr;
 			else

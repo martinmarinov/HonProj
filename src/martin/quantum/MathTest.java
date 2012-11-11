@@ -3,14 +3,14 @@ package martin.quantum;
 import java.util.HashMap;
 
 import martin.math.Complex;
-import martin.math.Expr2;
+import martin.math.MathExpression;
 import martin.math.MathsItem;
 import martin.math.MathsParser;
 import martin.quantum.tools.Tools;
 
 public class MathTest {
 
-	private final static String string = "sqrt(4)+(sqrt(2)*sqrt(2)+sqrt(2)*sqrt(2))";
+	private final static String string = "(1/4)+(-1)*(1/4)";
 	private final static String string2 = "1+3+5*(3+2*(-a-4)*(a+5))+a*(3+4)";
 	private final static int testid = 1;
 	private final static String[] variables = {"a"};
@@ -29,10 +29,10 @@ public class MathTest {
 			testMaths(string);
 			break;
 		case 2:
-			Expr2.simplify = false;
+			MathExpression.simplify = false;
 			final MathsItem mi = testMaths(string);
 			final MathsItem mi2 = testMaths(string2);
-			Expr2.simplify = true;			
+			MathExpression.simplify = true;			
 			mi.multiply(mi2);
 			System.out.println("Final "+mi+" = "+mi.getValue(pairs));
 			break;

@@ -1,26 +1,30 @@
 package martin.quantum;
 
-import martin.coefficients.CoeffNumber;
-import martin.coefficients.Coefficient;
+import martin.math.MathExpression;
+import martin.math.MathNumber;
+import martin.math.MathsItem;
 import martin.operators.Operator;
 
 public class SystemMatrix {
 
 	public final int mNumbQubits;
-	public Coefficient[] coeff;
+	public MathsItem[] coeff;
 	public final boolean[] measured;
 	public final int size;
 
 	public SystemMatrix(int qubitCount) {
 		mNumbQubits = qubitCount;
 		size = 1 << qubitCount;
-		coeff = new Coefficient[size];
+		coeff = new MathsItem[size];
 		measured = new boolean[qubitCount];
 		for (int i = 0; i < qubitCount; i++) measured[i] = false;
-		for (int i = 0; i < size; i++) coeff[i] = new CoeffNumber();
+		for (int i = 0; i < size; i++) {
+			coeff[i] = new MathExpression();
+			coeff[i].add(new MathNumber(1));
+		}
 	}
 
-	public void setCoeff(final Coefficient c, int... indeces) throws Exception {
+	public void setCoeff(final MathsItem c, int... indeces) throws Exception {
 		if (indeces.length != mNumbQubits)
 			throw new Exception("Not enough indeces supplied");
 
@@ -32,7 +36,7 @@ public class SystemMatrix {
 
 	}
 
-	public Coefficient getCoeff(int... indeces) throws Exception {
+	public MathsItem getCoeff(int... indeces) throws Exception {
 		if (indeces.length != mNumbQubits)
 			throw new Exception("Not enough indeces supplied");
 
@@ -54,9 +58,7 @@ public class SystemMatrix {
 		return id;
 	}
 
-	public int[] getIndexesFromId(int id) throws Exception {
-		if (id >= size || id < 0)
-			throw new Exception("Index does not exist");
+	public int[] getIndexesFromId(int id) {
 
 		int[] idx = new int[mNumbQubits];
 		for (int i = 0; i < mNumbQubits; i++)
@@ -70,25 +72,25 @@ public class SystemMatrix {
 		String rep = "";
 
 		for (int i = 0; i < size; i++) {
-			int[] idxes;
-			try {
-				idxes = getIndexesFromId(i);
+			
+			if (coeff[i].isZero())
+				continue;
+			
+			if (i != 0) rep += " + \n";
+			
+			final int[] idxes = getIndexesFromId(i);
 
-				rep += coeff[i]+" |";
-				
-				for (int j = 0; j < idxes.length; j++)
-					if (!measured[j])
-						rep += idxes[j];
-					else
-						rep += "_";
+			rep += coeff[i]+" |";
 
-				rep += ">";
-				if (i != size-1) rep += " + ";
-				rep += "\n";
-			} catch (Exception e) {
-			}
+			for (int j = 0; j < idxes.length; j++)
+				if (!measured[j])
+					rep += idxes[j];
+				else
+					rep += "_";
+
+			rep += ">";
 		}
-		
+
 		return rep;
 	}
 	
