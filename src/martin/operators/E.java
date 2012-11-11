@@ -30,6 +30,10 @@ public class E implements Operator {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return "E(q1="+bitId1+", q2="+bitId2+")";
+	}
 	
 	
 }

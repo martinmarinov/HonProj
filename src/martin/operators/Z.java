@@ -34,4 +34,8 @@ public class Z implements Operator {
 
 	}
 
+	@Override
+	public String toString() {
+		return "Z(q="+qubitId+", s="+(skip ? "0" : "1")+")";
+	}
 }

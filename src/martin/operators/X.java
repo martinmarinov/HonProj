@@ -40,5 +40,10 @@ public class X implements Operator {
 			}
 
 	}
+	
+	@Override
+	public String toString() {
+		return "X(q="+qubitId+", s="+(skip ? "0" : "1")+")";
+	}
 
 }

@@ -9,6 +9,16 @@ public class Complex {
 		this.I = I;
 	}
 	
+	public Complex(final String number) throws Exception {
+		final Complex c = MathsParser.parse(number).getValue(null);
+		
+		if (c.isNaN())
+			throw new Exception("'"+number+"' is not a valid complex number!");
+		
+		R = c.R;
+		I = c.I;
+	}
+	
 	public void multiply(final Complex n) {
 		final double nR = R * n.R - I * n.I;
 		final double nI = R * n.I + I * n.R;

@@ -62,5 +62,10 @@ public class M implements Operator {
 			sm.coeff[i].simplify();
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "M(id="+qubitId+", s="+s+", t="+t+", alpha="+alpha+")";
+	}
 
 }

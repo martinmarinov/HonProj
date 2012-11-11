@@ -1,5 +1,8 @@
 package martin.quantum;
 
+import java.util.HashMap;
+
+import martin.math.Complex;
 import martin.math.MathExpression;
 import martin.math.MathNumber;
 import martin.math.MathsItem;
@@ -78,9 +81,15 @@ public class SystemMatrix {
 			
 			if (i != 0) rep += " + \n";
 			
-			final int[] idxes = getIndexesFromId(i);
+			rep += coeff[i]+" "+getBraKet(i);
+		}
 
-			rep += coeff[i]+" |";
+		return rep;
+	}
+	
+	private String getBraKet(int id) {
+		final int[] idxes = getIndexesFromId(id);
+		String rep = "|";
 
 			for (int j = 0; j < idxes.length; j++)
 				if (!measured[j])
@@ -89,6 +98,20 @@ public class SystemMatrix {
 					rep += "_";
 
 			rep += ">";
+		return rep;
+	}
+	
+	public String printValues(final HashMap<String, Complex> rules) {
+		String rep = "";
+
+		for (int i = 0; i < size; i++) {
+			
+			if (coeff[i].isZero())
+				continue;
+			
+			if (i != 0) rep += " + \n";
+			
+			rep += coeff[i].getValue(rules)+" "+getBraKet(i);
 		}
 
 		return rep;

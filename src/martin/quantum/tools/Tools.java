@@ -6,7 +6,7 @@ import java.util.HashMap;
 import martin.math.Complex;
 import martin.math.MathsItem;
 
-public class Tools {
+public final class Tools {
 	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!

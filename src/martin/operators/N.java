@@ -36,5 +36,10 @@ public class N implements Operator {
 		}
 
 	}
+	
+	@Override
+	public String toString() {
+		return "N(q="+qubitId+", a="+st1+", b="+st2+")";
+	}
 
 }

@@ -24,7 +24,7 @@ public class AddCoeffTogether implements Operator {
 				s.coeff[base].add(s.coeff[i]);
 				s.coeff[i] = new MathExpression();
 				s.coeff[i].add(new MathNumber(0));
-				
+				s.coeff[base].simplify();
 			}
 		}
 

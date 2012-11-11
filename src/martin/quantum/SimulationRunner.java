@@ -1,55 +1,58 @@
 package martin.quantum;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import martin.math.MathsItem;
+import martin.math.MathsParser;
+import martin.operators.AddCoeffTogether;
 import martin.operators.E;
-import martin.operators.N;
+import martin.operators.I;
 import martin.operators.Operator;
 import martin.quantum.tools.Tools;
 
-public class SimulationRunner {
+public final class SimulationRunner {
 
-	public static SystemMatrix run(int n, final String preparation, final String inputs, final String enganglement, final String measurements, final String corrections, final String branches) throws Exception {
+	public static SystemMatrix run(int n, final String inputs, final String entanglement, final String measurements, final String corrections, final String branches) throws Exception {
 		
 		final SystemMatrix sm = new SystemMatrix(n);
 		final ArrayList<Operator> al = new ArrayList<Operator>();
 		
-		parsePreparation(al, preparation);
+		final int[] b = parseBranches(branches);
+		
 		parseInputs(al, inputs);
-		parseEntanglement(al, enganglement);
+		parseEntanglement(al, entanglement);
 		parseMeasurements(al, measurements);
 		parseCorrections(al, corrections);
-		parseBranches(al, branches);
+		
+		System.out.println("branches = "+Arrays.toString(b));
+		for (Operator o : al)
+			System.out.println("Will perform: "+o);
 		
 		sm.perform(al.toArray(new Operator[0]));	
+		
+		sm.perform(new AddCoeffTogether());
 		return sm;
 	}
 	
 	/**
 	 * @param al
-	 * @param preparation format "id1, id2, id3" for N(id1), N(id2), N(id3)
+	 * @param inputs format "(a,b,c...)" for qubit 0...000, 0...001, 0...010, etc
 	 */
-	private static void parsePreparation(final ArrayList<Operator> al, final String preparation) {
-		final String[] csv = preparation.split(",");
+	private static void parseInputs(final ArrayList<Operator> al, String inputs) throws Exception {
 		
-		for (String s : csv)
-			al.add(new N(Integer.parseInt(s.trim())));
-	}
-	
-	/**
-	 * @param al
-	 * @param inputs format "(id1, c1, c2); (id2, c3, c4)" for N(id1, c1, c2), N(id2, c3, c4)
-	 */
-	private static void parseInputs(final ArrayList<Operator> al, String inputs) throws Exception {		
-		final String[] scsv = inputs.split(";");
+		if (inputs.trim().isEmpty())
+			return;
 		
-		for (String m : scsv) {
-			m = Tools.trimAndCheckBrackets(m);
-			
-			final String[] csv = m.split(",");
-			
-			//TODO! al.add(new N( Integer.parseInt(csv[0].trim()), Coefficient.fromString(csv[1]), Coefficient.fromString(csv[2]) ));
+		final String[] csv = inputs.split(",");
+		final MathsItem[] items = new MathsItem[csv.length];
+		
+		for (int i = 0; i < csv.length; i++) {
+			items[i] = MathsParser.parse(csv[i]);
+			items[i].simplify();
 		}
+			
+		al.add(new I(items));
 	}
 	
 	/**
@@ -57,7 +60,10 @@ public class SimulationRunner {
 	 * @param enganglement format "(id1, id2); (id3, id4)" for E(id1, id2), E(id3, id4)
 	 */
 	private static void parseEntanglement(final ArrayList<Operator> al, String enganglement) throws Exception {
-
+		
+		if (enganglement.trim().isEmpty())
+			return;
+		
 		final String[] scsv = enganglement.split(";");
 		
 		for (String m : scsv) {
@@ -65,20 +71,32 @@ public class SimulationRunner {
 			
 			final String[] csv = m.split(",");
 			
-			al.add(new E( Integer.parseInt(csv[0].trim()), Integer.parseInt(csv[0].trim()) ));
+			al.add(new E( Integer.parseInt(csv[0].trim()), Integer.parseInt(csv[1].trim()) ));
 		}
 	}
 	
 	private static void parseMeasurements(final ArrayList<Operator> al, final String measurements) {
-		
+		if (measurements.trim().isEmpty())
+			return;
 	}
 	
 	private static void parseCorrections(final ArrayList<Operator> al, final String corrections) {
-		
+		if (corrections.trim().isEmpty())
+			return;
 	}
 	
-	private static void parseBranches(final ArrayList<Operator> al, final String branches) {
+	private static int[] parseBranches(final String branches) {
 		
+		if (branches.trim().isEmpty())
+			return new int[0];
+		
+		final String[] csv = branches.split(",");
+		final int[] b = new int[csv.length];
+		
+		for (int i = 0; i < csv.length; i++)
+			b[i] = Integer.parseInt(csv[i].trim());
+		
+		return b;
 	}
 	
 
