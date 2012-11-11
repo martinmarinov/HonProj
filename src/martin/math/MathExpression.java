@@ -9,6 +9,8 @@ import martin.quantum.tools.Tuple;
 
 public class MathExpression implements MathsItem {
 	
+	private final static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 1000;
+	
 	private final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
 	public static boolean simplify = true;
 	public static boolean deep_simplify = false;
@@ -275,7 +277,7 @@ public class MathExpression implements MathsItem {
 
 						for (final MathsItem m1 : p1)
 							for (final MathsItem m2 : p2)
-								if (m1.equals(m2)) {
+								if (m1.equals(m2) && !containsInstance(common, m1) && !containsInstance(common, m2)) {
 									common.add(m1);
 									common.add(m2);
 								}
@@ -284,18 +286,17 @@ public class MathExpression implements MathsItem {
 
 						int i = 0;
 						for (final MathsItem m : p1)
-							if (!common.contains(m)) {
+							if (!containsInstance(common, m)) {
 								p1it = m;
 								if (i != 0) continue next;
 								i++;
 							}
 						if (i == 0) {
 							p1it = new MathNumber(1);
-							p1.add(p1it);
 						}
 						i = 0;
 						for (final MathsItem m : p2)
-							if (!common.contains(m)) {
+							if (!containsInstance(common, m)) {
 								p2it = m;
 								if (i != 0) continue next;
 								i++;
@@ -304,6 +305,7 @@ public class MathExpression implements MathsItem {
 
 						if (p1it.add(p2it)) {
 							// if one item remains and we can add it, p1it is changed now
+							p1.add(p1it);
 							toremove.add(p2);
 							happened = true;
 							h = true;
@@ -320,6 +322,14 @@ public class MathExpression implements MathsItem {
 		
 		return h;
 	}
+	
+	private boolean containsInstance(final HashSet<?> hs, final Object obj) {
+		for (final Object o : hs)
+			if (o == obj)
+				return true;
+		
+		return false;
+	}
 
 	@Override
 	public void simplify() {
@@ -327,13 +337,15 @@ public class MathExpression implements MathsItem {
 		if (!simplify)
 			return;
 		
-		boolean happened = true;
+		for (int i = 0; i < MAX_NUMBER_OF_SIMPLIFICAITON_STEPS; i++) {
 		
-		while (happened) {
-		
-			happened = false;
+			boolean happened = false;
 			
 			if (deep_simplify) deepSimplify();
+			
+			for (final HashSet<MathsItem> m : items)
+				for (final MathsItem it : m)
+					it.simplify();
 			
 			happened |= removeAllZeros();
 			happened |= removeAllOnes();
@@ -342,7 +354,14 @@ public class MathExpression implements MathsItem {
 			happened |= performAdditionOnSimpleExpressions();
 			happened |= commonFactors();
 		
+			if (i > MAX_NUMBER_OF_SIMPLIFICAITON_STEPS - 5)
+				System.out.println((MAX_NUMBER_OF_SIMPLIFICAITON_STEPS - i)+": "+this);
+			
+			if (!happened)
+				return;
 		}
+		
+		System.err.println("Warning: Too many simplifications happened! Possible bug in code!");
 		
 	}
 	
@@ -352,7 +371,7 @@ public class MathExpression implements MathsItem {
 		items.clear();
 		items.addAll(e);
 	}
-
+	
 	@Override
 	public boolean multiply(MathsItem m) {
 
@@ -434,8 +453,6 @@ public class MathExpression implements MathsItem {
 	
 	@Override
 	public String toString() {
-		
-		simplify();
 		
 		final StringBuilder ans = new StringBuilder();
 		

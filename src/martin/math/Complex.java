@@ -1,6 +1,7 @@
 package martin.math;
 
 public class Complex {
+	
 	public double R = 0;
 	public double I = 0;
 	
@@ -74,8 +75,15 @@ public class Complex {
 			if (isNaN() || c.isNaN())
 				return false;
 			
-			return c.R == R && c.I == I;
+			return R == c.R && I == c.I;
 		}
 		return false;
+	}
+	
+	public boolean similarValue(final Complex c, final double ACCURACY) {
+		if (isNaN() || c.isNaN())
+			return false;
+		
+		return (Math.abs(c.R - R) < ACCURACY) && (Math.abs(c.I - I) < ACCURACY);
 	}
 }

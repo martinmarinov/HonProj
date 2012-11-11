@@ -62,18 +62,37 @@ public class MathIm extends MathFunction {
 	@Override
 	public boolean multiply(final MathsItem m) {
 		
+		
+		
 		if (m instanceof MathIm) {
-			final MathIm im = (MathIm) m;
+			final MathIm im = (MathIm) m.clone();
+			
+			if (im.negative) {
+				im.negate();
+				im.expr.negate();
+			}
 			
 			if (expr.multiply(im.expr.clone())) {
 				
-				if (real != im.real)
-					real = false;
+				if (negative) {
+					negate();
+					expr.negate();
+				}
 				
-				if (real == false && real == im.real) {
+				//System.out.println("Multiplying "+this+" with "+m);
+				
+				if (real != im.real) {
+					//System.out.print("I am "+(real ? "real" : "imag")+" he is "+(im.real ? "real" : "imag")+", therefore I become imaginary : ");
+					real = false;
+					//System.out.println(this);
+				} else if (real == false && im.real == false) {
+					//System.out.print("I am "+(real ? "real" : "imag")+" he is "+(im.real ? "real" : "imag")+", therefore I become negative and real : ");
 					real = true;
 					negate();
-				}
+					//System.out.println(this);
+				}// else {
+					//System.out.println("I am "+(real ? "real" : "imag")+" he is "+(im.real ? "real" : "imag")+", therefore I stay as I am : "+this);
+				//}
 				
 				return true;
 			}
@@ -87,9 +106,26 @@ public class MathIm extends MathFunction {
 	@Override
 	public boolean add(final MathsItem m) {
 		if (m instanceof MathIm) {
-			final MathIm im = (MathIm) m;
+			final MathIm im = (MathIm) m.clone();
+
+			//System.out.print("Adding "+im+" to this "+this+": ");
 			
-			return real == im.real ? expr.add(im.expr) : false;
+			if (negative) {
+				negate();
+				expr.negate();
+			}
+			
+			if (im.negative) {
+				im.negate();
+				im.expr.negate();
+			}
+			
+			//System.out.print("negating remote to "+im+" and this "+this+"; ");
+
+			final boolean result = real == im.real ? expr.add(im.expr) : false;
+			
+			//System.out.println("result "+this);
+			return result;
 		}
 		
 		return false;

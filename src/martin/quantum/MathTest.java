@@ -10,14 +10,21 @@ import martin.quantum.tools.Tools;
 
 public class MathTest {
 
-	private final static String string = "(1/4)+(-1)*(1/4)";
-	private final static String string2 = "1+3+5*(3+2*(-a-4)*(a+5))+a*(3+4)";
-	private final static int testid = 1;
-	private final static String[] variables = {"a"};
-	private final static Complex[] values = {new Complex(-3, 0)};
+	private final static boolean disableSimplification = false;
+	
+	private final static String string = "b*1+a*b";
+	private final static String string2 = "(Im(1.0677930211090731)-1.0254292105013625)";
+	private final static int testid = 3;
+	private final static String[] variables = new String[] {"a", "b"};
+	private final static Complex[] values = {new Complex(-3, 5), new Complex(1, -2)};
 	private final static HashMap<String, Complex> pairs = Tools.generatePairs(variables, values);
 
 	public static void main(String[] args) throws Exception {
+		
+		if (disableSimplification)  {
+			MathExpression.simplify = false;
+			MathExpression.deep_simplify = false;
+		}
 
 		System.out.println(string + " - ORIGINAL\n");
 
@@ -35,6 +42,14 @@ public class MathTest {
 			MathExpression.simplify = true;			
 			mi.multiply(mi2);
 			System.out.println("Final "+mi+" = "+mi.getValue(pairs));
+			break;
+		case 3:
+			MathExpression.simplify = false;
+			final MathsItem mii = MathsParser.parse(Tools.trimAndCheckBrackets(string));
+			System.out.println(mii+"\nwith value "+mii.getValue(pairs)+"\n");
+			MathExpression.simplify = true;
+			mii.simplify();
+			System.out.println(mii+"\nwith value "+mii.getValue(pairs));
 			break;
 		}
 

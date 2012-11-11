@@ -13,8 +13,10 @@ public class MathAutoTest {
 
 	private enum mathtypes {exp, expression, fract, im, number, sqrt, symbol};
 	
-	private final static boolean disableSimplification = true;
-	private final static mathtypes[] THINGS_TO_TEST = {mathtypes.number, mathtypes.symbol};
+	private final static boolean disableSimplification = false; // disable simplification globally
+	private final static boolean useImaginary = true; // whether or not to disable imaginary numbers.
+	private final static boolean alwaysSimplify = false; // whether or not to simplify only from time to time in order to generate more complex equations
+	private final static mathtypes[] THINGS_TO_TEST = {mathtypes.im, mathtypes.number, mathtypes.symbol}; // types of functions that would be tested, if you supply im here, useImaginary will be ignored
 	
 	private final static String[] POSSIBLE_SYMBOLS = new String[] {"a", "b"};
 	private final static Complex[] values = {new Complex(-3, 5), new Complex(1, -2)};
@@ -65,6 +67,7 @@ public class MathAutoTest {
 				System.out.printf(": %dms,  %.4f MB\n", end - start, (aftused - intused) / 1048576d);
 			}
 			
+			sanityCheck();
 			generateComplexMathItem();
 		}
 
@@ -74,26 +77,36 @@ public class MathAutoTest {
 		System.out.printf("done in %dms,  %.4f MB; peak usage %.4f MB\n", end - start, (aftused - intused) / 1048576d,  peakmem / 1048576d);
 	}
 	
+	private final static void sanityCheck() {
+		for (int i = 0; i < NO_OF_ELS; i++) {
+			final Complex c1 = items[i].item.getValue(pairs);
+			final Complex c2 = items[i].item.getValue(pairs);
+			assertTrue("\nSanity check failed for \n"+items[i].item+",\nmeasurements yield different results!\norig: "+items[i].result+"\nm1: "+c1+"\nm2: "+c2+printPairs(), c1.similarValue(items[i].result, 0.0000001) && c2.similarValue(items[i].result, 0.0000001));
+		}
+	}
+	
 	private final static MathsItem generateRandomNumber() {
 		final MathExpression e = new MathExpression();
 		e.add(new MathNumber(generateRandomDouble()));
-		e.add(new MathIm(new MathNumber(generateRandomDouble())));
+		if (useImaginary) e.add(new MathIm(new MathNumber(generateRandomDouble())));
 		return e;
 	}
 	
 	private final static void putComplex(final Complex c, final MathsItem m) {
 		final int rand = r.nextInt(NO_OF_ELS);
-		items[rand].result = c;
-		items[rand].item = m;
+		items[rand].result = c.clone();
+		items[rand].item = m.clone();
 	}
 	
 	private final static Holder getRandom() {
 		final int rand = r.nextInt(NO_OF_ELS);
-		return items[rand];
+		return items[rand].clone();
 	}
 	
 	private final static void generateComplexMathItem() {
 		int rand = r.nextInt(THINGS_TO_TEST.length);
+		
+		boolean simplify = alwaysSimplify ? true : r.nextBoolean();
 		
 		final MathsItem item = new MathExpression();
 		
@@ -104,16 +117,17 @@ public class MathAutoTest {
 			break;
 		case expression:
 			break;
-		case im:
-			break;
 		case sqrt:
 			break;
-		
+		case im:
+			final double im = generateRandomDouble();
+			if (useImaginary) item.add(new MathIm(new MathNumber(im)));
+			break;
 		case number:
 			final double real = generateRandomDouble();
-			final double im = generateRandomDouble();
+			final double imm = generateRandomDouble();
 			item.add(new MathNumber(real));
-			item.add(new MathIm(new MathNumber(im)));
+			if (useImaginary) item.add(new MathIm(new MathNumber(imm)));
 			break;
 		case symbol:
 			final int ra = r.nextInt(POSSIBLE_SYMBOLS.length);
@@ -138,9 +152,17 @@ public class MathAutoTest {
 		}
 		
 		final Complex actual = item.getValue(pairs);
-		final String msg = "\n"+random.item+action+"\n"+orig+" = \n"+item+"\n(i.e. "+random.result+" to "+origexp+")\nand expected to get\n"+expected+" but got \n"+actual;
-		assertEquals(msg, expected.R, actual.R, 0.0000001d);
-		assertEquals(msg, expected.I, actual.I, 0.0000001d);
+		final Complex a2 = item.getValue(pairs);
+		final MathsItem origbefore = item.clone();
+		
+		if (simplify) item.simplify();
+		
+		final Complex aft1 = item.getValue(pairs);
+		final Complex aft2 = item.getValue(pairs);
+		
+		assertTrue("\nMeasurements before and after simplification different!\nBefore expr: "+origbefore+"\nAfter expr:"+item+"\nbefore1: "+actual+"\nbefore2: "+a2+"\nafter1: "+aft1+"\nafter2: "+aft2+"\n"+printPairs()+"\n", actual.similarValue(aft2, 0.000001));
+		
+		assertTrue("\n"+random.item+action+"\n"+orig+" = \n"+item+"\ni.e. "+random.result+action+"\n"+origexp+" =\n"+expected+" but got \n"+actual+printPairs()+"\n", actual.similarValue(expected, 0.000001));
 		putComplex(actual, item);
 	}
 	
@@ -151,13 +173,24 @@ public class MathAutoTest {
 	}
 	
 	private static class Holder {
-		public Complex result;
-		public MathsItem item;
+		private Complex result;
+		private MathsItem item;
 		
 		public Holder(final Complex result, final MathsItem item) {
 			this.result = result;
 			this.item = item;
 		}
+		
+		protected Holder clone() {
+			return new Holder(result.clone(), item.clone());
+		}
+	}
+	
+	private final static String printPairs() {
+		String ans = "\n\nPairs:\n";
+		for (String h : pairs.keySet())
+			ans += h +" = "+pairs.get(h)+"\n";
+		return ans;
 	}
 
 }
