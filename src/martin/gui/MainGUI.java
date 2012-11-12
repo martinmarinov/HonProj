@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -20,6 +21,7 @@ import martin.quantum.tools.Tools;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,24 +34,14 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 public class MainGUI {
 	
-	private static final String DEFAULT_no_of_qubits = 	"3";
-	private static final String DEFAULT_inputs =		"a, b";
-	private static final String DEFAULT_entanglement =	"(0, 1); (1, 2)";
-	private static final String DEFAULT_measurements =	"(0, 0, 0, 0); (1, s0, 0, 0)";
-	private static final String DEFAULT_corrections =	"(2, z, s0); (2, x, s1)";//"(2, x, s1); ";
-	private static final String DEFAULT_branches =		"1, 1";
-	private static final String DEFAULT_variables =		"a = 12 + Im(3); b = 3 + Im(4)";
-	
 	private final Properties p = new Properties();
-	private final static String config_filename = "mbqc.config";
+	private final static String PROG_TITLE = "MBQC Simulator alpha";
 	
 	private static final Runtime runtime = Runtime.getRuntime();
 
@@ -71,11 +63,11 @@ public class MainGUI {
 	private SystemMatrix system = null;
 	private JTextPane outNumerical;
 	private JCheckBox chckbxSimplificationEnabled;
-	private JButton btnResetFields;
 	private JTextPane outConsole;
 	private JScrollPane scrollPane_2;
 	private JButton btnClear;
 	private JLabel lblConsole;
+	private JFileChooser fileChooser = new JFileChooser(".");
 
 	/**
 	 * Launch the application.
@@ -108,13 +100,7 @@ public class MainGUI {
 		MathExpression.simplify = true;
 		
 		frmMbqcSimulatorValpha = new JFrame();
-		frmMbqcSimulatorValpha.setTitle("MBQC Simulator v0");
-		frmMbqcSimulatorValpha.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent paramWindowEvent) {
-				saveProperties();
-			}
-		});
+		frmMbqcSimulatorValpha.setTitle(PROG_TITLE);
 		frmMbqcSimulatorValpha.setBounds(100, 100, 933, 618);
 		frmMbqcSimulatorValpha.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmMbqcSimulatorValpha.getContentPane().setLayout(null);
@@ -125,7 +111,7 @@ public class MainGUI {
 		frmMbqcSimulatorValpha.getContentPane().add(lblNewLabel);
 		
 		txtNumbOfQubits = new JTextField();
-		txtNumbOfQubits.setBounds(145, 25, 431, 20);
+		txtNumbOfQubits.setBounds(145, 25, 233, 20);
 		txtNumbOfQubits.setToolTipText("Integer representing the number of qubits in the system");
 		frmMbqcSimulatorValpha.getContentPane().add(txtNumbOfQubits);
 		txtNumbOfQubits.setColumns(10);
@@ -277,18 +263,9 @@ public class MainGUI {
 		chckbxSimplificationEnabled.setBounds(421, 181, 155, 23);
 		frmMbqcSimulatorValpha.getContentPane().add(chckbxSimplificationEnabled);
 		
-		btnResetFields = new JButton("Reset to teleportation example");
-		btnResetFields.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent paramActionEvent) {
-				setDefaults();
-			}
-		});
-		btnResetFields.setBounds(666, 5, 241, 23);
-		frmMbqcSimulatorValpha.getContentPane().add(btnResetFields);
-		
 		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane_2.setBounds(601, 80, 306, 455);
+		scrollPane_2.setBounds(601, 54, 306, 481);
 		frmMbqcSimulatorValpha.getContentPane().add(scrollPane_2);
 		
 		outConsole = new JTextPane() {
@@ -317,15 +294,51 @@ public class MainGUI {
 		frmMbqcSimulatorValpha.getContentPane().add(btnClear);
 		
 		lblConsole = new JLabel("Debug messages:");
-		lblConsole.setBounds(602, 54, 206, 14);
+		lblConsole.setBounds(603, 28, 206, 14);
 		frmMbqcSimulatorValpha.getContentPane().add(lblConsole);
 		
-		loadProperties();
+		btnOpenFile = new JButton("Open file");
+		btnOpenFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				
+				final int returnVal = fileChooser.showOpenDialog(frmMbqcSimulatorValpha);
+				
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					final File f = fileChooser.getSelectedFile();
+					loadProperties(f.getPath());
+					frmMbqcSimulatorValpha.setTitle(PROG_TITLE+" - "+f.getName());
+				}
+			}
+		});
+		btnOpenFile.setBounds(388, 24, 89, 23);
+		frmMbqcSimulatorValpha.getContentPane().add(btnOpenFile);
+		
+		btnSaveFile = new JButton("Save file");
+		btnSaveFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				final int returnVal = fileChooser.showSaveDialog(frmMbqcSimulatorValpha);
+				
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					final File f = fileChooser.getSelectedFile();
+					if (f.exists() && 
+							JOptionPane.showConfirmDialog(
+									frmMbqcSimulatorValpha, 
+									"File '"+f.getName()+"' already exists. Overwrite?",
+									"Overwriting file", 
+									JOptionPane.YES_NO_OPTION, 
+									JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
+						return;
+					saveProperties(fileChooser.getSelectedFile().getPath());
+					frmMbqcSimulatorValpha.setTitle(PROG_TITLE+" - "+f.getName());
+				}
+			}
+		});
+		btnSaveFile.setBounds(487, 24, 89, 23);
+		frmMbqcSimulatorValpha.getContentPane().add(btnSaveFile);
+		
 	}
 	
 	private void generateSystemMatrix() throws NumberFormatException, Exception {
-		saveProperties();
-
 		final long intused = runtime.totalMemory() - runtime.freeMemory();
 		final long start = System.currentTimeMillis();
 		
@@ -353,35 +366,25 @@ public class MainGUI {
 		e.printStackTrace(Tools.logger);
 	}
 	
-	private void setDefaults() {
-		txtNumbOfQubits.setText(DEFAULT_no_of_qubits);
-		txtBranches.setText(DEFAULT_branches);
-		txtCorrections.setText(DEFAULT_corrections);
-		txtEntanglement.setText(DEFAULT_entanglement);
-		txtInputs.setText(DEFAULT_inputs);
-		txtMeasurement.setText(DEFAULT_measurements);
-		txtVariables.setText(DEFAULT_variables);
-	}
-	
-	private void loadProperties() {
+	private void loadProperties(final String config_filename) {
 		try {
 			final FileInputStream in = new FileInputStream(config_filename);
 			p.load(in);
 			in.close();
 			
-			txtNumbOfQubits.setText(p.getProperty("prop_no", DEFAULT_no_of_qubits));
-			txtBranches.setText(p.getProperty("prop_branch", DEFAULT_branches));
-			txtCorrections.setText(p.getProperty("prop_corr", DEFAULT_corrections));
-			txtEntanglement.setText(p.getProperty("prop_ent", DEFAULT_entanglement));
-			txtInputs.setText(p.getProperty("prop_in", DEFAULT_inputs));
-			txtMeasurement.setText(p.getProperty("prop_meas", DEFAULT_measurements));
-			txtVariables.setText(p.getProperty("prop_vars", DEFAULT_variables));
+			txtNumbOfQubits.setText(p.getProperty("prop_no"));
+			txtBranches.setText(p.getProperty("prop_branch"));
+			txtCorrections.setText(p.getProperty("prop_corr"));
+			txtEntanglement.setText(p.getProperty("prop_ent"));
+			txtInputs.setText(p.getProperty("prop_in"));
+			txtMeasurement.setText(p.getProperty("prop_meas"));
+			txtVariables.setText(p.getProperty("prop_vars"));
 		} catch (Exception e) {
-			setDefaults();
+			throwException(e);
 		}
 	}
 	
-	private void saveProperties() {
+	private void saveProperties(final String config_filename) {
 		
 		try {
 			p.setProperty("prop_no", txtNumbOfQubits.getText());
@@ -394,13 +397,17 @@ public class MainGUI {
 			
 			
 			final FileOutputStream out = new FileOutputStream(config_filename);
-			p.store(out, "---No Comment---");
+			p.store(out, "---MBQC Pattern description---");
 			out.close();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			throwException(e);
+		}
 		
 	}
 	
 	final PrintLogger logger = new PrintLogger();
+	private JButton btnOpenFile;
+	private JButton btnSaveFile;
 	
 	private class PrintLogger extends PrintStream {
 

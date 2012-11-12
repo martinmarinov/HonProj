@@ -62,7 +62,7 @@ public class Main {
 				new X(2, b[1]), // make X correction
 				new Z(2, b[0]), // make Z correction
 				
-				new M(1, 0, b[0], new MathNumber(0), b[1]), // make a measurement of qubit 1 with alpha = 0, take |alpha - > branch
+				new M(1, b[0], 0, new MathNumber(0), b[1]), // make a measurement of qubit 1 with alpha = 0, take |alpha - > branch
 				new M(0, 0, 0, new MathNumber(0), b[0]), // make a measurement of qubit 0 with alpha = 0, take |alpha - > branch
 				
 				new E(1, 2), // entangle 1 and 2
