@@ -11,21 +11,27 @@ import org.junit.Test;
 
 public class MathAutoTest {
 
-	private enum mathtypes {exp, expression, fract, im, number, sqrt, symbol};
+	private enum mathtypes {exp, fract, im, number, sqrt, symbol};
 	
 	private final static boolean disableSimplification = false; // disable simplification globally
 	private final static boolean useImaginary = true; // whether or not to disable imaginary numbers.
 	private final static boolean alwaysSimplify = false; // whether or not to simplify only from time to time in order to generate more complex equations
-	private final static mathtypes[] THINGS_TO_TEST = {mathtypes.im, mathtypes.number, mathtypes.symbol}; // types of functions that would be tested, if you supply im here, useImaginary will be ignored
+	private final static mathtypes[] THINGS_TO_TEST = {
+		mathtypes.sqrt, mathtypes.exp,  mathtypes.fract,
+		mathtypes.im, mathtypes.number, mathtypes.symbol
+		}; // types of functions that would be tested, if you supply im here, useImaginary will be ignored
 	
 	private final static String[] POSSIBLE_SYMBOLS = new String[] {"a", "b"};
 	private final static Complex[] values = {new Complex(-3, 5), new Complex(1, -2)};
 	
 	private final static double DOUBLE_RANGE = 5;
-	private final static int NO_OF_ELS = 300;
-	private final static int NO_OF_TRIES = 1000;
+	private final static int NO_OF_ELS = 50;
+	private final static int NO_OF_TRIES = 100;
+	
+	private final static double DOUBLE_COMPARISON_ACCURACY = 0.001; // %0.1 of the number means it's accurate
 	
 	private final static int PROGRESS_BAR_SIZE = 18;
+	private final static int TEST_REPEATS = 100;
 	
 	private final static Holder[] items = new Holder[NO_OF_ELS];
 	private final static Random r = new Random();
@@ -33,55 +39,58 @@ public class MathAutoTest {
 	
 	@Test
 	public void test() {
-		Runtime runtime = Runtime.getRuntime();
-		runtime.gc();
-		final long intused = runtime.totalMemory() - runtime.freeMemory();
-		long peakmem = 0;
+		for (int t = 0; t < TEST_REPEATS; t++) {
+			Runtime runtime = Runtime.getRuntime();
+			runtime.gc();
+			final long intused = runtime.totalMemory() - runtime.freeMemory();
+			long peakmem = 0;
 
-		final long start = System.currentTimeMillis();
-		
-		if (disableSimplification)  {
-			MathExpression.simplify = false;
-			MathExpression.deep_simplify = false;
-		}
-		
-		for (int i = 0; i < NO_OF_ELS; i++) {
-			final MathsItem m = generateRandomNumber();
-			items[i] = new Holder(m.getValue(pairs), m);
-		}
-		
-		final double sizeofblah = 100d / PROGRESS_BAR_SIZE;
-		final double oneit = 100d / (double) NO_OF_TRIES;
-		double so_far = 0;
-		System.out.println("0%");
-		for (int i = 0; i < NO_OF_TRIES; i++) {
-			so_far += oneit;
-			
-			if (so_far > sizeofblah) {
-				so_far = 0;
-				System.out.printf("%.2f%% - ", 100 * i / (double) NO_OF_TRIES );
-				
-				final long end = System.currentTimeMillis();
-				final long aftused = runtime.totalMemory() - runtime.freeMemory();
-				if (aftused > peakmem) peakmem = aftused;
-				System.out.printf(": %dms,  %.4f MB\n", end - start, (aftused - intused) / 1048576d);
+			final long start = System.currentTimeMillis();
+
+			if (disableSimplification)  {
+				MathExpression.simplify = false;
+				MathExpression.deep_simplify = false;
 			}
-			
-			sanityCheck();
-			generateComplexMathItem();
-		}
 
-		final long end = System.currentTimeMillis();
-		final long aftused = runtime.totalMemory() - runtime.freeMemory();
-		if (aftused > peakmem) peakmem = aftused;
-		System.out.printf("done in %dms,  %.4f MB; peak usage %.4f MB\n", end - start, (aftused - intused) / 1048576d,  peakmem / 1048576d);
+			for (int i = 0; i < NO_OF_ELS; i++) {
+				final MathsItem m = generateRandomNumber();
+				items[i] = new Holder(m.getValue(pairs), m);
+			}
+
+			final double sizeofblah = 100d / PROGRESS_BAR_SIZE;
+			final double oneit = 100d / (double) NO_OF_TRIES;
+			double so_far = 0;
+			System.out.println("\nTest #"+t+"\n0%");
+			for (int i = 0; i < NO_OF_TRIES; i++) {
+				so_far += oneit;
+
+				if (so_far > sizeofblah) {
+					so_far = 0;
+					System.out.printf("%.2f%% - ", 100 * i / (double) NO_OF_TRIES );
+
+					final long end = System.currentTimeMillis();
+					final long aftused = runtime.totalMemory() - runtime.freeMemory();
+					if (aftused > peakmem) peakmem = aftused;
+					System.out.printf(": %dms,  %.4f MB\n", end - start, (aftused - intused) / 1048576d);
+				}
+
+				sanityCheck();
+				generateComplexMathItem();
+			}
+
+			final long end = System.currentTimeMillis();
+			final long aftused = runtime.totalMemory() - runtime.freeMemory();
+			if (aftused > peakmem) peakmem = aftused;
+			System.out.printf("done in %dms,  %.4f MB; peak usage %.4f MB\n", end - start, (aftused - intused) / 1048576d,  peakmem / 1048576d);
+			runtime.gc();
+		}
 	}
 	
 	private final static void sanityCheck() {
 		for (int i = 0; i < NO_OF_ELS; i++) {
 			final Complex c1 = items[i].item.getValue(pairs);
 			final Complex c2 = items[i].item.getValue(pairs);
-			assertTrue("\nSanity check failed for \n"+items[i].item+",\nmeasurements yield different results!\norig: "+items[i].result+"\nm1: "+c1+"\nm2: "+c2+printPairs(), c1.similarValue(items[i].result, 0.0000001) && c2.similarValue(items[i].result, 0.0000001));
+			assertTrue("\nSanity check failed for \n"+items[i].item+",\nmeasurements yield different results!\norig: "+items[i].result+"\nm1: "+c1+"\nm2: "+c2+printPairs(), c1.similarValue(items[i].result, DOUBLE_COMPARISON_ACCURACY) && c2.similarValue(items[i].result, DOUBLE_COMPARISON_ACCURACY));
 		}
 	}
 	
@@ -110,24 +119,26 @@ public class MathAutoTest {
 		
 		final MathsItem item = new MathExpression();
 		
+		final double real = generateRandomDouble();
+		final double im = generateRandomDouble();
+		
 		switch (THINGS_TO_TEST[rand]) {
+		
 		case exp:
+			item.add(new MathExp(getRandom().item.clone()));
 			break;
 		case fract:
-			break;
-		case expression:
+			item.add(new MathFract(getRandom().item.clone(), getRandom().item.clone()));
 			break;
 		case sqrt:
+			item.add(new MathSqrt(getRandom().item.clone()));
 			break;
 		case im:
-			final double im = generateRandomDouble();
 			if (useImaginary) item.add(new MathIm(new MathNumber(im)));
 			break;
 		case number:
-			final double real = generateRandomDouble();
-			final double imm = generateRandomDouble();
 			item.add(new MathNumber(real));
-			if (useImaginary) item.add(new MathIm(new MathNumber(imm)));
+			if (useImaginary) item.add(new MathIm(new MathNumber(im)));
 			break;
 		case symbol:
 			final int ra = r.nextInt(POSSIBLE_SYMBOLS.length);
@@ -160,9 +171,9 @@ public class MathAutoTest {
 		final Complex aft1 = item.getValue(pairs);
 		final Complex aft2 = item.getValue(pairs);
 		
-		assertTrue("\nMeasurements before and after simplification different!\nBefore expr: "+origbefore+"\nAfter expr:"+item+"\nbefore1: "+actual+"\nbefore2: "+a2+"\nafter1: "+aft1+"\nafter2: "+aft2+"\n"+printPairs()+"\n", actual.similarValue(aft2, 0.000001));
+		assertTrue("\nMeasurements before and after simplification different!\nBefore expr: "+origbefore+"\nAfter expr:"+item+"\nbefore1: "+actual+"\nbefore2: "+a2+"\nafter1: "+aft1+"\nafter2: "+aft2+"\n"+printPairs()+"\n", actual.similarValue(aft2, DOUBLE_COMPARISON_ACCURACY));
 		
-		assertTrue("\n"+random.item+action+"\n"+orig+" = \n"+item+"\ni.e. "+random.result+action+"\n"+origexp+" =\n"+expected+" but got \n"+actual+printPairs()+"\n", actual.similarValue(expected, 0.000001));
+		assertTrue("\n"+random.item+action+"\n"+orig+" = \n"+item+"\ni.e. "+random.result+action+"\n"+origexp+" =\n"+expected+" but got \n"+actual+printPairs()+"\n", actual.similarValue(expected, DOUBLE_COMPARISON_ACCURACY));
 		putComplex(actual, item);
 	}
 	

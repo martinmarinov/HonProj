@@ -80,10 +80,20 @@ public class Complex {
 		return false;
 	}
 	
-	public boolean similarValue(final Complex c, final double ACCURACY) {
-		if (isNaN() || c.isNaN())
-			return false;
+	/**
+	 * Compare the two numbers up to an accuracy of 100*ACCURACY % of the number
+	 * @param c
+	 * @param ACCURACY
+	 * @return
+	 */
+	public boolean similarValue(final Complex c, double ACCURACY) {
+		if (isNaN() && c.isNaN())
+			return true;
 		
-		return (Math.abs(c.R - R) < ACCURACY) && (Math.abs(c.I - I) < ACCURACY);
+		if (ACCURACY < 0.0000000001) ACCURACY = 0.0000000001;
+		
+		final double racc = ACCURACY * Math.abs(R);
+		final double iacc = ACCURACY * Math.abs(I);
+		return (Math.abs(c.R - R) <= racc) && (Math.abs(c.I - I) <= iacc);
 	}
 }

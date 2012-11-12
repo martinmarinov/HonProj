@@ -40,7 +40,7 @@ public class MathSqrt extends MathFunction {
 		final Complex result = expr.getValue(rules);
 		
 		final double r = Math.sqrt(result.R*result.R + result.I*result.I);
-		final double sgnI = result.I == 0 ? 0 : (result.I > 0 ? 1 : -1);
+		final double sgnI = result.I >= 0 ? 1 : -1;
 		
 		final double R = sign * Math.sqrt((r+result.R) / 2d);
 		final double I = sign * sgnI * Math.sqrt((r-result.R) / 2d);
@@ -60,6 +60,18 @@ public class MathSqrt extends MathFunction {
 	public boolean multiply(MathsItem m) {
 		if (m instanceof MathSqrt) {
 			final MathSqrt me = (MathSqrt) m;
+			
+			// sqrt of complex numbers is not well supported for simplification
+			final Complex mres = getValue(null);
+			if (mres.I != 0)
+				return false;
+			
+			final Complex remres = me.getValue(null);
+			if (remres.I != 0)
+				return false;
+			
+			negative = negative != me.negative;
+			
 			return expr.multiply(me.expr);
 		}
 		

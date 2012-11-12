@@ -57,6 +57,9 @@ public class MathExp extends MathFunction {
 	public boolean multiply(final MathsItem m) {
 		if (m instanceof MathExp) {
 			final MathExp me = (MathExp) m;
+			
+			negative = negative != me.negative;
+			
 			return expr.add(me.expr);
 		}
 		
