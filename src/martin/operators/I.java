@@ -28,8 +28,8 @@ public class I implements Operator {
 			c.multiply(ONE_OVER_SQRT_2);
 		
 		for (int i = 0; i < s.size; i++) {
-			s.coeff[i].multiply(items[i >> nremaining].clone());
-			s.coeff[i].multiply(c.clone());
+			s.coeff[i].multiply(items[i >> nremaining]);
+			s.coeff[i].multiply(c);
 			s.coeff[i].simplify();
 		}
 	}

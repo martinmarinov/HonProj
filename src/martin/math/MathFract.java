@@ -82,17 +82,17 @@ public class MathFract implements MathsItem {
 	}
 
 	@Override
-	public boolean multiply(MathsItem m) {
+	public boolean multiply(final MathsItem m) {
 		if (m instanceof MathFract) {
 			
 			final MathFract mul = (MathFract) m;
 			
-			num.multiply(mul.num.clone());
-			den.multiply(mul.den.clone());
+			num.multiply(mul.num);
+			den.multiply(mul.den);
 			
 			return true;
-		} //else if (m instanceof MathsItem)
-			//return num.multiply(((MathsItem) m).clone());
+		} else if (m instanceof MathsItem)
+			return num.multiply(m);
 					
 		return false;
 	}
@@ -104,16 +104,16 @@ public class MathFract implements MathsItem {
 			final MathFract ad = (MathFract) m;
 			
 			if (ad.den.equals(den))
-				return num.add(ad.num.clone());
+				return num.add(ad.num);
 			
 			final MathExpression nD = (MathExpression) den.clone();
-			nD.multiply(ad.den.clone());
+			nD.multiply(ad.den);
 			
 			final MathExpression nN1 = (MathExpression) num.clone();
-			nN1.multiply(ad.den.clone());
+			nN1.multiply(ad.den);
 			
 			final MathExpression nN2 = (MathExpression) ad.num.clone();
-			nN2.multiply(den.clone());
+			nN2.multiply(den);
 			
 			final MathExpression nN = new MathExpression();
 			nN.add(nN1);

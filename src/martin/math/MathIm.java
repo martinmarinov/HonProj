@@ -65,14 +65,14 @@ public class MathIm extends MathFunction {
 		
 		
 		if (m instanceof MathIm) {
-			final MathIm im = (MathIm) m.clone();
+			final MathIm im = (MathIm) m;
 			
 			if (im.negative) {
 				im.negate();
 				im.expr.negate();
 			}
 			
-			if (expr.multiply(im.expr.clone())) {
+			if (expr.multiply(im.expr)) {
 				
 				if (negative) {
 					negate();
@@ -106,7 +106,7 @@ public class MathIm extends MathFunction {
 	@Override
 	public boolean add(final MathsItem m) {
 		if (m instanceof MathIm) {
-			final MathIm im = (MathIm) m.clone();
+			final MathIm im = (MathIm) m;
 
 			//System.out.print("Adding "+im+" to this "+this+": ");
 			

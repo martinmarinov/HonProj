@@ -4,21 +4,27 @@ import martin.math.MathNumber;
 import martin.math.MathSymbol;
 import martin.operators.AddCoeffTogether;
 import martin.operators.E;
+import martin.operators.I;
 import martin.operators.M;
 import martin.operators.N;
 import martin.operators.X;
 import martin.operators.Z;
 import martin.quantum.SystemMatrix;
+import martin.quantum.tools.Tools;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
 		
 		quantumTeleport();
+		AltQunatumTeleport();
 
 	}
 	
 	public static void quantumTeleport() throws Exception {
+		
+		Tools.logger.println();
+		Tools.logger.println("Standard quantum teleportation:");
 		
 		SystemMatrix m = new SystemMatrix(3);
 		
@@ -40,10 +46,36 @@ public class Main {
 		
 		m.performReverse(new AddCoeffTogether());
 		
-		System.out.println(m);
-		
-		System.exit(0);
+		Tools.logger.println(m);
 	}
+	
+	public static void AltQunatumTeleport() throws Exception {
+		
+		Tools.logger.println();
+		Tools.logger.println("Quantum teleportation 2:");
+		
+		SystemMatrix m = new SystemMatrix(3);
+		
+		int b[] = new int[]{1, 1};
+		
+		m.performReverse(
+				new X(2, b[1]), // make X correction
+				new Z(2, b[0]), // make Z correction
+				
+				new M(1, 0, b[0], new MathNumber(0), b[1]), // make a measurement of qubit 1 with alpha = 0, take |alpha - > branch
+				new M(0, 0, 0, new MathNumber(0), b[0]), // make a measurement of qubit 0 with alpha = 0, take |alpha - > branch
+				
+				new E(1, 2), // entangle 1 and 2
+				new E(0, 1), // entangle 0 and 1
+				
+				new I(new MathSymbol("a"), new MathSymbol("b"))
+				);
+		
+		m.performReverse(new AddCoeffTogether());
+		
+		Tools.logger.println(m);
+	}
+	
 	
 	public static void moreComplicatedTest() throws Exception {
 		SystemMatrix m = new SystemMatrix(4);
@@ -70,9 +102,7 @@ public class Main {
 		
 		m.performReverse(new AddCoeffTogether());
 		
-		System.out.println(m);
-		
-		System.exit(0);
+		Tools.logger.println(m);
 	}
 
 }

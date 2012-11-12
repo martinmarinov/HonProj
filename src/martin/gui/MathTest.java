@@ -26,7 +26,7 @@ public class MathTest {
 			MathExpression.deep_simplify = false;
 		}
 
-		System.out.println(string + " - ORIGINAL\n");
+		Tools.logger.println(string + " - ORIGINAL\n");
 
 		switch (testid) {
 		case 0:
@@ -41,15 +41,15 @@ public class MathTest {
 			final MathsItem mi2 = testMaths(string2);
 			MathExpression.simplify = true;			
 			mi.multiply(mi2);
-			System.out.println("Final "+mi+" = "+mi.getValue(pairs));
+			Tools.logger.println("Final "+mi+" = "+mi.getValue(pairs));
 			break;
 		case 3:
 			MathExpression.simplify = false;
 			final MathsItem mii = MathsParser.parse(Tools.trimAndCheckBrackets(string));
-			System.out.println(mii+"\nwith value "+mii.getValue(pairs)+"\n");
+			Tools.logger.println(mii+"\nwith value "+mii.getValue(pairs)+"\n");
 			MathExpression.simplify = true;
 			mii.simplify();
-			System.out.println(mii+"\nwith value "+mii.getValue(pairs));
+			Tools.logger.println(mii+"\nwith value "+mii.getValue(pairs));
 			break;
 		}
 
@@ -65,15 +65,15 @@ public class MathTest {
 				.trimAndCheckBrackets(StrinsToParse));
 
 		if (it != null)
-			System.out.println(it + " = " + it.getValue(pairs));
+			Tools.logger.println(it + " = " + it.getValue(pairs));
 		else
-			System.out.println("EXPRESSION IS NULL!!!");
+			Tools.logger.println("EXPRESSION IS NULL!!!");
 		
 		final long end = System.currentTimeMillis();
 
 		final long aftused = runtime.totalMemory() - runtime.freeMemory();
-		System.out.printf("Runtime: %dms\n", end - start);
-		System.out.printf("Memusage: %.4f KB\n", (aftused - intused) / 1024d);
+		Tools.logger.printf("Runtime: %dms\n", end - start);
+		Tools.logger.printf("Memusage: %.4f KB\n", (aftused - intused) / 1024d);
 
 		return it;
 	}

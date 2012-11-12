@@ -19,6 +19,7 @@ import martin.quantum.tools.Tools;
 public final class SimulationRunner {
 
 	public static SystemMatrix run(int n, final String inputs, final String entanglement, final String measurements, final String corrections, final String branches) throws Exception {
+		Tools.logger.println();
 		
 		final SystemMatrix sm = new SystemMatrix(n);
 		final ArrayList<Operator> al = new ArrayList<Operator>();
@@ -30,13 +31,14 @@ public final class SimulationRunner {
 		parseMeasurements(al, measurements, b);
 		parseCorrections(al, corrections, b);
 		
-		System.out.println("branches = "+Arrays.toString(b));
+		Tools.logger.println("branches = "+Arrays.toString(b));
 		for (Operator o : al)
-			System.out.println("Will perform: "+o);
+			Tools.logger.println("Will perform: "+o);
 		
 		sm.perform(al.toArray(new Operator[0]));	
 		
 		sm.perform(new AddCoeffTogether());
+	
 		return sm;
 	}
 	

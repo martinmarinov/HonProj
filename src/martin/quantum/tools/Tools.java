@@ -1,5 +1,6 @@
 package martin.quantum.tools;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,6 +8,9 @@ import martin.math.Complex;
 import martin.math.MathsItem;
 
 public final class Tools {
+	
+	/** Default logger to output messages to */
+	public static PrintStream logger = System.out;
 	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!
@@ -150,7 +154,7 @@ public final class Tools {
 
 	public static void printTuples(final ArrayList<Tuple<char[], String>> arrayList) {
 		if (arrayList == null) {
-			System.out.println("Tuples null!");
+			Tools.logger.println("Tuples null!");
 			return;
 		}
 		
@@ -159,7 +163,7 @@ public final class Tools {
 		for (Tuple<char[], String> t : arrayList) {
 			
 			if (t == null) {
-				System.out.println("NULL TUPLE!");
+				Tools.logger.println("NULL TUPLE!");
 				continue;
 			}
 			
@@ -168,14 +172,14 @@ public final class Tools {
 			System.out.print("[");
 			for(int ii = 0; ii < t.x.length; ii++)
 				if (ii == 0)
-					System.out.print("'"+t.x[ii]+"'");
+					Tools.logger.print("'"+t.x[ii]+"'");
 				else
-					System.out.print(", '"+t.x[ii]+"'");
-			System.out.println("]; "+t.y);
+					Tools.logger.print(", '"+t.x[ii]+"'");
+			Tools.logger.println("]; "+t.y);
 		}
 		
-		if (i == 0) System.out.println("No tuples!");
-		System.out.println();
+		if (i == 0) Tools.logger.println("No tuples!");
+		Tools.logger.println();
 	}
 	
 	/**

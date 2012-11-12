@@ -47,13 +47,13 @@ public class M implements Operator {
 				if (s == 1)
 					angle.multiply(MINUS_ONE);
 				
-				sm.coeff[i].multiply(new MathExp( new MathIm(angle) )); // TODO handle addition
+				sm.coeff[i].multiply(new MathExp( new MathIm(angle) ));
 				
 				if (b == 1) // if negative branch
-					sm.coeff[i].multiply(MINUS_ONE.clone());
+					sm.coeff[i].multiply(MINUS_ONE);
 				
 				if (t == 1) // Z correction
-					sm.coeff[i].multiply(MINUS_ONE.clone());//angle.add(Pi);
+					sm.coeff[i].multiply(MINUS_ONE);
 				
 				sm.coeff[i].multiply(ONE_OVER_SQRT_2);
 			} else
@@ -65,7 +65,7 @@ public class M implements Operator {
 	
 	@Override
 	public String toString() {
-		return "M(id="+qubitId+", s="+s+", t="+t+", alpha="+alpha+")";
+		return "M(id="+qubitId+", t="+t+", s="+s+", alpha="+alpha+", b="+b+")";
 	}
 
 }

@@ -355,7 +355,7 @@ public class MathExpression implements MathsItem {
 			happened |= commonFactors();
 		
 			if (i > MAX_NUMBER_OF_SIMPLIFICAITON_STEPS - 5)
-				System.out.println((MAX_NUMBER_OF_SIMPLIFICAITON_STEPS - i)+": "+this);
+				Tools.logger.println((MAX_NUMBER_OF_SIMPLIFICAITON_STEPS - i)+": "+this);
 			
 			if (!happened)
 				return;

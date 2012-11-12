@@ -31,7 +31,7 @@ public class N implements Operator {
 			throw new Exception("This qubit does not exist in this system matrix!");
 
 		for (int i = 0; i < s.size; i++) {
-			s.coeff[i].multiply( ((i >> (s.mNumbQubits - qubitId - 1)) & 1) == 0 ? st1.clone() : st2.clone());
+			s.coeff[i].multiply( ((i >> (s.mNumbQubits - qubitId - 1)) & 1) == 0 ? st1 : st2);
 			s.coeff[i].simplify();
 		}
 

@@ -24,7 +24,7 @@ public class E implements Operator {
 			int state2 = (i >> (s.mNumbQubits - bitId2 - 1)) & 1; // state of second bit
 			
 			if (state1 == 1 && state2 == 1)
-				s.coeff[i].multiply(MINUS_ONE.clone());
+				s.coeff[i].multiply(MINUS_ONE);
 			
 			s.coeff[i].simplify();
 		}
