@@ -103,13 +103,13 @@ public class MathAutoTest {
 	
 	private final static void putComplex(final Complex c, final MathsItem m) {
 		final int rand = r.nextInt(NO_OF_ELS);
-		items[rand].result = c.clone();
-		items[rand].item = m.clone();
+		items[rand].result = c;
+		items[rand].item = m;
 	}
 	
 	private final static Holder getRandom() {
 		final int rand = r.nextInt(NO_OF_ELS);
-		return items[rand].clone();
+		return items[rand];
 	}
 	
 	private final static void generateComplexMathItem() {
@@ -125,13 +125,13 @@ public class MathAutoTest {
 		switch (THINGS_TO_TEST[rand]) {
 		
 		case exp:
-			item.add(new MathExp(getRandom().item.clone()));
+			item.add(new MathExp(getRandom().item));
 			break;
 		case fract:
-			item.add(new MathFract(getRandom().item.clone(), getRandom().item.clone()));
+			item.add(new MathFract(getRandom().item, getRandom().item));
 			break;
 		case sqrt:
-			item.add(new MathSqrt(getRandom().item.clone()));
+			item.add(new MathSqrt(getRandom().item));
 			break;
 		case im:
 			if (useImaginary) item.add(new MathIm(new MathNumber(im)));
@@ -191,10 +191,7 @@ public class MathAutoTest {
 			this.result = result;
 			this.item = item;
 		}
-		
-		protected Holder clone() {
-			return new Holder(result.clone(), item.clone());
-		}
+
 	}
 	
 	private final static String printPairs() {

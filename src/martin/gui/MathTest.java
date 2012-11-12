@@ -1,4 +1,4 @@
-package martin.quantum;
+package martin.gui;
 
 import java.util.HashMap;
 
@@ -12,7 +12,7 @@ public class MathTest {
 
 	private final static boolean disableSimplification = false;
 	
-	private final static String string = "sqrt(Im(-2)+1)*sqrt(-3+Im(-5))"; // golden error - "(-exp(1)*exp(-3))"
+	private final static String string = "sqrt(-2)*sqrt(-2)"; // golden error - "(-exp(1)*exp(-3))"
 	private final static String string2 = "(Im(1.0677930211090731)-1.0254292105013625)";
 	private final static int testid = 3;
 	private final static String[] variables = new String[] {"a", "b"};

@@ -1,4 +1,4 @@
-package martin.quantum;
+package martin.gui;
 
 import martin.math.MathNumber;
 import martin.math.MathSymbol;
@@ -8,28 +8,13 @@ import martin.operators.M;
 import martin.operators.N;
 import martin.operators.X;
 import martin.operators.Z;
+import martin.quantum.SystemMatrix;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
 		
-		//quantumTeleport();
-		
-		int n = 3;
-		String inputs =			"a, b";
-		String entanglement =	"(0, 1); (1, 2)";
-		String measurements =	"";
-		String corrections =	"";
-		String branches =		"1, 8";
-		
-		System.out.println("\n"+SimulationRunner.run(
-				n,
-				inputs,
-				entanglement,
-				measurements,
-				corrections,
-				branches
-				));
+		quantumTeleport();
 
 	}
 	
@@ -37,13 +22,13 @@ public class Main {
 		
 		SystemMatrix m = new SystemMatrix(3);
 		
-		m.perform(
-				//new X(2), // make Z correction because we took |alpha - > branch in M0
-				//new Z(2), // make X correction because we took |alpha - > branch in M1
+		m.performReverse(
+				new X(2), // make Z correction because we took |alpha - > branch in M0
+				new Z(2), // make X correction because we took |alpha - > branch in M1
 				
-				//new M(1, 0, 0, new MathNumber(0), 1), // make a measurement of qubit 1 with alpha = 0, take |alpha - > branch
-				//new X(1), // make X correction because we have taken |alpha - > branch
-				//new M(0, 0, 0, new MathNumber(0), 1), // make a measurement of qubit 0 with alpha = 0, take |alpha - > branch
+				new M(1, 0, 0, new MathNumber(0), 1), // make a measurement of qubit 1 with alpha = 0, take |alpha - > branch
+				new X(1), // make X correction because we have taken |alpha - > branch
+				new M(0, 0, 0, new MathNumber(0), 1), // make a measurement of qubit 0 with alpha = 0, take |alpha - > branch
 				
 				new E(1, 2), // entangle 1 and 2
 				new E(0, 1), // entangle 0 and 1
@@ -53,7 +38,7 @@ public class Main {
 				new N(0, new MathSymbol("a"), new MathSymbol("b")) // my input qubit 0 in state a|0>+b|1>
 				);
 		
-		m.perform(new AddCoeffTogether());
+		m.performReverse(new AddCoeffTogether());
 		
 		System.out.println(m);
 		
@@ -65,7 +50,7 @@ public class Main {
 		
 		int[] b = {1, 1, 1};
 		
-		m.perform(
+		m.performReverse(
 				new Z(3, b[1]),
 				new X(3, b[2]),
 				
@@ -83,7 +68,7 @@ public class Main {
 				new N(0, new MathSymbol("a"), new MathSymbol("b")) // my input qubit 0 in state a|0>+b|1>
 				);
 		
-		m.perform(new AddCoeffTogether());
+		m.performReverse(new AddCoeffTogether());
 		
 		System.out.println(m);
 		

@@ -117,9 +117,15 @@ public class SystemMatrix {
 		return rep;
 	}
 	
-	public void perform(Operator ... actions) throws Exception
+	public void performReverse(Operator ... actions) throws Exception
 	{
 		for (int i = actions.length - 1; i >= 0; i--)
+			actions[i].operate(this);
+	}
+	
+	public void perform(Operator ... actions) throws Exception
+	{
+		for (int i = 0; i < actions.length; i++)
 			actions[i].operate(this);
 	}
 

@@ -6,13 +6,12 @@ import martin.math.MathFract;
 import martin.math.MathIm;
 import martin.math.MathNumber;
 import martin.math.MathSqrt;
-import martin.math.MathSymbol;
 import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
 
 public class M implements Operator {
 	
-	private final static MathsItem Pi = new MathSymbol("Pi"); // TODO BETTER WAY OF HANDLING?
+	//private final static MathsItem Pi = new MathSymbol("Pi");
 	private final static MathsItem MINUS_ONE = new MathNumber(-1);
 	private final static MathsItem ONE_OVER_SQRT_2 = new MathFract(new MathNumber(1), new MathSqrt(new MathNumber(2)));;
 
@@ -47,13 +46,14 @@ public class M implements Operator {
 				angle.add(alpha);
 				if (s == 1)
 					angle.multiply(MINUS_ONE);
-				if (t == 1)
-					angle.add(Pi);
 				
 				sm.coeff[i].multiply(new MathExp( new MathIm(angle) )); // TODO handle addition
 				
 				if (b == 1) // if negative branch
 					sm.coeff[i].multiply(MINUS_ONE.clone());
+				
+				if (t == 1) // Z correction
+					sm.coeff[i].multiply(MINUS_ONE.clone());//angle.add(Pi);
 				
 				sm.coeff[i].multiply(ONE_OVER_SQRT_2);
 			} else
