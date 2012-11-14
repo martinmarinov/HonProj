@@ -130,6 +130,9 @@ public class MathFract implements MathsItem {
 	
 	@Override
 	public MathsItem clone() {
+		if (den.isZero())
+			return new MathNumber(Double.NaN);
+		
 		return new MathFract(num.clone(), den.clone());
 	}
 	

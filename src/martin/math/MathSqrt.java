@@ -2,6 +2,7 @@ package martin.math;
 
 import java.util.HashMap;
 
+import martin.quantum.tools.Tools;
 import martin.quantum.tools.Tuple;
 
 public class MathSqrt extends MathFunction {
@@ -30,7 +31,7 @@ public class MathSqrt extends MathFunction {
 
 	@Override
 	public boolean isOne() {
-		return expr.isOne();
+		return expr.isOne() && !negative;
 	}
 
 	@Override
@@ -86,10 +87,12 @@ public class MathSqrt extends MathFunction {
 	@Override
 	public MathsItem clone() {
 		
-		final Complex value = getValue(null);
-		
-		if (!value.isNaN() && value.I == 0 && value.R == (int) value.R)
+		if (Tools.SIMPLIFICATION_ENABLED) {
+			final Complex value = getValue(null);
+
+			if (!value.isNaN() && value.I == 0 && value.R == (int) value.R)
 				return new MathNumber(value.R);
+		}
 		
 		return new MathSqrt(expr.clone(), negative);
 	}

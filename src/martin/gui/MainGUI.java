@@ -14,7 +14,6 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 
-import martin.math.MathExpression;
 import martin.quantum.SimulationRunner;
 import martin.quantum.SystemMatrix;
 import martin.quantum.tools.Tools;
@@ -97,7 +96,7 @@ public class MainGUI {
 	 */
 	private void initialize() {
 		
-		MathExpression.simplify = true;
+		Tools.SIMPLIFICATION_ENABLED = true;
 		
 		frmMbqcSimulatorValpha = new JFrame();
 		frmMbqcSimulatorValpha.setTitle(PROG_TITLE);
@@ -256,10 +255,10 @@ public class MainGUI {
 		chckbxSimplificationEnabled = new JCheckBox("Simplification enabled");
 		chckbxSimplificationEnabled.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent paramChangeEvent) {
-				MathExpression.simplify = chckbxSimplificationEnabled.isSelected();
+				Tools.SIMPLIFICATION_ENABLED = chckbxSimplificationEnabled.isSelected();
 			}
 		});
-		chckbxSimplificationEnabled.setSelected(MathExpression.simplify);
+		chckbxSimplificationEnabled.setSelected(Tools.SIMPLIFICATION_ENABLED);
 		chckbxSimplificationEnabled.setBounds(421, 181, 155, 23);
 		frmMbqcSimulatorValpha.getContentPane().add(chckbxSimplificationEnabled);
 		

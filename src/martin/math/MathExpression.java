@@ -12,7 +12,6 @@ public class MathExpression implements MathsItem {
 	private final static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 1000;
 	
 	private final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
-	public static boolean simplify = true;
 	public static boolean deep_simplify = false;
 
 	@Override
@@ -334,7 +333,7 @@ public class MathExpression implements MathsItem {
 	@Override
 	public void simplify() {
 		
-		if (!simplify)
+		if (!Tools.SIMPLIFICATION_ENABLED)
 			return;
 		
 		for (int i = 0; i < MAX_NUMBER_OF_SIMPLIFICAITON_STEPS; i++) {

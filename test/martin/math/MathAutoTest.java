@@ -14,10 +14,11 @@ public class MathAutoTest {
 	private enum mathtypes {exp, fract, im, number, sqrt, symbol};
 	
 	private final static boolean disableSimplification = false; // disable simplification globally
+	private final static boolean useIntegersOnly = true;
 	private final static boolean useImaginary = true; // whether or not to disable imaginary numbers.
 	private final static boolean alwaysSimplify = false; // whether or not to simplify only from time to time in order to generate more complex equations
 	private final static mathtypes[] THINGS_TO_TEST = {
-		mathtypes.sqrt, mathtypes.exp,  mathtypes.fract,
+		mathtypes.sqrt, mathtypes.exp, mathtypes.fract,
 		mathtypes.im, mathtypes.number, mathtypes.symbol
 		}; // types of functions that would be tested, if you supply im here, useImaginary will be ignored
 	
@@ -48,7 +49,7 @@ public class MathAutoTest {
 			final long start = System.currentTimeMillis();
 
 			if (disableSimplification)  {
-				MathExpression.simplify = false;
+				Tools.SIMPLIFICATION_ENABLED= false;
 				MathExpression.deep_simplify = false;
 			}
 
@@ -154,11 +155,11 @@ public class MathAutoTest {
 		final Holder random = getRandom();
 		String action = " [+] ";
 		if (r.nextInt(2) == 0) {
-			expected.add(random.result);
-			item.add(random.item);
+			expected.add(random.result.clone());
+			item.add(random.item.clone());
 		} else {
-			expected.multiply(random.result);
-			item.multiply(random.item);
+			expected.multiply(random.result.clone());
+			item.multiply(random.item.clone());
 			action = " [*] ";
 		}
 		
@@ -173,14 +174,16 @@ public class MathAutoTest {
 		
 		assertTrue("\nMeasurements before and after simplification different!\nBefore expr: "+origbefore+"\nAfter expr:"+item+"\nbefore1: "+actual+"\nbefore2: "+a2+"\nafter1: "+aft1+"\nafter2: "+aft2+"\n"+printPairs()+"\n", actual.similarValue(aft2, DOUBLE_COMPARISON_ACCURACY));
 		
-		assertTrue("\n"+random.item+action+"\n"+orig+" = \n"+item+"\ni.e. "+random.result+action+"\n"+origexp+" =\n"+expected+" but got \n"+actual+printPairs()+"\n", actual.similarValue(expected, DOUBLE_COMPARISON_ACCURACY));
+		assertTrue("\n"+random.item+action+"\n"+orig+" = \n"+item+"\ni.e. "+random.result+action+"\n"+origexp+" =\nexpected = "+expected+" but got \n"+actual+printPairs()+"\n", actual.similarValue(expected, DOUBLE_COMPARISON_ACCURACY));
 		putComplex(actual, item);
 	}
 	
 	private final static double generateRandomDouble() {
 		final double maxd = DOUBLE_RANGE;
 		final double mind = -DOUBLE_RANGE;
-		return r.nextDouble()*maxd+r.nextDouble()*mind;
+		final double rand = r.nextDouble()*maxd+r.nextDouble()*mind;
+				
+		return useIntegersOnly ? (int) rand : rand;
 	}
 	
 	private static class Holder {

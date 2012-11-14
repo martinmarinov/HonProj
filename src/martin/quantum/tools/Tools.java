@@ -12,6 +12,8 @@ public final class Tools {
 	/** Default logger to output messages to */
 	public static PrintStream logger = System.out;
 	
+	public static boolean SIMPLIFICATION_ENABLED = true;
+	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!
 	 * @param input
@@ -194,4 +196,5 @@ public final class Tools {
 			ans.put(variables[i], values[i]);
 		return ans;
 	}
+
 }

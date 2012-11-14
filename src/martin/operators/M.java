@@ -45,15 +45,15 @@ public class M implements Operator {
 				final MathExpression angle = new MathExpression();
 				angle.add(alpha);
 				if (s == 1)
-					angle.multiply(MINUS_ONE);
+					angle.multiply(MINUS_ONE.clone());
 				
 				sm.coeff[i].multiply(new MathExp( new MathIm(angle) ));
 				
 				if (b == 1) // if negative branch
-					sm.coeff[i].multiply(MINUS_ONE);
+					sm.coeff[i].multiply(MINUS_ONE.clone());
 				
 				if (t == 1) // Z correction
-					sm.coeff[i].multiply(MINUS_ONE);
+					sm.coeff[i].multiply(MINUS_ONE.clone());
 				
 				sm.coeff[i].multiply(ONE_OVER_SQRT_2);
 			} else

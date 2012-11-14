@@ -12,7 +12,7 @@ public class MathTest {
 
 	private final static boolean disableSimplification = false;
 	
-	private final static String string = "sqrt(-2)*sqrt(-2)"; // golden error - "(-exp(1)*exp(-3))"
+	private final static String string = "4*sqrt(b)"; // golden error - "(-exp(1)*exp(-3))"
 	private final static String string2 = "(Im(1.0677930211090731)-1.0254292105013625)";
 	private final static int testid = 3;
 	private final static String[] variables = new String[] {"a", "b"};
@@ -22,7 +22,7 @@ public class MathTest {
 	public static void main(String[] args) throws Exception {
 		
 		if (disableSimplification)  {
-			MathExpression.simplify = false;
+			Tools.SIMPLIFICATION_ENABLED = false;
 			MathExpression.deep_simplify = false;
 		}
 
@@ -36,18 +36,18 @@ public class MathTest {
 			testMaths(string);
 			break;
 		case 2:
-			MathExpression.simplify = false;
+			Tools.SIMPLIFICATION_ENABLED = false;
 			final MathsItem mi = testMaths(string);
 			final MathsItem mi2 = testMaths(string2);
-			MathExpression.simplify = true;			
+			Tools.SIMPLIFICATION_ENABLED = true;			
 			mi.multiply(mi2);
 			Tools.logger.println("Final "+mi+" = "+mi.getValue(pairs));
 			break;
 		case 3:
-			MathExpression.simplify = false;
+			Tools.SIMPLIFICATION_ENABLED = false;
 			final MathsItem mii = MathsParser.parse(Tools.trimAndCheckBrackets(string));
 			Tools.logger.println(mii+"\nwith value "+mii.getValue(pairs)+"\n");
-			MathExpression.simplify = true;
+			Tools.SIMPLIFICATION_ENABLED = true;
 			mii.simplify();
 			Tools.logger.println(mii+"\nwith value "+mii.getValue(pairs));
 			break;

@@ -11,7 +11,6 @@ import java.util.HashMap;
 public interface MathsItem {
 	
 	static final boolean DEBUG = false;
-
 	/**
 	 * If there is an explicit minus sign before this item
 	 * 

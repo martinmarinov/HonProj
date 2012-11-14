@@ -2,6 +2,7 @@ package martin.math;
 
 import java.util.HashMap;
 
+import martin.quantum.tools.Tools;
 import martin.quantum.tools.Tuple;
 
 public class MathExp extends MathFunction {
@@ -30,7 +31,7 @@ public class MathExp extends MathFunction {
 
 	@Override
 	public boolean isOne() {
-		return expr.isZero();
+		return expr.isZero() && !negative;
 	}
 
 	@Override
@@ -73,8 +74,10 @@ public class MathExp extends MathFunction {
 	
 	@Override
 	public MathsItem clone() {
-		if (expr.isZero())
-			return new MathNumber(1);
+		if (Tools.SIMPLIFICATION_ENABLED) {
+			if (expr.isZero())
+				return new MathNumber(1);
+		}
 		
 		return new MathExp(expr.clone(), negative);
 	}

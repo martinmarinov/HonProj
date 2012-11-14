@@ -2,6 +2,8 @@ package martin.math;
 
 public class Complex {
 	
+	private final static double COMPARISON_LOWEST_ACC = 1E-9;
+	
 	public double R = 0;
 	public double I = 0;
 	
@@ -87,13 +89,15 @@ public class Complex {
 	 * @return
 	 */
 	public boolean similarValue(final Complex c, double ACCURACY) {
-		if (isNaN() && c.isNaN())
+		if (isNaN() || c.isNaN())
 			return true;
 		
-		if (ACCURACY < 0.0000000001) ACCURACY = 0.0000000001;
+		double racc = ACCURACY * Math.abs(R);
+		double iacc = ACCURACY * Math.abs(I);
 		
-		final double racc = ACCURACY * Math.abs(R);
-		final double iacc = ACCURACY * Math.abs(I);
+		if (racc < COMPARISON_LOWEST_ACC) racc = COMPARISON_LOWEST_ACC;
+		if (iacc < COMPARISON_LOWEST_ACC) iacc = COMPARISON_LOWEST_ACC;
+		
 		return (Math.abs(c.R - R) <= racc) && (Math.abs(c.I - I) <= iacc);
 	}
 }
