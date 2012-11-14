@@ -150,6 +150,11 @@ public class MathFract implements MathsItem {
 			return getValue(null).equals(((MathsItem) obj).getValue(null));
 		
 		return false;
+	}
+
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
 	};
 
 }

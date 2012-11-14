@@ -556,4 +556,9 @@ public class MathExpression implements MathsItem {
 		return false;
 	}
 
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
+	}
+
 }

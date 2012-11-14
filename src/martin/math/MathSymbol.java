@@ -131,4 +131,9 @@ public class MathSymbol implements MathsItem {
 		return false;
 	}
 
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
+	}
+
 }

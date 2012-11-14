@@ -97,4 +97,9 @@ public class MathSqrt extends MathFunction {
 		return new MathSqrt(expr.clone(), negative);
 	}
 
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
+	}
+
 }

@@ -166,7 +166,7 @@ public class MainGUI {
 		
 		txtBranches = new JTextField();
 		txtBranches.setBounds(145, 155, 431, 20);
-		txtBranches.setToolTipText("Comma seperated values like \"1, 0, 1\"");
+		txtBranches.setToolTipText("\"1, 0, 1\" to represent b0 = 1, b1 = 0, b2 = 1... otherwise use \"(2, 0); (4, 1)\" to represent b2 = 0, b4 = 1");
 		frmMbqcSimulatorValpha.getContentPane().add(txtBranches);
 		txtBranches.setColumns(10);
 		

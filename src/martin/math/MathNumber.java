@@ -105,4 +105,9 @@ public class MathNumber implements MathsItem {
 		}
 	}
 
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
+	}
+
 }

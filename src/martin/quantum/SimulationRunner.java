@@ -1,7 +1,6 @@
 package martin.quantum;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import martin.math.Complex;
@@ -24,14 +23,13 @@ public final class SimulationRunner {
 		final SystemMatrix sm = new SystemMatrix(n);
 		final ArrayList<Operator> al = new ArrayList<Operator>();
 		
-		final int[] b = parseBranches(branches);
+		final HashMap<Integer, Integer> b = parseBranches(branches);
 		
 		parseInputs(al, inputs);
 		parseEntanglement(al, entanglement);
 		parseMeasurements(al, measurements, b);
 		parseCorrections(al, corrections, b);
 		
-		Tools.logger.println("branches = "+Arrays.toString(b));
 		for (Operator o : al)
 			Tools.logger.println("Will perform: "+o);
 		
@@ -87,7 +85,7 @@ public final class SimulationRunner {
 	 * @param measurements format (id, s, t, alpha);
 	 * @throws Exception 
 	 */
-	private static void parseMeasurements(final ArrayList<Operator> al, final String measurements, final int[] b) throws Exception {
+	private static void parseMeasurements(final ArrayList<Operator> al, final String measurements, final HashMap<Integer, Integer> b) throws Exception {
 		if (measurements.trim().isEmpty())
 			return;
 		
@@ -109,12 +107,17 @@ public final class SimulationRunner {
 			final int s = ((int) sval.R) % 2;
 			final int t = ((int) tval.R) % 2;
 			
-			al.add(new M(qubitId, t, s, alpha, b[qubitId]));
+			final Integer bv = b.get(qubitId);
+			
+			if (bv == null)
+				throw new Exception("No value for b"+qubitId+" specified!");
+			
+			al.add(new M(qubitId, t, s, alpha, bv));
 		}
 		
 	}
 	
-	private static void parseCorrections(final ArrayList<Operator> al, final String corrections, final int[] b) throws Exception {
+	private static void parseCorrections(final ArrayList<Operator> al, final String corrections, final HashMap<Integer, Integer> b) throws Exception {
 		if (corrections.trim().isEmpty())
 			return;
 
@@ -147,31 +150,53 @@ public final class SimulationRunner {
 		}
 	}
 	
-	private static HashMap<String, Complex> genPairs(final int[] b, final char index) {
-		final String[] ses = new String[b.length];
-		final Complex[] bes = new Complex[b.length];
-		for (int i = 0; i < b.length; i++) {
-			ses[i] = Character.toString(index)+i;
-			bes[i] = new Complex(b[i], 0);
+	private static HashMap<String, Complex> genPairs(final HashMap<Integer, Integer> b, final char index) {
+		final String[] ses = new String[b.size()];
+		final Complex[] bes = new Complex[ses.length];
+		int i = 0;
+		for (final Integer bv : b.keySet()) {
+			ses[i] = Character.toString(index)+bv;
+			bes[i] = new Complex(b.get(bv), 0);
+			i++;
 		}
 		return Tools.generatePairs(ses, bes);
 	}
 	
-	private static int[] parseBranches(final String branches) throws Exception {
+	private static HashMap<Integer, Integer> parseBranches(final String branches) throws Exception {
+		
+		final HashMap<Integer, Integer> ans = new HashMap<Integer, Integer>();
 		
 		if (branches.trim().isEmpty())
-			return new int[0];
+			return ans;
 		
-		final String[] csv = branches.split(",");
-		final int[] b = new int[csv.length];
-		
-		for (int i = 0; i < csv.length; i++) {
-			b[i] = Integer.parseInt(csv[i].trim());
-			if (!(b[i] == 0 || b[i] == 1))
-				throw new Exception("Branch values must be either 0 or 1 for each measurement!");
+		if (!branches.contains(")")) {
+			final String[] csv = branches.split(",");
+
+			for (int i = 0; i < csv.length; i++) {
+				final int bv = Integer.parseInt(csv[i].trim());
+				if (!(bv == 0 || bv == 1))
+					throw new Exception("Branch values must be either 0 or 1 for each measurement!");
+				ans.put(i, bv);
+			}
+		} else {
+			
+			final String[] scsv = branches.split(";");
+
+			for (String m : scsv) {
+				m = Tools.trimAndCheckBrackets(m);
+
+				final String[] csv = m.split(",");
+				final int qubitId = Integer.parseInt(csv[0].trim());
+				final int bv = Integer.parseInt(csv[1].trim());
+				if (!(bv == 0 || bv == 1))
+					throw new Exception("Branch values must be either 0 or 1 for each measurement!");
+				if (ans.containsKey(qubitId))
+					throw new Exception("B value of qubit "+qubitId+" already specified!");
+				ans.put(qubitId, bv);
+			}
 		}
 		
-		return b;
+		return ans;
 	}
 	
 	/**

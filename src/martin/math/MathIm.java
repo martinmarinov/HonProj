@@ -181,4 +181,9 @@ public class MathIm extends MathFunction {
 		return false;
 	}
 
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
+	}
+
 }

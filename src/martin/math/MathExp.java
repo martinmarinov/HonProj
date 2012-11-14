@@ -82,4 +82,9 @@ public class MathExp extends MathFunction {
 		return new MathExp(expr.clone(), negative);
 	}
 
+	@Override
+	public boolean divide(MathsItem m) {
+		return false;
+	}
+
 }

@@ -45,6 +45,8 @@ public interface MathsItem {
 	 */
 	public boolean multiply(final MathsItem m);
 	
+	public boolean divide(final MathsItem m);
+	
 	/**
 	 * Add a value to the current {@link MathsItem}
 	 * 
