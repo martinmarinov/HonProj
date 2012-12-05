@@ -5,9 +5,11 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import martin.gui.quantum.Arrow;
+import martin.gui.quantum.Corrector;
 import martin.gui.quantum.Entangler;
 import martin.gui.quantum.Inventory;
 import martin.gui.quantum.Qubit;
+import martin.gui.quantum.Corrector.corrtype;
 import martin.gui.quantum.Qubit.type;
 import martin.gui.quantum.Visualizer;
 
@@ -21,7 +23,9 @@ public class GraphicalGUI {
 			new Qubit(type.input),
 			new Qubit(type.normal),
 			new Qubit(type.output),
-			new Entangler());
+			new Entangler(),
+			new Corrector(corrtype.X),
+			new Corrector(corrtype.Z));
 	
 	private JFrame frmMeasurementBasedQuantum;
 	private Visualizer visualizer;

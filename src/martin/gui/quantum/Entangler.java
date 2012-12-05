@@ -10,6 +10,7 @@ public class Entangler extends Item {
 	private static final int ICON_OFFSET = 16;
 	private static final int QUBIT_SIZE = 32;
 	private final static Stroke DASHED_STROKE = new BasicStroke(4.0f);
+	private static final int PICKING_DISTANCE = 6;
 	
 	private Qubit i1, i2;
 	
@@ -43,8 +44,40 @@ public class Entangler extends Item {
 
 	@Override
 	boolean isMouseOntop(int x, int y) {
-		// TODO Auto-generated method stub
+		final double dist = distFromLine(x, y);
+		
+		if (dist < PICKING_DISTANCE)
+			return true;
+		
 		return false;
+	}
+	
+	public double distFromLine(int px, int py) {
+		
+		final int dx = i2.x - i1.x;
+		final int dy = i2.y - i1.y;
+		final double d = Math.sqrt(dx * dx + dy * dy);
+		final double cos = dx / d;
+		final double sin = dy / d;
+
+		final int sx = i1.x + (int) (cos * QUBIT_SIZE);
+		final int sy = i1.y + (int) (sin * QUBIT_SIZE);
+		final int ex = i2.x - (int) (cos * QUBIT_SIZE);
+		final int ey = i2.y - (int) (sin * QUBIT_SIZE);
+		
+		if (ex > sx && (px < sx || px > ex))
+			return Double.NaN;
+		if (sx > ex && (px < ex || px > sx))
+			return Double.NaN;
+		if (ey > sy && (py < sy || py > ey))
+			return Double.NaN;
+		if (sy > ey && (py < ey || py > sy))
+			return Double.NaN;
+
+		final int ddx = ex - sx;
+		final int ddy = ey - sy;
+		final double normalLength = Math.sqrt(ddx * ddx + ddy * ddy);
+		return Math.abs((px - sx) * dy - (py - sy) * dx) / normalLength;
 	}
 
 	@Override

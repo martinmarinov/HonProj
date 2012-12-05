@@ -17,11 +17,11 @@ public class Arrow extends Item {
 		return "arrow.png";
 	}
 	
-	private int getItemsCountAt(int x, int y, Visualizer vis) {
+	private int getItemsCountAt(int x, int y, Visualizer vis, Object same) {
 		int c = 0;
 		
 		for (final Item i : vis.items)
-			if (i.isMouseOntop(x, y))
+			if (i.isMouseOntop(x, y) && same.getClass().equals(i.getClass()))
 				c++;
 		
 		return c;
@@ -66,7 +66,7 @@ public class Arrow extends Item {
 	@Override
 	void mouseDrag(Graphics2D g, int x, int y, Visualizer vis) {
 		if (selected != null) {
-			if ( getItemsCountAt(x, y, vis) <= 1)
+			if ( getItemsCountAt(x, y, vis, selected) <= 1)
 				selected.moveWith(x - msx, y - msy, g, vis);
 			else
 				selected = null;

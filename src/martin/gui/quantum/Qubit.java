@@ -19,7 +19,7 @@ public class Qubit extends Item {
 	private final static int GRID_OFF_Y = GRID_SIZE / 2;
 	private final static int GRID_SNAP_DIST = 10;
 	
-	private final static int DEFAULT_FONT_SIZE = 22;
+	public final static int DEFAULT_FONT_SIZE = 22;
 	
 	private final static Stroke DASHED_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
 	        BasicStroke.JOIN_MITER, 2.0f, new float[]{2.0f}, 0.0f);
