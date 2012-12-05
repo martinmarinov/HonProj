@@ -14,7 +14,7 @@ import javax.swing.JToolBar;
 
 public class Inventory extends JToolBar {
 	
-	private static final int ICON_SIZE = 35;
+	private static final int ICON_SIZE = 30;
 	
 	private static final long serialVersionUID = 3452668488964049619L;
 	private Item selected = null;
@@ -66,6 +66,10 @@ public class Inventory extends JToolBar {
 	
 	public Item getSelectedItem() {
 		return selected;
+	}
+	
+	public void grabDefaultTool() {
+		btns[0].doClick();
 	}
 	
 	static abstract class inventoryClickListener {

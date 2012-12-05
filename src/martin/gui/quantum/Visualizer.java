@@ -32,6 +32,8 @@ public class Visualizer extends JPanel {
 	
 	public ArrayList<Item> items = new ArrayList<Item>();
 	
+	private Inventory inv;
+	
 	public Visualizer() {
 		addMouseMotionListener(new MouseMotionListener() {
 			
@@ -117,6 +119,7 @@ public class Visualizer extends JPanel {
 	}
 	
 	public void registerInventory(final Inventory inv) {
+		this.inv = inv;
 		inv.registerInventoryClickListener(new Inventory.inventoryClickListener() {
 			@Override
 			protected void onSelected(final Item item) {
@@ -158,6 +161,10 @@ public class Visualizer extends JPanel {
 		
 		for (final Item i : items)
 			i.renderInstance(g, this);
+	}
+	
+	public void grabDefaultTool() {
+		inv.grabDefaultTool();
 	}
 	
 	
