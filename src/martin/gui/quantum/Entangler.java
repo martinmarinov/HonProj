@@ -86,7 +86,7 @@ public class Entangler extends Item {
 	}
 
 	@Override
-	void moveWith(int dx, int dy, Graphics2D g, Visualizer vis) {}
+	void moveWith(int dx, int dy, int mx, int my, Graphics2D g, Visualizer vis) {}
 
 	@Override
 	void mouseMove(Graphics2D g, int x, int y, Visualizer vis) {

@@ -65,7 +65,7 @@ public class Qubit extends Item {
 	}
 	
 	@Override
-	void moveWith(int dx, int dy, Graphics2D g, Visualizer vis) {
+	void moveWith(int dx, int dy, int mx, int my, Graphics2D g, Visualizer vis) {
 		movex += dx;
 		movey += dy;
 		renderGrid(g, vis);

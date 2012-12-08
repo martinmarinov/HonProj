@@ -7,18 +7,19 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Path2D;
+import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 public class Corrector extends Item {
 	
 	private final static int DEFAULT_FONT_SIZE = Qubit.DEFAULT_FONT_SIZE;
 	
 	private static final int ICON_OFFSET = 16;
-	private static final int QUBIT_SIZE = 32;
+	private static final int QUBIT_SIZE = 30;
 	private final static Stroke DASHED_STROKE = new BasicStroke(4.0f);
-	private static final int PICKING_DISTANCE = 6;
+	private static final int PICKING_DISTANCE = 10;
 	private static final int DEFAULT_ARC_DISTANCE = 100;
 	
 	private Qubit i1, i2;
@@ -48,7 +49,14 @@ public class Corrector extends Item {
 		g.setStroke(DASHED_STROKE);	
 
 		final Point2D.Float p = new Point2D.Float();
-		g.draw(getBezier(p));
+		final ArrayList<double[]> bpts = generatePoints(getBezier(null, i1.x, i1.y, i2.x, i2.y));
+		final int size = bpts.size();
+		
+		if (size > 1) {
+			final double[] first = bpts.get(0);
+			final double[] last = bpts.get(size - 1);
+			g.draw(getBezier(p, (int) first[0], (int) first[1], (int) last[0], (int) last[1]));
+		}
 		
 		g.setStroke(def);
 		
@@ -64,11 +72,7 @@ public class Corrector extends Item {
 		g.setFont(defaultFont);
 	}
 	
-	private CubicCurve2D.Double getBezier(final Point2D.Float p) {
-		final int sx = i1.x;
-		final int sy = i1.y;
-		final int ex = i2.x;
-		final int ey = i2.y;
+	private CubicCurve2D.Double getBezier(final Point2D.Float p, final int sx, final int sy, final int ex, final int ey) {
 		
 		final int ddx = sx - ex;
 		final int ddy = sy - ey;
@@ -79,7 +83,7 @@ public class Corrector extends Item {
 		final int cp1x = sx + cos;
 		final int cp1y = sy + sin;
 		final int cp2x = ex + cos;
-		final int cp2y = ey + sin;
+		final int cp2y = ey + sin;		
 		
 		if (p != null) {
 			p.x = (cp1x + cp2x) / 2;
@@ -88,11 +92,82 @@ public class Corrector extends Item {
 		
 		return new CubicCurve2D.Double(sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey);	
 	}
+	
+	private ArrayList<double[]> generatePoints(CubicCurve2D.Double bezier) {
+		final FlatteningPathIterator pi = new FlatteningPathIterator(bezier.getPathIterator(null), 0.1);
+
+		final ArrayList<double[]> path = new ArrayList<double[]>();
+
+		while (!pi.isDone()) {  
+
+			final double[] coordinates = new double[6];
+			pi.currentSegment(coordinates);
+
+			final double dx1 = coordinates[0] - i1.x;
+			final double dy1 = coordinates[1] - i1.y;
+			final double d1 = dx1 * dx1 + dy1 * dy1;
+			
+			if (d1 > QUBIT_SIZE * QUBIT_SIZE) {
+				final double dx2 = coordinates[0] - i2.x;
+				final double dy2 = coordinates[1] - i2.y;
+				final double d2 = dx2 * dx2 + dy2 * dy2;
+				
+				if (d2 > QUBIT_SIZE * QUBIT_SIZE)
+					path.add(coordinates);
+			}
+
+			pi.next();
+		}
+		
+		return path;
+	}
 
 	@Override
 	boolean isMouseOntop(int x, int y) {
-		// TODO Auto-generated method stub
+		final Point2D.Float p = new Point2D.Float();
+		final ArrayList<double[]> bpts = generatePoints(getBezier(null, i1.x,
+				i1.y, i2.x, i2.y));
+		final int sizeb = bpts.size();
+
+		if (sizeb > 1) {
+			final double[] first = bpts.get(0);
+			final double[] last = bpts.get(sizeb - 1);
+			final ArrayList<double[]> path = generatePoints(getBezier(p,
+					(int) first[0], (int) first[1], (int) last[0],
+					(int) last[1]));
+
+			final int size = path.size();
+
+			double[] prev = path.get(0);
+			for (int i = 1; i < size; i++) {
+				final double[] curr = path.get(i);
+				final double dx = x - curr[0];
+				final double dy = y - curr[1];
+				if (dx * dx + dy * dy < PICKING_DISTANCE * PICKING_DISTANCE)
+					return true;
+				if (distFromLine(x, y, prev[0], prev[1], curr[0], curr[1]) < PICKING_DISTANCE)
+					return true;
+				prev = curr;
+			}
+		}
 		return false;
+	}
+	
+	public double distFromLine(double px, double py, double sx, double sy, double ex, double ey) {
+		
+		if (ex > sx && (px < sx || px > ex))
+			return Double.NaN;
+		if (sx > ex && (px < ex || px > sx))
+			return Double.NaN;
+		if (ey > sy && (py < sy || py > ey))
+			return Double.NaN;
+		if (sy > ey && (py < ey || py > sy))
+			return Double.NaN;
+
+		final double ddx = ex - sx;
+		final double ddy = ey - sy;
+		final double normalLength = Math.sqrt(ddx * ddx + ddy * ddy);
+		return Math.abs((px - sx) * ddy - (py - sy) * ddx) / normalLength;
 	}
 
 	@Override
@@ -101,7 +176,16 @@ public class Corrector extends Item {
 	}
 
 	@Override
-	void moveWith(int dx, int dy, Graphics2D g, Visualizer vis) {}
+	void moveWith(int dx, int dy, int mx, int my, Graphics2D g, Visualizer vis) {
+		final int ddx = i1.x - i2.x;
+		final int ddy = i1.y - i2.y;
+		final double nang = Math.atan2(ddy, ddx)+Math.PI/2;
+		
+		final double ddirx = Math.cos(nang);
+		final double ddiry = Math.sin(nang);
+		
+		arcd += (int) (ddirx * dx + ddiry * dy);
+	}
 
 	@Override
 	void mouseMove(Graphics2D g, int x, int y, Visualizer vis) {

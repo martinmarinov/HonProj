@@ -44,7 +44,16 @@ public abstract class Item  {
 	 */
 	abstract String getIconFileName();
 	
-	abstract void moveWith(int dx, int dy, final Graphics2D g, Visualizer vis);
+	/**
+	 * Someone requires the item to move with a certain amount
+	 * @param dx the amount in the x direction that the mouse moved
+	 * @param dy the amount in the y direction that the mouse moved
+	 * @param mx the x position of the mouse
+	 * @param my the y position of the mouse
+	 * @param g
+	 * @param vis
+	 */
+	abstract void moveWith(int dx, int dy, int mx, int my, final Graphics2D g, Visualizer vis);
 	
 	/**
 	 * Override if you don't want to use icons from files

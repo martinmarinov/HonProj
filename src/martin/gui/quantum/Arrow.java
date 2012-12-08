@@ -53,7 +53,7 @@ public class Arrow extends Item {
 	}
 	
 	@Override
-	void moveWith(int dx, int dy, final Graphics2D g, Visualizer vis) {
+	void moveWith(int dx, int dy, int mx, int my, final Graphics2D g, Visualizer vis) {
 
 	}
 
@@ -65,12 +65,8 @@ public class Arrow extends Item {
 
 	@Override
 	void mouseDrag(Graphics2D g, int x, int y, Visualizer vis) {
-		if (selected != null) {
-			if ( getItemsCountAt(x, y, vis, selected) <= 1)
-				selected.moveWith(x - msx, y - msy, g, vis);
-			else
-				selected = null;
-		}
+		if (selected != null) 
+			selected.moveWith(x - msx, y - msy, x, y, g, vis);
 		msx = x;
 		msy = y;
 	}
