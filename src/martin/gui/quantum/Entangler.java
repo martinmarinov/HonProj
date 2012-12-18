@@ -1,10 +1,11 @@
 package martin.gui.quantum;
 
 import java.awt.BasicStroke;
-import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.util.ArrayList;
 import java.util.HashSet;
+
 
 public class Entangler extends Item {
 	
@@ -150,25 +151,42 @@ public class Entangler extends Item {
 	}
 
 	@Override
-	Cursor getCursor() {
-		return null;
-	}
-
-	@Override
 	String[] getMenuEntries(Visualizer vis) {
 		return menu_entries;
 	}
 
-	@Override
-	void onMenuEntryClick(int id, Visualizer vis) {
-	}
-	
 	@Override
 	boolean doesItNeedToBeDeleted(final HashSet<Item> dependencies) {
 		for (final Item it : dependencies)
 			if (it == i1 || it == i2)
 				return true;
 		return false;
+	}
+	
+	@Override
+	protected Item loadFromString(String p, Visualizer vis) {
+		final String[] data = stringToStringArray(p);
+		int c = 0;
+		
+		final int id1 = Integer.parseInt(data[c++]);
+		final int id2 = Integer.parseInt(data[c++]);
+		
+		final Qubit q1 = getQubitWithId(id1, vis);
+		final Qubit q2 = getQubitWithId(id2, vis);
+		
+		if (q1 == null || q2 == null) return null;
+		
+		return new Entangler(q1, q2);
+	}
+	
+	@Override
+	protected String saveToString() {
+		final ArrayList<String> data = new ArrayList<String>();
+		
+		data.add(String.valueOf(i1.id));
+		data.add(String.valueOf(i2.id));
+		
+		return stringArrayToString(data.toArray(new String[0]));
 	}
 
 }

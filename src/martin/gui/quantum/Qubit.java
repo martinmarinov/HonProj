@@ -12,8 +12,6 @@ import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashSet;
-
 public class Qubit extends Item implements Comparable<Qubit> {
 	
 	private type[] menu_types;
@@ -234,17 +232,6 @@ public class Qubit extends Item implements Comparable<Qubit> {
 		return c;
 	}
 	
-	public Qubit getQubitWithId(final int id, final Visualizer vis) {
-		for (final Item i : vis.items)
-			if (i instanceof Qubit) {
-				final Qubit q = (Qubit) i;
-				if (q.id == id)
-					return q;
-			}
-				
-		return null;
-	}
-	
 	public type getType() {
 		return t;
 	}
@@ -338,12 +325,6 @@ public class Qubit extends Item implements Comparable<Qubit> {
 	}
 	
 	@Override
-	boolean doesItNeedToBeDeleted(final HashSet<Item> dependencies) {
-		return false;
-	}
-	
-	
-	@Override
 	protected void onPostLayoutChanged(final Visualizer vis) {		
 		
 		// look for gaps in the big numbers
@@ -379,4 +360,36 @@ public class Qubit extends Item implements Comparable<Qubit> {
 		return "Qubit "+id;
 	}
 
+	
+	@Override
+	protected Item loadFromString(String p, Visualizer vis) {
+		final String[] data = stringToStringArray(p);
+		int c = 0;
+		
+		final int x = Integer.parseInt(data[c++]);
+		final int y = Integer.parseInt(data[c++]);
+		final type t = type.valueOf(data[c++]);
+		final int id = Integer.parseInt(data[c++]);
+		final String angle = data[c++];
+		final boolean perform_m = Boolean.parseBoolean(data[c++]);
+		
+		final Qubit q = new Qubit(t, x, y, id);
+		q.measurement_angle = angle;
+		q.perform_measurement = perform_m;
+		return q;
+	}
+	
+	@Override
+	protected String saveToString() {
+		final ArrayList<String> data = new ArrayList<String>();
+		
+		data.add(String.valueOf(x));
+		data.add(String.valueOf(y));
+		data.add(String.valueOf(t));
+		data.add(String.valueOf(id));
+		data.add(String.valueOf(measurement_angle));
+		data.add(String.valueOf(perform_measurement));
+		
+		return stringArrayToString(data.toArray(new String[0]));
+	}
 }

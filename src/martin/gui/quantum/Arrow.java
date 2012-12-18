@@ -2,7 +2,6 @@ package martin.gui.quantum;
 
 import java.awt.Cursor;
 import java.awt.Graphics2D;
-import java.util.HashSet;
 
 public class Arrow extends Item {
 	
@@ -35,11 +34,6 @@ public class Arrow extends Item {
 		msy = y;
 	}
 	
-	@Override
-	void moveWith(int dx, int dy, int mx, int my, final Graphics2D g, Visualizer vis) {
-
-	}
-
 	@Override
 	void mouseClick(Graphics2D g, int x, int y, Visualizer vis) {
 		msx = x;
@@ -76,16 +70,6 @@ public class Arrow extends Item {
 		msx = x;
 		msy = y;
 	}
-
-	@Override
-	String[] getMenuEntries(Visualizer vis) {return null;}
-
-	@Override
-	void onMenuEntryClick(int id, Visualizer vis) {}
-
-	@Override
-	boolean doesItNeedToBeDeleted(HashSet<Item> dependencies) { return false; }
-
 
 
 }

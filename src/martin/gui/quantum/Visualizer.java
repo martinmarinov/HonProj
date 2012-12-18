@@ -11,9 +11,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Properties;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -51,6 +56,8 @@ public class Visualizer extends JPanel {
 	private Item item_for_menu;
 	
 	private Inventory inv;
+	
+	private final Properties p = new Properties();
 	
 	public Visualizer() {
 		addMouseMotionListener(new MouseMotionListener() {
@@ -440,6 +447,73 @@ public class Visualizer extends JPanel {
 		sb.setLength(0);
 		
 		return desc;
+	}
+		
+	private int getOccurances(final String key, final HashMap<String, Integer> db) {
+		final Integer count = db.get(key);
+		return count == null ? 0 : count;
+	}
+	
+	public void saveToFile(final File f) throws Exception {
+		// for storing how many times each class have been seen
+		final HashMap<String, Integer> db = new HashMap<String, Integer>();
+		
+		for (final Item it : items) {
+			final String its = it.saveToString();
+			if (its != null) {
+				final String className = it.getClass().getName();
+				final Integer occurances = getOccurances(className, db);
+				
+				p.setProperty(className+"&"+occurances, its);
+				
+				db.put(className, occurances == null ? 1 : (occurances + 1));
+			}
+		}
+		
+		// save occurances
+		for (final String key : db.keySet())
+			p.setProperty(key, String.valueOf(db.get(key)));
+		
+		FileOutputStream out;
+		out = new FileOutputStream(f);
+		p.store(out, "---MBQC Graphical Pattern description---");
+		out.close();
+
+	}
+	
+	public void loadFromFile(final File f) throws Exception {
+		final FileInputStream in = new FileInputStream(f);
+		final HashSet<String> passed = new HashSet<String>();
+		p.load(in);
+		in.close();
+		items.clear();
+		int c = 0;
+		
+		boolean notok = true;
+		while(notok) {
+			c++;
+			int items_c = 0;
+			notok = false;
+			for (final Item it : inv.items) {
+				final String className = it.getClass().getName();
+				if (passed.contains(className)) continue;
+				passed.add(className);
+
+				final int occurances = Integer.parseInt(p.getProperty(className, "0"));
+				items_c += occurances;
+				for (int i = 0; i < occurances; i++) {
+					final Item item = it.loadFromString(p.getProperty(className+"&"+i), this);
+					
+					if (item != null)
+						items.add(item);
+					else
+						notok = true;
+				}
+			}
+			if (c > items_c) throw new Exception("Corrupted file! Probably a missing reference!");
+		}
+		
+		repaint();
 	}
 
 }

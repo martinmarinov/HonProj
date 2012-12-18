@@ -20,8 +20,10 @@ public class Inventory extends JToolBar {
 	private Item selected = null;
 	private final JToggleButton[] btns;
 	private inventoryClickListener listener = null;
+	Item[] items;
 	
 	public Inventory(final Item ... items) {
+		this.items = items;
 		btns = new JToggleButton[items.length];
 
 		

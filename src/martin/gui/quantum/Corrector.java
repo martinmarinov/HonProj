@@ -1,7 +1,6 @@
 package martin.gui.quantum;
 
 import java.awt.BasicStroke;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -12,8 +11,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import martin.gui.quantum.Qubit.type;
 
 public class Corrector extends Item {
 	
@@ -317,11 +314,6 @@ public class Corrector extends Item {
 	}
 
 	@Override
-	Cursor getCursor() {
-		return null;
-	}
-
-	@Override
 	String[] getMenuEntries(Visualizer vis) {
 		return menu_entries;
 	}
@@ -345,5 +337,36 @@ public class Corrector extends Item {
 				return true;
 		return false;
 	}
-
+	
+	@Override
+	protected Item loadFromString(String p, Visualizer vis) {
+		final String[] data = stringToStringArray(p);
+		int c = 0;
+		
+		final int id1 = Integer.parseInt(data[c++]);
+		final int id2 = Integer.parseInt(data[c++]);
+		final corrtype t = corrtype.valueOf(data[c++]);
+		final int arcd = Integer.parseInt(data[c++]);
+		
+		final Qubit q1 = getQubitWithId(id1, vis);
+		final Qubit q2 = getQubitWithId(id2, vis);
+		
+		if (q1 == null || q2 == null) return null;
+		
+		final Corrector corr = new Corrector(q1, q2, t);
+		corr.arcd = arcd;
+		return corr;
+	}
+	
+	@Override
+	protected String saveToString() {
+		final ArrayList<String> data = new ArrayList<String>();
+		
+		data.add(String.valueOf(i1.id));
+		data.add(String.valueOf(i2.id));
+		data.add(String.valueOf(t));
+		data.add(String.valueOf(arcd));
+		
+		return stringArrayToString(data.toArray(new String[0]));
+	}
 }
