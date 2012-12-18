@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 import javax.imageio.ImageIO;
 
@@ -96,5 +97,16 @@ public abstract class Item  {
 	abstract String[] getMenuEntries();
 	
 	abstract void onMenuEntryClick(int id);
+	
+	/** Returns true if the current item needs to be destroyed. The list of dependencies
+	 * are the {@link Item}s that would be deleted, so if the curreint {@link Item} depends
+	 * on any of those, it should return true so that it will be deleted!
+	 * @param dependencies
+	 * @return
+	 */
+	abstract boolean doesItNeedToBeDeleted(HashSet<Item> dependencies);
+	
+	/** This will get called when items are deleted on the screen so the items that survive can rearange themselves accordingly */
+	protected void onPostLayoutChanged(Visualizer vis){};
 
 }

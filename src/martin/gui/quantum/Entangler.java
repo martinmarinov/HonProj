@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.util.HashSet;
 
 public class Entangler extends Item {
 	
@@ -160,6 +161,14 @@ public class Entangler extends Item {
 
 	@Override
 	void onMenuEntryClick(int id) {
+	}
+	
+	@Override
+	boolean doesItNeedToBeDeleted(final HashSet<Item> dependencies) {
+		for (final Item it : dependencies)
+			if (it == i1 || it == i2)
+				return true;
+		return false;
 	}
 
 }

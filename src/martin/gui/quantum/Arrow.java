@@ -2,6 +2,7 @@ package martin.gui.quantum;
 
 import java.awt.Cursor;
 import java.awt.Graphics2D;
+import java.util.HashSet;
 
 public class Arrow extends Item {
 	
@@ -91,6 +92,9 @@ public class Arrow extends Item {
 
 	@Override
 	void onMenuEntryClick(int id) {}
+
+	@Override
+	boolean doesItNeedToBeDeleted(HashSet<Item> dependencies) { return false; }
 
 
 

@@ -12,6 +12,7 @@ import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Corrector extends Item {
 	
@@ -333,7 +334,14 @@ public class Corrector extends Item {
 			arcd = -arcd;
 			break;
 		}
-		System.out.println("Corrector clicked on "+menu_entries[id]);
+	}
+
+	@Override
+	boolean doesItNeedToBeDeleted(final HashSet<Item> dependencies) {
+		for (final Item it : dependencies)
+			if (it == i1 || it == i2)
+				return true;
+		return false;
 	}
 
 }

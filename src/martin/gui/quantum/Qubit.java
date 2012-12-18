@@ -11,10 +11,11 @@ import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
 
 public class Qubit extends Item {
 	
-	private final String[] menu_entries = new String[] {"Change"};
+	private type[] menu_types;
 	
 	private final static int GRID_SIZE = 100;
 	private final static int GRID_OFF_X = GRID_SIZE / 2;
@@ -175,17 +176,52 @@ public class Qubit extends Item {
 
 	@Override
 	String[] getMenuEntries() {
-		return menu_entries;
+		final type[] types = type.values();
+		final String[] entries = new String[types.length - 1];
+		menu_types = new type[entries.length];
+		
+		int j = 0;
+		for (int i = 0; i < types.length; i++)
+			if (types[i] != t) {
+				entries[j] = "Change to "+types[i]+" qubit";
+				menu_types[j++] = types[i];
+			}
+		
+		return entries;
 	}
 
 	@Override
 	void onMenuEntryClick(int id) {
-		switch (id) {
-		case 0:
-			
-			break;
+		t = menu_types[id];
+		getIcon();
+	}
+	
+	@Override
+	boolean doesItNeedToBeDeleted(final HashSet<Item> dependencies) {
+		return false;
+	}
+	
+	
+	@Override
+	protected void onPostLayoutChanged(final Visualizer vis) {
+		int lowerid = -1;
+		Qubit lowerqubit = null;
+		for (final Item i : vis.items)
+			if (i instanceof Qubit) {
+				final Qubit q = (Qubit) i;
+				
+				if (q.id < id && id > lowerid) {
+					lowerid = q.id;
+					lowerqubit = q;
+				}
+			}
+		if (lowerid == -1) {
+			id = 1;
+			return;
 		}
-		System.out.println("Qubit clicked on "+menu_entries[id]);
+		
+		lowerqubit.onPostLayoutChanged(vis);
+		id = lowerqubit.id + 1;
 	}
 
 }

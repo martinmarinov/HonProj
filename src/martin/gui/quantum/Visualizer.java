@@ -12,6 +12,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -155,7 +158,26 @@ public class Visualizer extends JPanel {
 	};
 	
 	public void onMenuEntryClick(int id) {
-		System.out.println("Vizualizer clicked on "+menu_entries[id]);
+		switch (id) {
+		case 0:
+			boolean items_being_deleted = true;
+			final HashSet<Item> to_delete = new HashSet<Item>();
+			to_delete.add(item_for_menu);
+			while (items_being_deleted) {
+				items_being_deleted = false;
+				
+				for (final Item it : items)
+					if (!to_delete.contains(it) && it.doesItNeedToBeDeleted(to_delete)) {
+						items_being_deleted = true;
+						to_delete.add(it);
+					}
+			}
+			for (final Item it : to_delete)
+				items.remove(it);
+			for (final Item it : items)
+				it.onPostLayoutChanged(this);
+			break;
+		}
 	}
 	
 	public void addItem(final Item i) {
