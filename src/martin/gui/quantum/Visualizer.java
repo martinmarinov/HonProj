@@ -5,16 +5,25 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 public class Visualizer extends JPanel {
 
+	private final static String[] menu_entries = new String[] {"Delete"};
+	
 	private static final long serialVersionUID = -7435977815386640930L;
 	
 	private enum mousestate {moved, dragged, clicked, none, released, pressed}
@@ -31,6 +40,10 @@ public class Visualizer extends JPanel {
 	private final static Color foreground = Color.white;
 	
 	public ArrayList<Item> items = new ArrayList<Item>();
+	public ArrayList<JMenuItem> popup_items = new ArrayList<JMenuItem>();
+	
+	private JPopupMenu menu = new JPopupMenu();
+	private Item item_for_menu;
 	
 	private Inventory inv;
 	
@@ -91,9 +104,58 @@ public class Visualizer extends JPanel {
 				mx = e.getX();
 				my = e.getY();
 				laststate = mousestate.clicked;
+				if (SwingUtilities.isRightMouseButton(e)) {
+					final Item it = getItemAt(mx, my);
+					
+					if (it != null) {
+						item_for_menu = it;
+						menu.removeAll();
+						popup_items.clear();
+						
+						for (int i = 0; i < menu_entries.length; i++) {
+							final JMenuItem item = new JMenuItem(menu_entries[i]);
+							item.addActionListener(popup_listener);
+							popup_items.add(item);
+						}
+						
+						final String[] options = it.getMenuEntries();
+						for (int i = 0; i < options.length; i++) {
+							final JMenuItem item = new JMenuItem(options[i]);
+							item.addActionListener(popup_listener);
+							popup_items.add(item);
+						}
+						
+						for (final JMenuItem pit : popup_items)
+							menu.add(pit);
+						
+						menu.show(Visualizer.this, mx, my);
+					}
+				}
 				repaint();
 			}
 		});
+		
+	}
+	
+	private ActionListener popup_listener = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final int popup_items_c = popup_items.size();
+			
+			for (int i = 0; i < popup_items_c; i++)
+				if (popup_items.get(i) == e.getSource()) {
+					if (i < menu_entries.length)
+						onMenuEntryClick(i);
+					else
+						item_for_menu.onMenuEntryClick(i - menu_entries.length);
+					return;
+				}
+		}
+	};
+	
+	public void onMenuEntryClick(int id) {
+		System.out.println("Vizualizer clicked on "+menu_entries[id]);
 	}
 	
 	public void addItem(final Item i) {
@@ -165,6 +227,14 @@ public class Visualizer extends JPanel {
 	
 	public void grabDefaultTool() {
 		inv.grabDefaultTool();
+	}
+	
+	public Item getItemAt(int x, int y) {
+		for (final Item i : items)
+			if (i.isMouseOntop(x, y))
+				return i;
+		
+		return null;
 	}
 	
 	

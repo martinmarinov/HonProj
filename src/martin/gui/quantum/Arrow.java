@@ -26,19 +26,11 @@ public class Arrow extends Item {
 		
 		return c;
 	}
-	
-	private Item getItemAt(int x, int y, Visualizer vis) {
-		for (final Item i : vis.items)
-			if (i.isMouseOntop(x, y))
-				return i;
-		
-		return null;
-	}
 
 	@Override
 	void mouseMove(Graphics2D g, int x, int y, Visualizer vis) {
 
-		selected = getItemAt(x, y, vis);
+		selected = vis.getItemAt(x, y);
 		
 		if (selected == null) {
 			if (!defcur) vis.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -93,6 +85,12 @@ public class Arrow extends Item {
 		msx = x;
 		msy = y;
 	}
+
+	@Override
+	String[] getMenuEntries() {return null;}
+
+	@Override
+	void onMenuEntryClick(int id) {}
 
 
 

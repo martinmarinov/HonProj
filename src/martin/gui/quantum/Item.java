@@ -92,5 +92,9 @@ public abstract class Item  {
 	 * @return the default cursor for the current {@link Item} interaction
 	 */
 	abstract Cursor getCursor();
+	
+	abstract String[] getMenuEntries();
+	
+	abstract void onMenuEntryClick(int id);
 
 }

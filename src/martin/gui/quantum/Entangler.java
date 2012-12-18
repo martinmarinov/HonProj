@@ -7,6 +7,8 @@ import java.awt.Stroke;
 
 public class Entangler extends Item {
 	
+	private final String[] menu_entries = new String[] {};
+	
 	private static final int ICON_OFFSET = 16;
 	private static final int QUBIT_SIZE = 32;
 	private final static Stroke DASHED_STROKE = new BasicStroke(4.0f);
@@ -149,6 +151,15 @@ public class Entangler extends Item {
 	@Override
 	Cursor getCursor() {
 		return null;
+	}
+
+	@Override
+	String[] getMenuEntries() {
+		return menu_entries;
+	}
+
+	@Override
+	void onMenuEntryClick(int id) {
 	}
 
 }

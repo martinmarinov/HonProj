@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 public class Corrector extends Item {
 	
+	private final String[] menu_entries = new String[] {"Change direction"};
+	
 	private final static int DEFAULT_FONT_SIZE = Qubit.DEFAULT_FONT_SIZE;
 	
 	private static final int ICON_OFFSET = 16;
@@ -314,6 +316,24 @@ public class Corrector extends Item {
 	@Override
 	Cursor getCursor() {
 		return null;
+	}
+
+	@Override
+	String[] getMenuEntries() {
+		return menu_entries;
+	}
+
+	@Override
+	void onMenuEntryClick(int id) {
+		switch (id) {
+		case 0:
+			final Qubit temp = i1;
+			i1 = i2;
+			i2 = temp;
+			arcd = -arcd;
+			break;
+		}
+		System.out.println("Corrector clicked on "+menu_entries[id]);
 	}
 
 }

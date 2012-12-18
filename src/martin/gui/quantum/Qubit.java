@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 
 public class Qubit extends Item {
 	
+	private final String[] menu_entries = new String[] {"Change"};
+	
 	private final static int GRID_SIZE = 100;
 	private final static int GRID_OFF_X = GRID_SIZE / 2;
 	private final static int GRID_OFF_Y = GRID_SIZE / 2;
@@ -169,6 +171,21 @@ public class Qubit extends Item {
 	@Override
 	void mouseReleased(Graphics2D g, int x, int y, Visualizer vis) {
 		mouseMove(g, x, y, vis);
+	}
+
+	@Override
+	String[] getMenuEntries() {
+		return menu_entries;
+	}
+
+	@Override
+	void onMenuEntryClick(int id) {
+		switch (id) {
+		case 0:
+			
+			break;
+		}
+		System.out.println("Qubit clicked on "+menu_entries[id]);
 	}
 
 }
