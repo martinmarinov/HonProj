@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.FlatteningPathIterator;
@@ -21,6 +22,8 @@ public class Corrector extends Item {
 	private final static Stroke DASHED_STROKE = new BasicStroke(4.0f);
 	private static final int PICKING_DISTANCE = 10;
 	private static final int DEFAULT_ARC_DISTANCE = 100;
+	private static final int ARROW_HEIGHT = 15;
+	private static final int ARROW_WIDTH = 7;
 	
 	private Qubit i1, i2;
 	private int arcd = DEFAULT_ARC_DISTANCE;
@@ -28,6 +31,9 @@ public class Corrector extends Item {
 	private Font font = null;
 	
 	private boolean select_first = true;
+	
+	// The triangle end
+	int[] trix = new int[3], triy = new int[3];
 	
 	public enum corrtype {X, Z};
 	
@@ -49,13 +55,58 @@ public class Corrector extends Item {
 		g.setStroke(DASHED_STROKE);	
 
 		final Point2D.Float p = new Point2D.Float();
-		final ArrayList<double[]> bpts = generatePoints(getBezier(null, i1.x, i1.y, i2.x, i2.y));
+		ArrayList<double[]> bpts = generatePoints(getBezier(null, i1.x, i1.y, i2.x, i2.y));
 		final int size = bpts.size();
 		
 		if (size > 1) {
 			final double[] first = bpts.get(0);
 			final double[] last = bpts.get(size - 1);
-			g.draw(getBezier(p, (int) first[0], (int) first[1], (int) last[0], (int) last[1]));
+			final CubicCurve2D.Double bezier = getBezier(p, (int) first[0], (int) first[1], (int) last[0], (int) last[1]);
+			
+			bpts = generatePoints(bezier);
+			
+			int next_to_last_id = 0;
+			double[] next_to_last = null;
+			for (int i = bpts.size() - 1; i > 0; i--) {
+				final double[] temp = bpts.get(i);
+				final double ddx = last[0] - temp[0];
+				final double ddy = last[1] - temp[1];
+				final double dist = Math.sqrt(ddx * ddx + ddy * ddy);
+				if (dist > ARROW_HEIGHT) {
+					next_to_last = temp;
+					next_to_last_id = i;
+					break;
+				}
+			}
+			
+			if (next_to_last != null) {
+				
+				final int id_to_get = next_to_last_id != bpts.size() - 1 ? next_to_last_id + 1 : next_to_last_id;
+				final double[] todrawlast = bpts.get(id_to_get);
+				g.draw(getBezier(p, (int) first[0], (int) first[1], (int) todrawlast[0], (int) todrawlast[1]));
+				
+				final double ddx = last[0] - next_to_last[0];
+				final double ddy = last[1] - next_to_last[1];
+
+				final double dsize = Math.sqrt(ddx * ddx + ddy * ddy);
+				final double sx = last[0] - ddx * ARROW_HEIGHT / dsize;
+				final double sy = last[1] - ddy * ARROW_HEIGHT / dsize;
+
+				final double nang = Math.atan2(ddy, ddx)+Math.PI/2;
+				final int sin = (int) (Math.sin(nang) * ARROW_WIDTH);
+				final int cos = (int) (Math.cos(nang) * ARROW_WIDTH);
+
+				final double cp1x = sx + cos;
+				final double cp1y = sy + sin;	
+
+				final double cp2x = sx - cos;
+				final double cp2y = sy - sin;
+
+				trix[0] = (int) cp1x; triy[0] = (int) cp1y;
+				trix[1] = (int) cp2x; triy[1] = (int) cp2y;
+				trix[2] = (int) last[0]; triy[2] = (int) last[1];
+				g.fillPolygon(trix, triy, 3);
+			}
 		}
 		
 		g.setStroke(def);
@@ -70,6 +121,8 @@ public class Corrector extends Item {
 		int sty = (int) (p.y - f.getHeight() / 2  + fm.getAscent());
 		g.drawString(sid, stx, sty);
 		g.setFont(defaultFont);
+		
+
 	}
 	
 	private CubicCurve2D.Double getBezier(final Point2D.Float p, final int sx, final int sy, final int ex, final int ey) {
