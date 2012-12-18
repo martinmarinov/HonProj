@@ -12,9 +12,15 @@ import martin.gui.quantum.Qubit;
 import martin.gui.quantum.Corrector.corrtype;
 import martin.gui.quantum.Qubit.type;
 import martin.gui.quantum.Visualizer;
+import martin.quantum.tools.Tools;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GraphicalGUI {
 	
@@ -31,6 +37,10 @@ public class GraphicalGUI {
 	private Visualizer visualizer;
 	private JMenuBar menuBar;
 	private JMenu mnFile;
+	private JMenu mnSimulate;
+	private JMenuItem mntmTranslateToMcalc;
+	
+	private MainGUI mgui = new MainGUI();
 	
 	/**
 	 * Launch the application.
@@ -76,5 +86,27 @@ public class GraphicalGUI {
 		
 		mnFile = new JMenu("File");
 		menuBar.add(mnFile);
+		
+		mnSimulate = new JMenu("Simulation");
+		menuBar.add(mnSimulate);
+		
+		mntmTranslateToMcalc = new JMenuItem("Translate to Mcalc and simulate");
+		mntmTranslateToMcalc.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					mgui.populateFrom(visualizer.generateMcalcDesc());
+					mgui.makeVisible();
+				} catch (Exception e) {
+					throwException(e);
+				}
+			}
+		});
+		mnSimulate.add(mntmTranslateToMcalc);
 	}
+	
+	private void throwException(final Exception e) {
+		JOptionPane.showMessageDialog(frmMeasurementBasedQuantum, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		e.printStackTrace();
+	}
+	
 }

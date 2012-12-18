@@ -556,22 +556,8 @@ public class MathExpression implements MathsItem {
 		return false;
 	}
 
-	/**
-	 * This implements a very basic division. It just takes all of the common coefficients of the expression and tries to divide them together.
-	 */
 	@Override
 	public boolean divide(MathsItem m) {
-
-		if (Tools.SIMPLIFICATION_ENABLED) {
-
-			final HashSet<HashSet<MathsItem>> clone = new HashSet<HashSet<MathsItem>>();
-			cloneItems(clone);
-
-			if (m instanceof MathExpression) {
-				final MathExpression b = (MathExpression) m;
-
-			}
-		}
 
 		return false;
 	}

@@ -12,17 +12,18 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
+
+import martin.gui.quantum.Corrector.corrtype;
+import martin.gui.quantum.Qubit.type;
+import martin.quantum.McalcDescription;
 
 public class Visualizer extends JPanel {
 
@@ -301,4 +302,144 @@ public class Visualizer extends JPanel {
                 null,
                 default_text);
 	}
+	
+	/**
+	 * Gets all of the items from the given type
+	 * @param arr
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T[] getAllItemsOfType(final T[] arr) {
+		
+		final Class<?> input = arr.getClass().getComponentType();
+		final ArrayList<T> al = new ArrayList<T>();
+		
+		for (final Item it : items)
+			if (it.getClass().equals(input))
+				al.add((T) it);
+		
+		return al.toArray(arr);
+	}
+	
+	/**
+	 * Gets all of the qubits that have pointers starting from them pointing to the qubit q
+	 * @param q
+	 * @param type
+	 * @return
+	 */
+	public Qubit[] getQubitsDepending(final Qubit q, final Corrector.corrtype type) {
+		final ArrayList<Qubit> qubits = new ArrayList<Qubit>();
+		final Corrector[] correctors = getAllItemsOfType(new Corrector[0]);
+		
+		for (final Corrector c : correctors)
+			if (c.t == type && c.i2.id == q.id)
+				qubits.add(c.i1);
+		
+		return qubits.toArray(new Qubit[0]);
+	}
+	
+	private String getDependance(final Qubit q, final Corrector.corrtype type, final String var) {
+		
+		
+		final Qubit[] dep = getQubitsDepending(q, type);
+		
+		if (dep.length == 0) return "0";
+		
+		final StringBuilder sb = new StringBuilder();
+		
+		sb.append(var + dep[0].getId());
+		
+		for (int i = 1; i < dep.length; i++)
+			sb.append("+"+var+dep[i].getId());
+		
+		return sb.toString();
+	}
+	
+	public McalcDescription generateMcalcDesc() throws Exception {
+		final McalcDescription desc = new McalcDescription();
+		final StringBuilder sb = new StringBuilder(); // for efficient String building
+		
+		final Qubit[] qubit = getAllItemsOfType(new Qubit[0]); Arrays.sort(qubit);
+		
+		// error checking
+		for (int i = qubit.length - 1; i > 0; i--)
+			if (qubit[i].getType() == Qubit.type.input && qubit[i-1].getType() != Qubit.type.input)
+				throw new Exception("The current algorithm assumes the first n qubits are input qubits. Please, change your pattern to satisfy that requirement.");
+		
+		// set n
+		desc.n = qubit.length;
+		
+		// set inputs
+		int n_input = 0;
+		for (int i = 0; i < qubit.length; i++)
+			if (qubit[i].getType() == Qubit.type.input)
+				n_input++;
+			else
+				break;
+		
+		if (n_input > 0) {
+			final int coeff_to_gen = 1 << n_input;
+			
+			char first = 'a';
+			sb.append(first);
+			
+			for (int i = 1; i < coeff_to_gen; i++) {
+				first++;
+				sb.append(", "+first);
+			}
+			
+			desc.inputs = sb.toString();
+			sb.setLength(0);
+		}
+		
+		// set entanglement
+		final Entangler[] entanglers = getAllItemsOfType(new Entangler[0]);
+		boolean firstitem = true;
+		for (final Entangler e : entanglers) {
+			final String text = "("+e.i1.getId()+", "+e.i2.getId()+")";
+			if (firstitem) {
+				sb.append(text);
+				firstitem = false;
+			} else
+				sb.append("; "+text);
+		}
+		desc.entanglement = sb.toString();
+		sb.setLength(0);
+		
+		// set measurements
+		firstitem = true;
+		for (final Qubit q : qubit)
+			if (q.perform_measurement) {
+				final String text = "("+q.getId()+", "+getDependance(q, corrtype.X, "s")+", "+getDependance(q, corrtype.Z, "t")+", "+q.measurement_angle+")";
+				if (firstitem) {
+					sb.append(text);
+					firstitem = false;
+				} else
+					sb.append("; "+text);
+			}
+		desc.measurements = sb.toString();
+		sb.setLength(0);
+		
+		// corrections
+		firstitem = true;
+		for (final Qubit q : qubit)
+			if (q.getType() == type.output) {
+				
+				final String textx = "("+q.getId()+", x, "+getDependance(q, corrtype.X, "s")+")";
+				final String textz = "("+q.getId()+", z, "+getDependance(q, corrtype.Z, "s")+")";
+				
+				if (firstitem) {
+					sb.append(textx);
+					firstitem = false;
+				} else
+					sb.append("; "+textx);
+				
+				sb.append("; "+textz);
+			}
+		desc.corrections = sb.toString();
+		sb.setLength(0);
+		
+		return desc;
+	}
+
 }

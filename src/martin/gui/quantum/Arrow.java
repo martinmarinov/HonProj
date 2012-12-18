@@ -17,16 +17,6 @@ public class Arrow extends Item {
 	String getIconFileName() {
 		return "arrow.png";
 	}
-	
-	private int getItemsCountAt(int x, int y, Visualizer vis, Object same) {
-		int c = 0;
-		
-		for (final Item i : vis.items)
-			if (i.isMouseOntop(x, y) && same.getClass().equals(i.getClass()))
-				c++;
-		
-		return c;
-	}
 
 	@Override
 	void mouseMove(Graphics2D g, int x, int y, Visualizer vis) {

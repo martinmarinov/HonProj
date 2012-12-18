@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Qubit extends Item {
+public class Qubit extends Item implements Comparable<Qubit> {
 	
 	private type[] menu_types;
 	
@@ -25,13 +25,14 @@ public class Qubit extends Item {
 	
 	public final static int DEFAULT_FONT_SIZE = 22;
 	
-	private int menu_swap_id, menu_measurement_angle;
+	private int menu_swap_id, menu_measurement_angle, menu_perform_measurement;
 	
 	private final static Stroke DASHED_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
 	        BasicStroke.JOIN_MITER, 2.0f, new float[]{2.0f}, 0.0f);
 	private final static Color GRID_COLOR = new Color(255, 255, 255, 50);
 	private Font font = null;
-	private String measurement_angle = "";
+	String measurement_angle = "0";
+	boolean perform_measurement = false;
 	
 	public enum type {input, normal, output};
 	
@@ -55,7 +56,7 @@ public class Qubit extends Item {
 		movey = y;
 		getIcon();
 	}
-
+	
 	@Override
 	Cursor getCursor() {
 		return Toolkit.getDefaultToolkit().createCustomCursor(
@@ -113,7 +114,9 @@ public class Qubit extends Item {
 	
 	@Override
 	public void renderInstance(Graphics2D g, Visualizer vis) {
-		g.drawImage(icon, x-icon.getWidth()/2, y-icon.getHeight()/2, null);
+		final int halficw = icon.getWidth()/2;
+		final int halfich = icon.getHeight()/2;
+		g.drawImage(icon, x-halficw, y-halfich, null);
 		
 		final Font defaultFont = g.getFont();
 		if (font == null) font = new Font(defaultFont.getFamily(), Font.PLAIN, DEFAULT_FONT_SIZE);
@@ -124,7 +127,12 @@ public class Qubit extends Item {
 		int sx = (int) (x  - f.getWidth()  / 2);
 		int sy = (int) (y - f.getHeight() / 2  + fm.getAscent());
 		g.drawString(sid, sx, sy);
+		
+		if (perform_measurement)
+			g.drawString("α = "+measurement_angle, x - halficw, y - halfich);
+		
 		g.setFont(defaultFont);
+		
 	}
 
 	@Override
@@ -194,6 +202,8 @@ public class Qubit extends Item {
 		// additional actions, starting from id 0
 		int additional_id = 0;
 		menu_swap_id = -1;
+		menu_measurement_angle = -1;
+		menu_perform_measurement = -1;
 		
 		if (numberOfQubitsInVisualizer(vis) > 1) {
 			entries.add("Edit qubit id");
@@ -201,8 +211,14 @@ public class Qubit extends Item {
 		}
 		
 		if (t != type.output) {
-			entries.add("Set measurement angle");
-			menu_measurement_angle = additional_id++;
+			
+			entries.add((perform_measurement ? "✓ " : "") + "Perform measurement");
+			menu_perform_measurement = additional_id++;
+			
+			if (perform_measurement) {
+				entries.add("Set measurement angle");
+				menu_measurement_angle = additional_id++;
+			}
 		}
 		
 		return entries.toArray(new String[0]);
@@ -227,6 +243,18 @@ public class Qubit extends Item {
 			}
 				
 		return null;
+	}
+	
+	public type getType() {
+		return t;
+	}
+	
+	/**
+	 * Get 0 based qubit id. Keep in mind this is 0 based!
+	 * @return
+	 */
+	public int getId() {
+		return id - 1;
 	}
 	
 	public Qubit getHighestQubitId(final Visualizer vis) {
@@ -299,6 +327,12 @@ public class Qubit extends Item {
 			
 			final String new_ang = vis.showInputDialog("Enter angle", "Input the measurement angle for this qubit", measurement_angle);
 			if (new_ang != null) measurement_angle = new_ang;
+			measurement_angle = measurement_angle.trim();
+			if (measurement_angle.isEmpty()) measurement_angle = "0";
+			
+		} else if (additional_id == menu_perform_measurement) {
+			
+			perform_measurement = ! perform_measurement;
 			
 		}
 	}
@@ -333,6 +367,16 @@ public class Qubit extends Item {
 		
 		lowerqubit.fixId(vis);
 		id = lowerqubit.id + 1;
+	}
+
+	@Override
+	public int compareTo(Qubit o) {
+		return id > o.id ? 1 : (o.id < id ? -1 : 0);
+	}
+	
+	@Override
+	public String toString() {
+		return "Qubit "+id;
 	}
 
 }

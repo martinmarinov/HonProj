@@ -5,7 +5,6 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.FlatteningPathIterator;
@@ -13,6 +12,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import martin.gui.quantum.Qubit.type;
 
 public class Corrector extends Item {
 	
@@ -28,8 +29,8 @@ public class Corrector extends Item {
 	private static final int ARROW_HEIGHT = 15;
 	private static final int ARROW_WIDTH = 7;
 	
-	private Qubit i1, i2;
-	private int arcd = DEFAULT_ARC_DISTANCE;
+	Qubit i1, i2;
+	private int arcd;
 	
 	private Font font = null;
 	
@@ -40,10 +41,11 @@ public class Corrector extends Item {
 	
 	public enum corrtype {X, Z};
 	
-	private final corrtype t;
+	final corrtype t;
 	
 	public Corrector(final corrtype t) {
 		this.t = t;
+		arcd = t == corrtype.X ? DEFAULT_ARC_DISTANCE : - DEFAULT_ARC_DISTANCE;
 	}
 	
 	private Corrector(final Qubit i1, final Qubit i2, corrtype t) {
@@ -254,7 +256,7 @@ public class Corrector extends Item {
 			final int dx = i1.x - x;
 			final int dy = i1.y - y;
 			final double nang = Math.atan2(dy, dx)+Math.PI/2;
-			final int d = (int) Math.sqrt(dx * dx + dy * dy) / 2;
+			final int d = (t == corrtype.X ? 1 : -1) * (int) Math.sqrt(dx * dx + dy * dy) / 2;
 			
 			final int cp1x = (int) (i1.x + Math.cos(nang) * d);
 			final int cp1y = (int) (i1.y + Math.sin(nang) * d);

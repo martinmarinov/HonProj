@@ -17,18 +17,19 @@ import martin.quantum.tools.Tools;
 
 public final class SimulationRunner {
 
-	public static SystemMatrix run(int n, final String inputs, final String entanglement, final String measurements, final String corrections, final String branches) throws Exception {
+	public static SystemMatrix run(final McalcDescription desc) throws Exception {
+		final int n = desc.n;
 		Tools.logger.println();
 		
 		final SystemMatrix sm = new SystemMatrix(n);
 		final ArrayList<Operator> al = new ArrayList<Operator>();
 		
-		final HashMap<Integer, Integer> b = parseBranches(branches);
+		final HashMap<Integer, Integer> b = parseBranches(desc.branches);
 		
-		parseInputs(al, inputs);
-		parseEntanglement(al, entanglement);
-		parseMeasurements(al, measurements, b);
-		parseCorrections(al, corrections, b);
+		parseInputs(al, desc.inputs);
+		parseEntanglement(al, desc.entanglement);
+		parseMeasurements(al, desc.measurements, b);
+		parseCorrections(al, desc.corrections, b);
 		
 		for (Operator o : al)
 			Tools.logger.println("Will perform: "+o);

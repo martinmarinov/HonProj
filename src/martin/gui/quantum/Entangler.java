@@ -15,7 +15,7 @@ public class Entangler extends Item {
 	private final static Stroke DASHED_STROKE = new BasicStroke(4.0f);
 	private static final int PICKING_DISTANCE = 6;
 	
-	private Qubit i1, i2;
+	Qubit i1, i2;
 	
 	private boolean select_first = true;
 	

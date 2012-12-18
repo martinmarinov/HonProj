@@ -1,7 +1,6 @@
 package martin.gui;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
@@ -14,6 +13,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 
+import martin.quantum.McalcDescription;
 import martin.quantum.SimulationRunner;
 import martin.quantum.SystemMatrix;
 import martin.quantum.tools.Tools;
@@ -21,12 +21,9 @@ import martin.quantum.tools.Tools;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Properties;
 
 import javax.swing.JCheckBox;
 import javax.swing.text.BadLocationException;
@@ -39,7 +36,6 @@ import javax.swing.event.ChangeEvent;
 
 public class MainGUI {
 	
-	private final Properties p = new Properties();
 	private final static String PROG_TITLE = "MBQC Simulator alpha";
 	
 	private static final Runtime runtime = Runtime.getRuntime();
@@ -69,28 +65,16 @@ public class MainGUI {
 	private JFileChooser fileChooser = new JFileChooser(".");
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainGUI window = new MainGUI();
-					window.frmMbqcSimulatorValpha.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the application.
 	 */
 	public MainGUI() {
 		initialize();
 	}
 
+	public void makeVisible() {
+		frmMbqcSimulatorValpha.setVisible(true);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -101,7 +85,7 @@ public class MainGUI {
 		frmMbqcSimulatorValpha = new JFrame();
 		frmMbqcSimulatorValpha.setTitle(PROG_TITLE);
 		frmMbqcSimulatorValpha.setBounds(100, 100, 933, 618);
-		frmMbqcSimulatorValpha.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmMbqcSimulatorValpha.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frmMbqcSimulatorValpha.getContentPane().setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Qubits are indexed from 0. First few qubits are always inputs.");
@@ -303,9 +287,15 @@ public class MainGUI {
 				final int returnVal = fileChooser.showOpenDialog(frmMbqcSimulatorValpha);
 				
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					final File f = fileChooser.getSelectedFile();
-					loadProperties(f.getPath());
-					frmMbqcSimulatorValpha.setTitle(PROG_TITLE+" - "+f.getName());
+					try {
+						final File f = fileChooser.getSelectedFile();
+						final McalcDescription desc = new McalcDescription(f);
+						populateFrom(desc);
+						
+						frmMbqcSimulatorValpha.setTitle(PROG_TITLE+" - "+f.getName());
+					} catch (Exception e) {
+						e.printStackTrace(Tools.logger);
+					}
 				}
 			}
 		});
@@ -327,8 +317,14 @@ public class MainGUI {
 									JOptionPane.YES_NO_OPTION, 
 									JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION)
 						return;
-					saveProperties(fileChooser.getSelectedFile().getPath());
-					frmMbqcSimulatorValpha.setTitle(PROG_TITLE+" - "+f.getName());
+					
+					try {
+						final McalcDescription desc = generateMcalcDesc();
+						desc.saveToFile(fileChooser.getSelectedFile());
+						frmMbqcSimulatorValpha.setTitle(PROG_TITLE+" - "+f.getName());
+					} catch (Exception e) {
+						e.printStackTrace(Tools.logger);
+					}
 				}
 			}
 		});
@@ -341,13 +337,14 @@ public class MainGUI {
 		final long intused = runtime.totalMemory() - runtime.freeMemory();
 		final long start = System.currentTimeMillis();
 		
-		system = SimulationRunner.run(
+		system = SimulationRunner.run( new McalcDescription(
 				Integer.parseInt(txtNumbOfQubits.getText()),
 				txtInputs.getText(),
 				txtEntanglement.getText(),
 				txtMeasurement.getText(),
 				txtCorrections.getText(),
 				txtBranches.getText()
+				)
 				);
 		
 		final long stop = System.currentTimeMillis();
@@ -365,42 +362,25 @@ public class MainGUI {
 		e.printStackTrace(Tools.logger);
 	}
 	
-	private void loadProperties(final String config_filename) {
-		try {
-			final FileInputStream in = new FileInputStream(config_filename);
-			p.load(in);
-			in.close();
-			
-			txtNumbOfQubits.setText(p.getProperty("prop_no"));
-			txtBranches.setText(p.getProperty("prop_branch"));
-			txtCorrections.setText(p.getProperty("prop_corr"));
-			txtEntanglement.setText(p.getProperty("prop_ent"));
-			txtInputs.setText(p.getProperty("prop_in"));
-			txtMeasurement.setText(p.getProperty("prop_meas"));
-			txtVariables.setText(p.getProperty("prop_vars"));
-		} catch (Exception e) {
-			throwException(e);
-		}
+	public void populateFrom(final McalcDescription desc) {
+		
+		if (desc == null) return;
+
+		txtNumbOfQubits.setText(String.valueOf(desc.n));
+		txtBranches.setText(desc.branches);
+		txtCorrections.setText(desc.corrections);
+		txtEntanglement.setText(desc.entanglement);
+		txtInputs.setText(desc.inputs);
+		txtMeasurement.setText(desc.measurements);
+		txtVariables.setText(desc.variables);
+
 	}
 	
-	private void saveProperties(final String config_filename) {
+	private McalcDescription generateMcalcDesc() {
 		
-		try {
-			p.setProperty("prop_no", txtNumbOfQubits.getText());
-			p.setProperty("prop_branch", txtBranches.getText());
-			p.setProperty("prop_corr", txtCorrections.getText());
-			p.setProperty("prop_ent", txtEntanglement.getText());
-			p.setProperty("prop_in", txtInputs.getText());
-			p.setProperty("prop_meas", txtMeasurement.getText());
-			p.setProperty("prop_vars", txtVariables.getText());
-			
-			
-			final FileOutputStream out = new FileOutputStream(config_filename);
-			p.store(out, "---MBQC Pattern description---");
-			out.close();
-		} catch (Exception e) {
-			throwException(e);
-		}
+		return new McalcDescription(
+				Integer.valueOf(txtNumbOfQubits.getText()), 
+				txtInputs.getText(), txtEntanglement.getText(), txtMeasurement.getText(), txtCorrections.getText(), txtBranches.getText(), txtVariables.getText());
 		
 	}
 	
