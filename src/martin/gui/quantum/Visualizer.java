@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -77,6 +78,7 @@ public class Visualizer extends JPanel {
 				mx = e.getX();
 				my = e.getY();
 				laststate = mousestate.released;
+				if (SwingUtilities.isRightMouseButton(e)) showPopup(mx, my);
 				repaint();
 			}
 			
@@ -107,34 +109,36 @@ public class Visualizer extends JPanel {
 				mx = e.getX();
 				my = e.getY();
 				laststate = mousestate.clicked;
-				if (SwingUtilities.isRightMouseButton(e)) {
-					final Item it = getItemAt(mx, my);
-					
-					if (it != null) {
-						item_for_menu = it;
-						menu.removeAll();
-						popup_items.clear();
-						
-						for (int i = 0; i < menu_entries.length; i++) {
-							final JMenuItem item = new JMenuItem(menu_entries[i]);
-							item.addActionListener(popup_listener);
-							popup_items.add(item);
-						}
-						
-						final String[] options = it.getMenuEntries();
-						for (int i = 0; i < options.length; i++) {
-							final JMenuItem item = new JMenuItem(options[i]);
-							item.addActionListener(popup_listener);
-							popup_items.add(item);
-						}
-						
-						for (final JMenuItem pit : popup_items)
-							menu.add(pit);
-						
-						menu.show(Visualizer.this, mx, my);
-					}
-				}
 				repaint();
+			}
+
+			private void showPopup(int mx, int my) {
+				final Item it = getItemAt(mx, my);
+
+				if (it != null) {
+					item_for_menu = it;
+					menu.removeAll();
+					popup_items.clear();
+
+					for (int i = 0; i < menu_entries.length; i++) {
+						final JMenuItem item = new JMenuItem(menu_entries[i]);
+						item.addActionListener(popup_listener);
+						popup_items.add(item);
+					}
+
+					final String[] options = it.getMenuEntries(Visualizer.this);
+					if (options != null)
+					for (int i = 0; i < options.length; i++) {
+						final JMenuItem item = new JMenuItem(options[i]);
+						item.addActionListener(popup_listener);
+						popup_items.add(item);
+					}
+
+					for (final JMenuItem pit : popup_items)
+						menu.add(pit);
+
+					menu.show(Visualizer.this, mx, my);
+				}
 			}
 		});
 		
@@ -151,7 +155,7 @@ public class Visualizer extends JPanel {
 					if (i < menu_entries.length)
 						onMenuEntryClick(i);
 					else
-						item_for_menu.onMenuEntryClick(i - menu_entries.length);
+						item_for_menu.onMenuEntryClick(i - menu_entries.length, Visualizer.this);
 					return;
 				}
 		}
@@ -259,5 +263,42 @@ public class Visualizer extends JPanel {
 		return null;
 	}
 	
+	/**
+	 * Shows an option dialog with a droplist for the user to select from a certain range of options.
+	 * @param title the title of the dialog
+	 * @param description the description, which should be longer than the title
+	 * @param options the possible options that would appear in the droplist
+	 * @return the id of the option that was selected or -1 if nothing was selected
+	 */
+	public int showOptionDialog(final String title, final String description, final Object[] options) {
+		final Object ans = JOptionPane.showInputDialog(
+                this,
+                description,
+                title,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0].toString());
+		if (ans == null) return -1;
+		for (int i = 0; i < options.length; i++) if (ans == options[i]) return i;
+		return -1;
+	}
 	
+	/**
+	 * Shows an input dialog that the user can type information in.
+	 * @param title the title of the dialog
+	 * @param description the description, which should be longer than the title
+	 * @param default_text the default text to be shown in the dialog
+	 * @return
+	 */
+	public String showInputDialog(final String title, final String description, final String default_text) {
+		return (String) JOptionPane.showInputDialog(
+                this,
+                description,
+                title,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                default_text);
+	}
 }

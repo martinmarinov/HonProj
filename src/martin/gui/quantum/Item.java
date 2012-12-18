@@ -94,9 +94,9 @@ public abstract class Item  {
 	 */
 	abstract Cursor getCursor();
 	
-	abstract String[] getMenuEntries();
+	abstract String[] getMenuEntries(Visualizer vis);
 	
-	abstract void onMenuEntryClick(int id);
+	abstract void onMenuEntryClick(int id, Visualizer vis);
 	
 	/** Returns true if the current item needs to be destroyed. The list of dependencies
 	 * are the {@link Item}s that would be deleted, so if the curreint {@link Item} depends

@@ -88,10 +88,10 @@ public class Arrow extends Item {
 	}
 
 	@Override
-	String[] getMenuEntries() {return null;}
+	String[] getMenuEntries(Visualizer vis) {return null;}
 
 	@Override
-	void onMenuEntryClick(int id) {}
+	void onMenuEntryClick(int id, Visualizer vis) {}
 
 	@Override
 	boolean doesItNeedToBeDeleted(HashSet<Item> dependencies) { return false; }

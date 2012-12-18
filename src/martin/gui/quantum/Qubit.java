@@ -11,6 +11,7 @@ import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Qubit extends Item {
@@ -24,10 +25,13 @@ public class Qubit extends Item {
 	
 	public final static int DEFAULT_FONT_SIZE = 22;
 	
+	private int menu_swap_id, menu_measurement_angle;
+	
 	private final static Stroke DASHED_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
 	        BasicStroke.JOIN_MITER, 2.0f, new float[]{2.0f}, 0.0f);
 	private final static Color GRID_COLOR = new Color(255, 255, 255, 50);
 	private Font font = null;
+	private String measurement_angle = "";
 	
 	public enum type {input, normal, output};
 	
@@ -175,25 +179,128 @@ public class Qubit extends Item {
 	}
 
 	@Override
-	String[] getMenuEntries() {
+	String[] getMenuEntries(Visualizer vis) {
 		final type[] types = type.values();
-		final String[] entries = new String[types.length - 1];
-		menu_types = new type[entries.length];
+		final ArrayList<String> entries = new ArrayList<String>();
+		menu_types = new type[types.length - 1];
 		
 		int j = 0;
 		for (int i = 0; i < types.length; i++)
 			if (types[i] != t) {
-				entries[j] = "Change to "+types[i]+" qubit";
+				entries.add("Change to "+types[i]+" qubit");
 				menu_types[j++] = types[i];
 			}
 		
-		return entries;
+		// additional actions, starting from id 0
+		int additional_id = 0;
+		menu_swap_id = -1;
+		
+		if (numberOfQubitsInVisualizer(vis) > 1) {
+			entries.add("Edit qubit id");
+			menu_swap_id = additional_id++;
+		}
+		
+		if (t != type.output) {
+			entries.add("Set measurement angle");
+			menu_measurement_angle = additional_id++;
+		}
+		
+		return entries.toArray(new String[0]);
+	}
+	
+	private int numberOfQubitsInVisualizer(final Visualizer vis) {
+		int c = 0;
+		
+		for (final Item i : vis.items)
+			if (i instanceof Qubit)
+				c++;
+		
+		return c;
+	}
+	
+	public Qubit getQubitWithId(final int id, final Visualizer vis) {
+		for (final Item i : vis.items)
+			if (i instanceof Qubit) {
+				final Qubit q = (Qubit) i;
+				if (q.id == id)
+					return q;
+			}
+				
+		return null;
+	}
+	
+	public Qubit getHighestQubitId(final Visualizer vis) {
+		int highest = -1;
+		Qubit ans = null;
+		
+		for (final Item i : vis.items)
+			if (i instanceof Qubit) {
+				final Qubit q = (Qubit) i;
+				if (q.id > highest) {
+					highest = q.id;
+					ans = q;
+				}
+			}
+		
+		return ans;
+	}
+	
+	public Qubit getHighestQubitLessThanMe(final Visualizer vis) {
+		int highest = -1;
+		Qubit ans = null;
+		
+		for (final Item i : vis.items)
+			if (i instanceof Qubit) {
+				final Qubit q = (Qubit) i;
+				if (q.id > highest && q.id < id) {
+					highest = q.id;
+					ans = q;
+				}
+			}
+		
+		return ans;
 	}
 
 	@Override
-	void onMenuEntryClick(int id) {
-		t = menu_types[id];
-		getIcon();
+	void onMenuEntryClick(int id, Visualizer vis) {
+		if (id < menu_types.length) {
+			t = menu_types[id];
+			getIcon();
+			return;
+		}
+		
+		final int additional_id = id - menu_types.length;
+		if (additional_id == menu_swap_id) {
+			
+			final ArrayList<String> options = new ArrayList<String>();
+			for (final Item i : vis.items)
+				if (i instanceof Qubit) {
+					final Qubit q = (Qubit) i;
+					if (q.id != this.id)
+						options.add(String.valueOf(q.id));
+				}
+			
+			final int selected = vis.showOptionDialog("Select new id", "Choose a qubit to swap id with.", options.toArray(new String[0]));
+			if (selected >= 0) {
+				final int newqubitid = Integer.parseInt(options.get(selected));
+				
+				for (final Item i : vis.items)
+					if (i instanceof Qubit) {
+						final Qubit q = (Qubit) i;
+						if (q.id == newqubitid) {
+							final int temp = q.id;
+							q.id = this.id;
+							this.id = temp;
+						}
+					}
+			}
+			
+		} else if (additional_id == menu_measurement_angle) {
+			
+			final String new_ang = vis.showInputDialog("Enter angle", "Input the measurement angle for this qubit", measurement_angle);
+			if (new_ang != null) measurement_angle = new_ang;
+			
+		}
 	}
 	
 	@Override
@@ -203,24 +310,28 @@ public class Qubit extends Item {
 	
 	
 	@Override
-	protected void onPostLayoutChanged(final Visualizer vis) {
-		int lowerid = -1;
-		Qubit lowerqubit = null;
-		for (final Item i : vis.items)
-			if (i instanceof Qubit) {
-				final Qubit q = (Qubit) i;
-				
-				if (q.id < id && id > lowerid) {
-					lowerid = q.id;
-					lowerqubit = q;
-				}
-			}
-		if (lowerid == -1) {
+	protected void onPostLayoutChanged(final Visualizer vis) {		
+		
+		// look for gaps in the big numbers
+		final Qubit highest_qubit = getHighestQubitId(vis);
+		final int highest_id = highest_qubit.id;
+		
+		if (highest_id != id)
+			highest_qubit.onPostLayoutChanged(vis);
+		else
+			fixId(vis);
+
+	}
+	
+	private void fixId(final Visualizer vis) {
+		final Qubit lowerqubit = getHighestQubitLessThanMe(vis);
+
+		if (lowerqubit == null) {
 			id = 1;
 			return;
 		}
 		
-		lowerqubit.onPostLayoutChanged(vis);
+		lowerqubit.fixId(vis);
 		id = lowerqubit.id + 1;
 	}
 

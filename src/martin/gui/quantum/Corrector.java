@@ -320,12 +320,12 @@ public class Corrector extends Item {
 	}
 
 	@Override
-	String[] getMenuEntries() {
+	String[] getMenuEntries(Visualizer vis) {
 		return menu_entries;
 	}
 
 	@Override
-	void onMenuEntryClick(int id) {
+	void onMenuEntryClick(int id, Visualizer vis) {
 		switch (id) {
 		case 0:
 			final Qubit temp = i1;
