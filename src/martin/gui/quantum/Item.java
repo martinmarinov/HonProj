@@ -3,7 +3,6 @@ package martin.gui.quantum;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -62,7 +61,7 @@ public abstract class Item  {
 	 */
 	BufferedImage getIcon() {
 		try {
-			return icon = ImageIO.read(new File( getIconFileName() ));
+			return icon = ImageIO.read(this.getClass().getResourceAsStream(getIconFileName()));
 		} catch (IOException e) {
 			return null;
 		}

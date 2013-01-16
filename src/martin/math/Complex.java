@@ -100,4 +100,9 @@ public class Complex {
 		
 		return (Math.abs(c.R - R) <= racc) && (Math.abs(c.I - I) <= iacc);
 	}
+	
+	/** Returns the real square value of the complex number */
+	public double getSquare() {
+		return R*R + I*I;
+	}
 }

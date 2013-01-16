@@ -4,14 +4,16 @@ import martin.math.MathExpression;
 import martin.math.MathExp;
 import martin.math.MathIm;
 import martin.math.MathNumber;
+import martin.math.MathSqrt;
 import martin.math.MathsItem;
+import martin.math.MathFract;
 import martin.quantum.SystemMatrix;
 
 public class M implements Operator {
 	
 	//private final static MathsItem Pi = new MathSymbol("Pi");
 	private final static MathsItem MINUS_ONE = new MathNumber(-1);
-	//private final static MathsItem ONE_OVER_SQRT_2 = new MathFract(new MathNumber(1), new MathSqrt(new MathNumber(2)));;
+	private final static MathsItem ONE_OVER_SQRT_2 = new MathFract(new MathNumber(1), new MathSqrt(new MathNumber(2)));;
 
 	private final int t, s, qubitId, b;
 	private final MathsItem alpha;
@@ -53,8 +55,10 @@ public class M implements Operator {
 				if (t == 1) // Z correction
 					sm.coeff[i].multiply(MINUS_ONE.clone());
 				
+				sm.coeff[i].multiply(ONE_OVER_SQRT_2.clone());
 				sm.coeff[i].simplify();
-			}
+			} else
+				sm.coeff[i].multiply(ONE_OVER_SQRT_2.clone());
 		}
 	}
 	

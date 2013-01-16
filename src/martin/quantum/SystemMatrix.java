@@ -128,5 +128,26 @@ public class SystemMatrix {
 		for (int i = 0; i < actions.length; i++)
 			actions[i].operate(this);
 	}
+	
+	/** Gets the vector representing the system matrix dotted with itself */
+	public MathsItem getProbability() {
+		final MathsItem probab = new MathExpression();
+		
+		for (int i = 0; i < size; i++) {
+			
+			if (coeff[i].isZero())
+				continue;
+			
+			final MathsItem square = new MathExpression();
+			square.add(new MathNumber(1));
+			square.multiply(coeff[i].clone());
+			square.multiply(coeff[i].clone());
+			
+			probab.add(square);
+		}
+
+		probab.simplify();
+		return probab;
+	}
 
 }

@@ -13,6 +13,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 
+import martin.math.Complex;
 import martin.quantum.McalcDescription;
 import martin.quantum.SimulationRunner;
 import martin.quantum.SystemMatrix;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
 
 import javax.swing.JCheckBox;
 import javax.swing.text.BadLocationException;
@@ -220,13 +222,14 @@ public class MainGUI {
 					final long start = System.currentTimeMillis();
 					
 					final String res = txtVariables.getText();
+					final HashMap<String, Complex> rules = SimulationRunner.parseVariablesAndValues(res);
 					
 					final long stop = System.currentTimeMillis();
 					final long afterused = runtime.totalMemory() - runtime.freeMemory();
 					
 					Tools.logger.printf("Evaluated in %dms,  used %.4f MB\n", stop - start, (afterused - intused) / 1048576d);
 					
-					outNumerical.setText(system.printValues(SimulationRunner.parseVariablesAndValues(res)));
+					outNumerical.setText(system.printValues(rules)+"\nProbability: "+system.getProbability().getValue(rules));					
 					
 				} catch (Exception e) {
 					throwException(e);
@@ -352,7 +355,7 @@ public class MainGUI {
 		
 		Tools.logger.printf("Generated in %dms,  used %.4f MB\n", stop - start, (afterused - intused) / 1048576d);
 		
-		outSymbolic.setText(system.toString());
+		outSymbolic.setText(system+"\nProbability: "+system.getProbability());
 		
 		
 	}
