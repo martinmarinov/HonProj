@@ -15,6 +15,10 @@ import java.util.ArrayList;
 public class Qubit extends Item implements Comparable<Qubit> {
 	
 	private type[] menu_types;
+
+	public static final int QUBIT_SIZE = 30;
+	public static final int SQUARE_AROUND_QUBIT_SIZE = 39;
+	
 	
 	private final static int GRID_SIZE = 100;
 	private final static int GRID_OFF_X = GRID_SIZE / 2;
@@ -27,12 +31,14 @@ public class Qubit extends Item implements Comparable<Qubit> {
 	
 	private final static Stroke DASHED_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
 	        BasicStroke.JOIN_MITER, 2.0f, new float[]{2.0f}, 0.0f);
+	private final static Stroke CIRCLE_STROKE = new BasicStroke(4.0f);
 	private final static Color GRID_COLOR = new Color(255, 255, 255, 50);
+	private final static Color FILL_COLOR = new Color(255, 255, 255, 120);
 	private Font font = null;
 	String measurement_angle = "0";
 	boolean perform_measurement = false;
 	
-	public enum type {input, normal, output};
+	public enum type {input, normal};
 	
 	int x, y;
 	int movex, movey;
@@ -114,7 +120,22 @@ public class Qubit extends Item implements Comparable<Qubit> {
 	public void renderInstance(Graphics2D g, Visualizer vis) {
 		final int halficw = icon.getWidth()/2;
 		final int halfich = icon.getHeight()/2;
-		g.drawImage(icon, x-halficw, y-halfich, null);
+		//g.drawImage(icon, x-halficw, y-halfich, null);
+		
+		final Stroke backup = g.getStroke();
+		g.setStroke(CIRCLE_STROKE);
+		g.drawOval(x-QUBIT_SIZE, y-QUBIT_SIZE, QUBIT_SIZE*2, QUBIT_SIZE*2);
+		
+		if (t == type.input)
+			g.drawRect(x-SQUARE_AROUND_QUBIT_SIZE, y-SQUARE_AROUND_QUBIT_SIZE, SQUARE_AROUND_QUBIT_SIZE*2, SQUARE_AROUND_QUBIT_SIZE*2);
+			
+		if (perform_measurement) {
+			final Color cbackup = g.getColor();
+			g.setColor(FILL_COLOR);
+			g.fillOval(x-QUBIT_SIZE, y-QUBIT_SIZE, QUBIT_SIZE*2, QUBIT_SIZE*2);
+			g.setColor(cbackup);
+		}
+		g.setStroke(backup);
 		
 		final Font defaultFont = g.getFont();
 		if (font == null) font = new Font(defaultFont.getFamily(), Font.PLAIN, DEFAULT_FONT_SIZE);
@@ -208,17 +229,14 @@ public class Qubit extends Item implements Comparable<Qubit> {
 			menu_swap_id = additional_id++;
 		}
 		
-		if (t != type.output) {
-			
-			entries.add((perform_measurement ? "✓ " : "") + "Perform measurement");
-			menu_perform_measurement = additional_id++;
-			
-			if (perform_measurement) {
-				entries.add("Set measurement angle");
-				menu_measurement_angle = additional_id++;
-			}
+		entries.add((perform_measurement ? "✓ " : "") + "Perform measurement");
+		menu_perform_measurement = additional_id++;
+
+		if (perform_measurement) {
+			entries.add("Set measurement angle");
+			menu_measurement_angle = additional_id++;
 		}
-		
+
 		return entries.toArray(new String[0]);
 	}
 	

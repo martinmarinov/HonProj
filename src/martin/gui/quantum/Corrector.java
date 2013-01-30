@@ -40,6 +40,15 @@ public class Corrector extends Item {
 	
 	final corrtype t;
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Corrector) {
+			final Corrector o = (Corrector) obj;
+			return o.i1 == i1 && o.i2 == i2 && o.t == t;
+		}
+		return false;
+	}
+	
 	public Corrector(final corrtype t) {
 		this.t = t;
 		arcd = t == corrtype.X ? DEFAULT_ARC_DISTANCE : - DEFAULT_ARC_DISTANCE;

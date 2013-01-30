@@ -27,7 +27,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import martin.gui.quantum.Corrector.corrtype;
-import martin.gui.quantum.Qubit.type;
 import martin.quantum.McalcDescription;
 
 public class Visualizer extends JPanel {
@@ -193,7 +192,7 @@ public class Visualizer extends JPanel {
 	}
 	
 	public void addItem(final Item i) {
-		items.add(i);
+		if (!items.contains(i)) items.add(i);
 	}
 	
 	@Override
@@ -430,7 +429,7 @@ public class Visualizer extends JPanel {
 		// corrections
 		firstitem = true;
 		for (final Qubit q : qubit)
-			if (q.getType() == type.output) {
+			if (!q.perform_measurement) {
 				
 				final String textx = "("+q.getId()+", x, "+getDependance(q, corrtype.X, "s")+")";
 				final String textz = "("+q.getId()+", z, "+getDependance(q, corrtype.Z, "s")+")";
@@ -504,7 +503,7 @@ public class Visualizer extends JPanel {
 				for (int i = 0; i < occurances; i++) {
 					final Item item = it.loadFromString(p.getProperty(className+"&"+i), this);
 					
-					if (item != null)
+					if (item != null && !items.contains(item))
 						items.add(item);
 					else
 						notok = true;

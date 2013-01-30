@@ -3,7 +3,7 @@
 martin.gui.quantum.Qubit=3
 martin.gui.quantum.Entangler&1=2\u00003
 martin.gui.quantum.Entangler&0=1\u00002
-martin.gui.quantum.Qubit&2=550\u0000250\u0000output\u00003\u00000\u0000false
+martin.gui.quantum.Qubit&2=550\u0000250\u0000normal\u00003\u00000\u0000false
 martin.gui.quantum.Qubit&1=350\u0000250\u0000normal\u00002\u00000\u0000true
 martin.gui.quantum.Qubit&0=150\u0000250\u0000input\u00001\u00000\u0000true
 martin.gui.quantum.Entangler=2

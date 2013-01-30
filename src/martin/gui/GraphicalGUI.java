@@ -30,7 +30,6 @@ public class GraphicalGUI {
 			new Arrow(),
 			new Qubit(type.input),
 			new Qubit(type.normal),
-			new Qubit(type.output),
 			new Entangler(),
 			new Corrector(corrtype.X),
 			new Corrector(corrtype.Z));

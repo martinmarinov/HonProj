@@ -11,8 +11,9 @@ public class Entangler extends Item {
 	
 	private final String[] menu_entries = new String[] {};
 	
+	public static final int QUBIT_SIZE = 32;
+	
 	private static final int ICON_OFFSET = 16;
-	private static final int QUBIT_SIZE = 32;
 	private final static Stroke DASHED_STROKE = new BasicStroke(4.0f);
 	private static final int PICKING_DISTANCE = 6;
 	
@@ -25,6 +26,15 @@ public class Entangler extends Item {
 	private Entangler(Qubit i1, Qubit i2) {
 		this.i1 = i1;
 		this.i2 = i2;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Entangler) {
+			final Entangler o = (Entangler) obj;
+			return (o.i1 == i1 && o.i2 == i2) || (o.i1 == i2 && o.i2 == i1);
+		}
+		return false;
 	}
 
 	@Override

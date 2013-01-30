@@ -142,6 +142,7 @@ public class SystemMatrix {
 			square.add(new MathNumber(1));
 			square.multiply(coeff[i].clone());
 			square.multiply(coeff[i].clone());
+			square.simplify();
 			
 			probab.add(square);
 		}
