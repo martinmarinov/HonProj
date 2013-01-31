@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import martin.gui.quantum.Corrector.corrtype;
 import martin.quantum.McalcDescription;
+import martin.quantum.tools.Tools;
 
 public class Visualizer extends JPanel {
 
@@ -402,7 +403,7 @@ public class Visualizer extends JPanel {
 		final Entangler[] entanglers = getAllItemsOfType(new Entangler[0]);
 		boolean firstitem = true;
 		for (final Entangler e : entanglers) {
-			final String text = "("+e.i1.getId()+", "+e.i2.getId()+")";
+			final String text = "("+Tools.zBOB(e.i1.getId())+", "+Tools.zBOB(e.i2.getId())+")";
 			if (firstitem) {
 				sb.append(text);
 				firstitem = false;
@@ -416,7 +417,7 @@ public class Visualizer extends JPanel {
 		firstitem = true;
 		for (final Qubit q : qubit)
 			if (q.perform_measurement) {
-				final String text = "("+q.getId()+", "+getDependance(q, corrtype.X, "s")+", "+getDependance(q, corrtype.Z, "t")+", "+q.measurement_angle+")";
+				final String text = "("+Tools.zBOB(q.getId())+", "+getDependance(q, corrtype.X, "s")+", "+getDependance(q, corrtype.Z, "t")+", "+q.measurement_angle+")";
 				if (firstitem) {
 					sb.append(text);
 					firstitem = false;
@@ -431,8 +432,8 @@ public class Visualizer extends JPanel {
 		for (final Qubit q : qubit)
 			if (!q.perform_measurement) {
 				
-				final String textx = "("+q.getId()+", x, "+getDependance(q, corrtype.X, "s")+")";
-				final String textz = "("+q.getId()+", z, "+getDependance(q, corrtype.Z, "s")+")";
+				final String textx = "("+Tools.zBOB(q.getId())+", x, "+getDependance(q, corrtype.X, "s")+")";
+				final String textz = "("+Tools.zBOB(q.getId())+", z, "+getDependance(q, corrtype.Z, "s")+")";
 				
 				if (firstitem) {
 					sb.append(textx);

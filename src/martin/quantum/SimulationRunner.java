@@ -77,7 +77,7 @@ public final class SimulationRunner {
 			
 			final String[] csv = m.split(",");
 			
-			al.add(new E( Integer.parseInt(csv[0].trim()), Integer.parseInt(csv[1].trim()) ));
+			al.add(new E( Tools.oBZB(Integer.parseInt(csv[0].trim())), Tools.oBZB(Integer.parseInt(csv[1].trim())) ));
 		}
 	}
 	
@@ -97,7 +97,7 @@ public final class SimulationRunner {
 			
 			final String[] csv = m.split(",");
 			
-			int qubitId = Integer.parseInt(csv[0].trim());
+			int qubitId = Tools.oBZB(Integer.parseInt(csv[0].trim()));
 			final MathsItem sitem = MathsParser.parse(csv[1]);
 			final MathsItem titem = MathsParser.parse(csv[2]);
 			final MathsItem alpha = MathsParser.parse(csv[3]);
@@ -129,7 +129,7 @@ public final class SimulationRunner {
 
 			final String[] csv = m.split(",");
 
-			int qubitId = Integer.parseInt(csv[0].trim());
+			int qubitId = Tools.oBZB(Integer.parseInt(csv[0].trim()));
 			final char meas = csv[1].trim().toLowerCase().charAt(0);
 			final MathsItem sitem = MathsParser.parse(csv[2]);
 

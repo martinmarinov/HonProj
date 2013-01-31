@@ -90,7 +90,7 @@ public class MainGUI {
 		frmMbqcSimulatorValpha.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frmMbqcSimulatorValpha.getContentPane().setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Qubits are indexed from 0. First few qubits are always inputs.");
+		JLabel lblNewLabel = new JLabel("Qubits are indexed from 1. First few qubits are always inputs.");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(145, 5, 431, 14);
 		frmMbqcSimulatorValpha.getContentPane().add(lblNewLabel);

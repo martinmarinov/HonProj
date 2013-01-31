@@ -197,4 +197,26 @@ public final class Tools {
 		return ans;
 	}
 
+	
+	/**
+	 * Use for translating internal qubit representation to user visible representation.
+	 * Convert zero based qubit indexing to one based qubit indexing.
+	 * I know it's just qubitid+1 but using this function makes the code more readable.
+	 * @param qubitid
+	 * @return qubitid+1;
+	 */
+	public static final int zBOB(final int qubitid) {
+		return qubitid+1;
+	}
+	
+	/**
+	 * Use for translating user visible representation to internal qubit representation.
+	 * Convert one based qubit indexing to zero based qubit indexing.
+	 * I know it's just qubitid-1 but using this function makes the code more readable.
+	 * @param qubitid
+	 * @return qubitid-1;
+	 */
+	public static final int oBZB(final int qubitid) {
+		return qubitid-1;
+	}
 }
