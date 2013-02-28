@@ -1,7 +1,9 @@
 package martin.math;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import martin.quantum.tools.Tools;
 import martin.quantum.tools.Tuple;
@@ -77,8 +79,82 @@ public class MathFract implements MathsItem {
 
 	@Override
 	public void simplify() {
+		
+		if (!Tools.SIMPLIFICATION_ENABLED)
+			return;
+		
 		num.simplify();
 		den.simplify();
+		
+		final Collection<Integer> ints = new ArrayList<Integer>();
+
+		if (!putIntsInHere(num, ints) || !putIntsInHere(den, ints))
+			return;
+
+		if (ints.isEmpty())
+			return;
+
+		final int dividor = gcd(ints);
+		if (dividor != 1) {
+//			System.out.print("Common dividor of [");
+//			for (final Integer in : ints) System.out.print(in+", ");
+//			System.out.println("] is "+dividor+" for "+this);
+			
+			final MathNumber numb = new MathNumber(dividor);
+
+			if (num.divide(numb)) {
+				if (!den.divide(numb)) {
+					num.multiply(numb);
+				} else {
+					den.simplify();
+					num.simplify();
+				}
+			}
+
+		}
+	}
+	
+	/** Takes all of the int coefficients of a MathExpression. Returns false on error */
+	private boolean putIntsInHere(final MathExpression from, final Collection<Integer> ints) {
+		for (final HashSet<MathsItem> mult : from.items) {
+			int count = 0;
+			
+			for (final MathsItem item : mult)
+				if (item instanceof MathNumber) {
+					final MathNumber mn = (MathNumber) item;
+					if (count != 0) return false;
+					if (mn.isInteger()) {
+						ints.add((int) mn.number);
+						count++;
+					}
+				}
+			
+			if (count != 1) return false;
+		}
+		
+		return true;
+	}
+	
+	/** Return greatest common devisor */
+	private static int gcd(final Iterable<Integer> numbers) {
+		final int minn = min(numbers);
+		
+		outer : for (int n = minn; n >= 1; n--) {
+			
+			for (final Integer in : numbers)
+				if (in % n != 0) continue outer;
+			
+			return n;
+		}
+		
+		return 1;
+	}
+	
+	private static Integer min(final Iterable<Integer> numbers) {
+		Integer ans = null;
+		for (final Integer n : numbers)
+			if (ans == null || n < ans) ans = n;
+		return ans;
 	}
 
 	@Override

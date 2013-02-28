@@ -1,0 +1,15 @@
+#---MBQC Graphical Pattern description---
+#Thu Jan 31 12:46:44 GMT 2013
+martin.gui.quantum.Qubit=4
+martin.gui.quantum.Entangler&2=3\u00004
+martin.gui.quantum.Entangler&1=1\u00003
+martin.gui.quantum.Entangler&0=2\u00003
+martin.gui.quantum.Qubit&3=471\u0000289\u0000normal\u00004\u00000\u0000false
+martin.gui.quantum.Qubit&2=312\u0000296\u0000normal\u00003\u00000\u0000true
+martin.gui.quantum.Qubit&1=137\u0000272\u0000input\u00002\u00000\u0000true
+martin.gui.quantum.Qubit&0=293\u0000104\u0000input\u00001\u00000\u0000false
+martin.gui.quantum.Entangler=3
+martin.gui.quantum.Corrector&2=2\u00004\u0000Z\u0000-100
+martin.gui.quantum.Corrector&1=3\u00004\u0000X\u0000100
+martin.gui.quantum.Corrector=3
+martin.gui.quantum.Corrector&0=2\u00003\u0000X\u0000100

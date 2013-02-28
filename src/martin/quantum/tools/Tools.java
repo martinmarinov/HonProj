@@ -11,8 +11,11 @@ public final class Tools {
 	
 	/** Default logger to output messages to */
 	public static PrintStream logger = System.out;
+	public static final boolean FORCE_SYSTEM_LOGGER = false;
 	
 	public static boolean SIMPLIFICATION_ENABLED = true;
+	
+	public static final boolean VERBOSE = false;
 	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!

@@ -14,6 +14,7 @@ public class I implements Operator {
 	private final int inpqubits;
 	
 	public I(final MathsItem ... items) throws Exception {
+		
 		this.items = items;
 		this.inpqubits = powerOfTwo(this.items.length);
 	}
@@ -33,6 +34,23 @@ public class I implements Operator {
 			s.coeff[i].simplify();
 		}
 	}
+	
+//	private final static int reverse(final int number, final int size) {
+//		int r = 0;
+//		for (int i = 0; i < size; i++)
+//			r = setBit(i, r, getBit(size-i-1, number));
+//		return r;
+//	}
+//	
+//	private final static int getBit(final int id, final int number) {
+//		return (number >> id) & 1;
+//	}
+//	
+//	private final static int setBit(final int id, final int number, final int val) {
+//		return (val == 1) ?
+//			((1 << id) | number) :
+//			((((1 << 31) - 1) ^ (1 << id)) & number);
+//	}
 	
 	private static int powerOfTwo(final int initnumber) throws Exception {
 		int power = 0;

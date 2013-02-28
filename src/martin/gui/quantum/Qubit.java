@@ -370,7 +370,7 @@ public class Qubit extends Item implements Comparable<Qubit> {
 
 	@Override
 	public int compareTo(Qubit o) {
-		return id > o.id ? 1 : (o.id < id ? -1 : 0);
+		return id > o.id ? 1 : (id < o.id ? -1 : 0);
 	}
 	
 	@Override

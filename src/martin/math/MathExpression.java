@@ -9,10 +9,10 @@ import martin.quantum.tools.Tuple;
 
 public class MathExpression implements MathsItem {
 	
-	private final static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 1000;
+	private final static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 50;//1000;
 	
-	private final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
-	public static boolean deep_simplify = false;
+	final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
+	public static boolean deep_simplify = true;
 
 	@Override
 	public boolean hasNegativeSign() {
@@ -559,6 +559,39 @@ public class MathExpression implements MathsItem {
 	@Override
 	public boolean divide(MathsItem m) {
 
+		if (m instanceof MathNumber) {
+			
+			final HashSet<MathsItem> divided = new HashSet<MathsItem>();
+			
+			for (final HashSet<MathsItem> mult : items) {
+				int count = 0;
+				
+				for (final MathsItem item : mult)
+					if (item instanceof MathNumber) {
+						if (count != 0) {
+							for (final MathsItem rest : divided) rest.multiply(m);
+							return false;
+						}
+						final Complex v = item.getValue(null);
+						if (v.I == 0 && v.R == (int) v.R) {
+							
+							if (!item.divide(m)) {
+								for (final MathsItem rest : divided) {
+									rest.multiply(m);
+								}
+								return false;
+							}
+							
+							divided.add(item);
+							
+							count++;
+						}
+					}
+			}
+			
+			return true;
+		}
+		
 		return false;
 	}
 

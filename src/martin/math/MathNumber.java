@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class MathNumber implements MathsItem {
 	
-	private double number;
+	double number;
 	
 	/**
 	 * Create a double precision floating point item with a given value
@@ -88,6 +88,10 @@ public class MathNumber implements MathsItem {
 	public boolean isOne() {
 		return number == 1;
 	}
+	
+	public boolean isInteger() {
+		return number == (int) number;
+	}
 
 	@Override
 	public Complex getValue(final HashMap<String, Complex> rules) {
@@ -107,6 +111,16 @@ public class MathNumber implements MathsItem {
 
 	@Override
 	public boolean divide(MathsItem m) {
+		
+		if (m instanceof MathNumber) {
+			final MathNumber mn = (MathNumber) m;
+			if (!mn.isInteger() || !isInteger())
+				return false;
+			
+			number /= mn.number;
+			return true;
+		}
+		
 		return false;
 	}
 

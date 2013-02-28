@@ -29,5 +29,10 @@ public class AddCoeffTogether implements Operator {
 		}
 
 	}
+	
+	@Override
+	public String toString() {
+		return "Add coefficients together";
+	}
 
 }

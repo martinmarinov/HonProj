@@ -408,7 +408,7 @@ public class MainGUI {
 					}
 				}
 			});
-			Tools.logger = this;
+			if (!Tools.FORCE_SYSTEM_LOGGER) Tools.logger = this;
 		}
 		
 	}

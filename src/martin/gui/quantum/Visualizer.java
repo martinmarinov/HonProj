@@ -366,7 +366,8 @@ public class Visualizer extends JPanel {
 		final McalcDescription desc = new McalcDescription();
 		final StringBuilder sb = new StringBuilder(); // for efficient String building
 		
-		final Qubit[] qubit = getAllItemsOfType(new Qubit[0]); Arrays.sort(qubit);
+		final Qubit[] qubit = getAllItemsOfType(new Qubit[0]);
+		Arrays.sort(qubit);
 		
 		// error checking
 		for (int i = qubit.length - 1; i > 0; i--)

@@ -6,7 +6,9 @@ import martin.math.Complex;
 import martin.math.MathExpression;
 import martin.math.MathNumber;
 import martin.math.MathsItem;
+import martin.operators.AddCoeffTogether;
 import martin.operators.Operator;
+import martin.quantum.tools.Tools;
 
 public class SystemMatrix {
 
@@ -81,13 +83,13 @@ public class SystemMatrix {
 			
 			if (i != 0) rep += " + \n";
 			
-			rep += coeff[i]+" "+getBraKet(i);
+			rep += coeff[i]+"\t"+getBraKet(i);
 		}
 
 		return rep;
 	}
 	
-	private String getBraKet(int id) {
+	public String getBraKet(int id) {
 		final int[] idxes = getIndexesFromId(id);
 		String rep = "|";
 
@@ -119,14 +121,28 @@ public class SystemMatrix {
 	
 	public void performReverse(Operator ... actions) throws Exception
 	{
-		for (int i = actions.length - 1; i >= 0; i--)
+		for (int i = actions.length - 1; i >= 0; i--) {
+			Tools.logger.println("Performing "+actions[i]);
 			actions[i].operate(this);
+			if (Tools.VERBOSE) {
+				(new AddCoeffTogether()).operate(this);
+				Tools.logger.println(this);
+				Tools.logger.println();
+			}
+		}
 	}
 	
 	public void perform(Operator ... actions) throws Exception
 	{
-		for (int i = 0; i < actions.length; i++)
+		for (int i = 0; i < actions.length; i++) {
+			Tools.logger.println("Performing "+actions[i]);
 			actions[i].operate(this);
+			if (Tools.VERBOSE) {
+				(new AddCoeffTogether()).operate(this);
+				Tools.logger.println(this);
+				Tools.logger.println();
+			}
+		}
 	}
 	
 	/** Gets the vector representing the system matrix dotted with itself */

@@ -31,9 +31,6 @@ public final class SimulationRunner {
 		parseMeasurements(al, desc.measurements, b);
 		parseCorrections(al, desc.corrections, b);
 		
-		for (Operator o : al)
-			Tools.logger.println("Will perform: "+o);
-		
 		sm.perform(al.toArray(new Operator[0]));	
 		
 		sm.perform(new AddCoeffTogether());
