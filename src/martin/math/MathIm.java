@@ -185,5 +185,10 @@ public class MathIm extends MathFunction {
 	public boolean divide(MathsItem m) {
 		return false;
 	}
+	
+	@Override
+	public void complexconjugate() {
+		negate();
+	}
 
 }

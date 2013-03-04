@@ -232,5 +232,11 @@ public class MathFract implements MathsItem {
 	public boolean divide(MathsItem m) {
 		return false;
 	};
+	
+	@Override
+	public void complexconjugate() {
+		num.complexconjugate();
+		den.complexconjugate();
+	}
 
 }

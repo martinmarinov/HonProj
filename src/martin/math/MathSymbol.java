@@ -7,6 +7,7 @@ public class MathSymbol implements MathsItem {
 	private final String symbol;
 	private boolean negative = false;
 	private boolean zero = false;
+	private boolean complexconj = false;
 	
 	public MathSymbol(final String symbol) {
 		this.symbol = symbol;
@@ -14,10 +15,11 @@ public class MathSymbol implements MathsItem {
 		zero = false;
 	}
 	
-	private MathSymbol(final String symbol, boolean negative, boolean zero) {
+	private MathSymbol(final String symbol, boolean negative, boolean zero, boolean complexconj) {
 		this.symbol = symbol;
 		this.negative = negative;
 		this.zero = zero;
+		this.complexconj = complexconj;
 	}
 
 	@Override
@@ -55,6 +57,9 @@ public class MathSymbol implements MathsItem {
 		if (negative)
 			value.negate();
 		
+		if (complexconj)
+			value.I = - value.I;
+		
 		return value;
 	}
 
@@ -88,12 +93,12 @@ public class MathSymbol implements MathsItem {
 		
 		if (negative) {
 			final MathExpression e = new MathExpression();
-			e.add(new MathSymbol(symbol, false, false));
+			e.add(new MathSymbol(symbol, false, false, complexconj));
 			e.multiply(new MathNumber(-1));
 			return e;
 		}
 		
-		return new MathSymbol(symbol, negative, false);
+		return new MathSymbol(symbol, negative, false, complexconj);
 	}
 	
 	public static MathSymbol fromString(String input) throws Exception {
@@ -106,19 +111,19 @@ public class MathSymbol implements MathsItem {
 			if (!Character.isLetterOrDigit(input.charAt(i)))
 					return null;
 		
-		return new MathSymbol(input, negative, false);
+		return new MathSymbol(input, negative, false, false);
 	}
 	
 	@Override
 	public String toString() {
 		
 		if (DEBUG)
-			return " [Sym]" + (negative ? "-" : "") + symbol;
+			return " [Sym]" + (negative ? "-" : "") + symbol + (complexconj ? "^" : "");
 		
 		if (negative)
-			return "-"+symbol;
+			return "-"+symbol+ (complexconj ? "^" : "");
 		else
-			return symbol;
+			return symbol+ (complexconj ? "^" : "");
 	}
 	
 	@Override
@@ -134,6 +139,11 @@ public class MathSymbol implements MathsItem {
 	@Override
 	public boolean divide(MathsItem m) {
 		return false;
+	}
+	
+	@Override
+	public void complexconjugate() {
+		complexconj = !complexconj;
 	}
 
 }

@@ -89,5 +89,10 @@ public abstract class MathFunction implements MathsItem {
 		}
 		return false;
 	}
+	
+	@Override
+	public void complexconjugate() {
+		expr.complexconjugate();
+	}
 
 }

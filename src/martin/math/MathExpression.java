@@ -519,6 +519,13 @@ public class MathExpression implements MathsItem {
 		return ans;
 	}
 	
+	@Override
+	public void complexconjugate() {
+		for (final HashSet<MathsItem> its : items)
+			for (final MathsItem it : its)
+					it.complexconjugate();
+	}
+	
 	private static HashSet<MathsItem> parsemultiples(final Tuple<char[], String> ms) throws Exception {
 		final ArrayList<Tuple<char[], String>> multiples = Tools.splitByTopLevel(ms.y, new char[]{'*'}, false);
 		final HashSet<MathsItem> forstore = new HashSet<MathsItem>();

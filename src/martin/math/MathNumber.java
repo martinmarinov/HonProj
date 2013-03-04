@@ -123,5 +123,8 @@ public class MathNumber implements MathsItem {
 		
 		return false;
 	}
+	
+	@Override
+	public void complexconjugate() {}
 
 }

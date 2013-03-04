@@ -157,7 +157,10 @@ public class SystemMatrix {
 			final MathsItem square = new MathExpression();
 			square.add(new MathNumber(1));
 			square.multiply(coeff[i].clone());
-			square.multiply(coeff[i].clone());
+			
+			final MathsItem complconj = coeff[i].clone();
+			complconj.complexconjugate();
+			square.multiply(complconj);
 			square.simplify();
 			
 			probab.add(square);

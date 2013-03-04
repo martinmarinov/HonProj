@@ -23,6 +23,11 @@ public interface MathsItem {
 	 */
 	public void negate();
 	
+	/**
+	 * Get the complex conjugate of the current item
+	 */
+	public void complexconjugate();
+	
 	public boolean isZero();
 	
 	public boolean isOne();
