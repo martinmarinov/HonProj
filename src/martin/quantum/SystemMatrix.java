@@ -28,6 +28,19 @@ public class SystemMatrix {
 			coeff[i].add(new MathNumber(1));
 		}
 	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		final SystemMatrix clone = new SystemMatrix(mNumbQubits);
+		
+		for (int i = 0; i < size; i++)
+			clone.coeff[i] = coeff[i].clone();
+		
+		for (int i = 0; i < mNumbQubits; i++)
+				clone.measured[i] = measured[i];
+	
+		return clone;
+	}
 
 	public void setCoeff(final MathsItem c, int... indeces) throws Exception {
 		if (indeces.length != mNumbQubits)
@@ -122,9 +135,9 @@ public class SystemMatrix {
 	public void performReverse(Operator ... actions) throws Exception
 	{
 		for (int i = actions.length - 1; i >= 0; i--) {
-			Tools.logger.println("Performing "+actions[i]);
+			if (!Tools.SILENT) Tools.logger.println("Performing "+actions[i]);
 			actions[i].operate(this);
-			if (Tools.VERBOSE) {
+			if (!Tools.SILENT && Tools.VERBOSE) {
 				(new AddCoeffTogether()).operate(this);
 				Tools.logger.println(this);
 				Tools.logger.println();
@@ -135,9 +148,9 @@ public class SystemMatrix {
 	public void perform(Operator ... actions) throws Exception
 	{
 		for (int i = 0; i < actions.length; i++) {
-			Tools.logger.println("Performing "+actions[i]);
+			if (!Tools.SILENT) Tools.logger.println("Performing "+actions[i]);
 			actions[i].operate(this);
-			if (Tools.VERBOSE) {
+			if (!Tools.SILENT && Tools.VERBOSE) {
 				(new AddCoeffTogether()).operate(this);
 				Tools.logger.println(this);
 				Tools.logger.println();
@@ -168,6 +181,11 @@ public class SystemMatrix {
 
 		probab.simplify();
 		return probab;
+	}
+	
+	public void simplify() {
+		for (int i = 0; i < size; i++)
+			coeff[i].simplify();
 	}
 
 }

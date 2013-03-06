@@ -15,7 +15,8 @@ public final class Tools {
 	
 	public static boolean SIMPLIFICATION_ENABLED = true;
 	
-	public static final boolean VERBOSE = false;
+	public static boolean VERBOSE = false;
+	public static boolean SILENT = false;
 	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!
