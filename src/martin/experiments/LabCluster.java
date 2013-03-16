@@ -17,11 +17,9 @@ public class LabCluster extends SystemMatrix {
 		try {
 			zero = MathsParser.parse("0");
 			
-			final MathsItem firstcoeff = MathsParser.parse("exp(Im((" + n
-					+ "*Pi)/4))");
+			final MathsItem firstcoeff = MathsParser.parse("exp(Im((" + n + "*Pi)/4))");
 			final MathsItem coeffi = MathsParser.parse("Im(1)");
-			final MathsItem secondcoeff = MathsParser.parse("-Im(exp((" + n
-					+ "*Pi)/4))");
+			final MathsItem secondcoeff = MathsParser.parse("-Im(exp(Im((" + n + "*Pi)/4)))");
 
 			coeff[1].multiply(zero);
 			coeff[2].multiply(zero);

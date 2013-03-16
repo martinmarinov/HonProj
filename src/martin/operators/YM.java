@@ -7,7 +7,7 @@ import martin.quantum.SystemMatrix;
 
 public class YM extends M {
 
-	private final static MathsItem IM = new MathIm(new MathNumber(1));
+	private final static MathsItem IM = new MathIm(new MathNumber(-1));
 	
 	public YM(int qubitId, int t, int s, int b) {
 		super(qubitId, t, s, null, b);

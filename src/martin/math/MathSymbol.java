@@ -50,7 +50,7 @@ public class MathSymbol implements MathsItem {
 		Complex value = rules == null ? null : rules.get(symbol);
 		
 		if (value == null)
-			return new Complex(Float.NaN, Float.NaN);
+			return new Complex(Double.NaN, Double.NaN);
 		
 		value = value.clone();
 		

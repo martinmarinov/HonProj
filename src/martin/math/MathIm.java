@@ -188,6 +188,7 @@ public class MathIm extends MathFunction {
 	
 	@Override
 	public void complexconjugate() {
+		expr.complexconjugate();
 		negate();
 	}
 
