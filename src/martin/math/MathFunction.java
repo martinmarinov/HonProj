@@ -66,6 +66,9 @@ public abstract class MathFunction implements MathsItem {
 	@Override
 	public String toString() {
 		
+		String name = this.name;
+		if (Tools.MATHEMATICA_FRIENDLY_OUTPUT) name = name.substring(0, 1).toUpperCase() + name.substring(1);
+		
 		if (expr instanceof MathExpression) {
 			if (negative)
 				return "-"+name+expr;

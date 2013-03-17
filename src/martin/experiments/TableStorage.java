@@ -6,9 +6,9 @@ public class TableStorage<R, C, V> {
 	
 	private final static int CHARS_IN_OUTPUT = 7;
 	
-	private final ArrayList<R> rowheaders = new ArrayList<R>();
-	private final ArrayList<C> columns = new ArrayList<C>();
-	private final ArrayList<ArrayList<V>> values = new ArrayList<ArrayList<V>>();
+	final ArrayList<R> rowheaders = new ArrayList<R>();
+	final ArrayList<C> columns = new ArrayList<C>();
+	final ArrayList<ArrayList<V>> values = new ArrayList<ArrayList<V>>();
 	
 	public int getRowCount() {
 		return rowheaders.size();

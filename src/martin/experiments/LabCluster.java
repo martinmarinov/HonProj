@@ -2,9 +2,9 @@ package martin.experiments;
 
 import martin.math.MathsItem;
 import martin.math.MathsParser;
+import martin.operators.M;
 import martin.operators.Operator;
-import martin.operators.XM;
-import martin.operators.YM;
+import martin.operators.ZM;
 import martin.quantum.SystemMatrix;
 
 public class LabCluster extends SystemMatrix {
@@ -79,14 +79,26 @@ public class LabCluster extends SystemMatrix {
 	}
 	
 	private Operator getOp(final char meas, final String base, int i, final int[] branches) throws MeasurementCycleNotSupported {
-		switch (meas) {
-		case 'X':
-			return new XM(i, 0, 0, branches[i]);
-		case 'Y':
-			return new YM(i, 0, 0, branches[i]);
+		try {
+			switch (meas) {
+			case 'X':
+				return new M(i, 0, 0, MathsParser.parse("0"), branches[i]);
+				//return new XM(i, 0, 0, branches[i]);
+			case 'Y':
+				//return new YM(i, 0, 0, branches[i]);
+				return new M(i, 0, 0, MathsParser.parse("Pi/2"), branches[i]);
+			case 'M':
+				return new M(i, 0, 0, MathsParser.parse("-Pi/4"), branches[i]);
+			case 'P':
+				return new M(i, 0, 0, MathsParser.parse("Pi/4"), branches[i]);
+			case 'Z':
+				return new ZM(i, 0, 0, branches[i]);
 
-		default:
-			throw new MeasurementCycleNotSupported(base, i);
+			default:
+				throw new MeasurementCycleNotSupported(base, i);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	

@@ -96,6 +96,7 @@ public class SystemMatrix {
 			
 			if (i != 0) rep += " + \n";
 			
+			coeff[i].simplify();
 			rep += coeff[i]+"\t"+getBraKet(i);
 		}
 
@@ -158,8 +159,30 @@ public class SystemMatrix {
 		}
 	}
 	
+	public static MathsItem square(final MathsItem it) {
+		it.simplify();
+		
+		MathsItem square = new MathExpression();
+		square.add(new MathNumber(1));
+		square.multiply(it.clone());
+		
+		final MathsItem complconj = it.clone();
+		complconj.complexconjugate();
+		square.multiply(complconj);
+		square.simplify();
+		
+		return square;
+	}
+	
 	/** Gets the vector representing the system matrix dotted with itself */
 	public MathsItem getProbability() {
+		try {
+			perform(new AddCoeffTogether());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		simplify();
+		
 		final MathsItem probab = new MathExpression();
 		
 		for (int i = 0; i < size; i++) {
@@ -167,20 +190,35 @@ public class SystemMatrix {
 			if (coeff[i].isZero())
 				continue;
 			
-			final MathsItem square = new MathExpression();
-			square.add(new MathNumber(1));
-			square.multiply(coeff[i].clone());
+			System.out.print("Norm[ "+coeff[i]+" = "+coeff[i].getValue(Tools.PI_rule)+" ] = ");
 			
-			final MathsItem complconj = coeff[i].clone();
-			complconj.complexconjugate();
-			square.multiply(complconj);
-			square.simplify();
+			final MathsItem square = square(coeff[i]);
+			
+			System.out.println(square+" = "+square.getValue(Tools.PI_rule));
 			
 			probab.add(square);
 		}
 
 		probab.simplify();
 		return probab;
+	}
+	
+	public double getQuickProbability(final HashMap<String, Complex> rules) {
+		try {
+			perform(new AddCoeffTogether());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		simplify();
+		
+		double sq = 0;
+		
+		for (int i = 0; i < size; i++) {
+			final Complex val = coeff[i].getValue(rules);
+			sq += val.R * val.R + val.I * val.I;
+		}
+		
+		return sq;
 	}
 	
 	public void simplify() {

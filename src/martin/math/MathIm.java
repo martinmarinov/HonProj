@@ -160,6 +160,7 @@ public class MathIm extends MathFunction {
 		if (DEBUG)
 			return "( ["+name+"; "+(negative ? "-" : "+")+"; "+(real? "Re" : "Im")+"]"+expr+")";
 		
+		
 		if (real) {
 			if (expr instanceof MathExpression) {
 				if (negative)
@@ -172,8 +173,11 @@ public class MathIm extends MathFunction {
 			else
 				return "Re("+expr+")";
 		}
-					
-		return super.toString();
+		
+		if (Tools.MATHEMATICA_FRIENDLY_OUTPUT) {
+			return "(I*("+expr+"))";
+		} else
+			return super.toString();
 	}
 	
 	@Override
@@ -191,5 +195,6 @@ public class MathIm extends MathFunction {
 		expr.complexconjugate();
 		negate();
 	}
+	
 
 }
