@@ -6,16 +6,22 @@ import martin.operators.M;
 import martin.operators.Operator;
 import martin.operators.ZM;
 import martin.quantum.SystemMatrix;
+import martin.quantum.tools.Tools;
 
 public class LabCluster extends SystemMatrix {
-
-	private final MathsItem zero;
+	
+	public LabCluster(final MathsItem[] items) throws Exception {
+		super(Tools.powerOfTwo(items.length));
+		for (int i = 0; i < items.length; i++)
+			coeff[i].multiply(items[i].clone());
+		simplify();
+	}
 	
 	public LabCluster(int n) {
 		super(4);
 
 		try {
-			zero = MathsParser.parse("0");
+			final MathsItem zero = MathsParser.parse("0");
 			
 			final MathsItem firstcoeff = MathsParser.parse("exp(Im((" + n + "*Pi)/4))");
 			final MathsItem coeffi = MathsParser.parse("Im(1)");

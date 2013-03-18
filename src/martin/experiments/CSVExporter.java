@@ -1,17 +1,18 @@
 package martin.experiments;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class CSVExporter {
 	
 	private final PrintWriter out;
+	private final StringWriter string;
 	private final String delimiter;
 	
-	public CSVExporter(final String filename, final String delimiter) throws IOException {
-		out = new PrintWriter(new FileWriter( new File(filename) ));
+	public CSVExporter(final String delimiter) throws IOException {
+		out = new PrintWriter(string = new StringWriter());
 		this.delimiter = delimiter;
 	}
 	
@@ -36,7 +37,9 @@ public class CSVExporter {
 		out.println();
 	}
 	
-	public void close() {
+	public void saveToFile(final String filename) throws FileNotFoundException {
+		final PrintWriter out = new PrintWriter(filename);
+		out.write(string.toString());
 		out.close();
 	}
 	

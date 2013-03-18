@@ -6,6 +6,7 @@ import martin.math.MathNumber;
 import martin.math.MathSqrt;
 import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
+import martin.quantum.tools.Tools;
 
 public class I implements Operator {
 	
@@ -16,7 +17,7 @@ public class I implements Operator {
 	public I(final MathsItem ... items) throws Exception {
 		
 		this.items = items;
-		this.inpqubits = powerOfTwo(this.items.length);
+		this.inpqubits = Tools.powerOfTwo(this.items.length);
 	}
 
 	@Override
@@ -51,19 +52,6 @@ public class I implements Operator {
 //			((1 << id) | number) :
 //			((((1 << 31) - 1) ^ (1 << id)) & number);
 //	}
-	
-	private static int powerOfTwo(final int initnumber) throws Exception {
-		int power = 0;
-		int number = initnumber;
-		
-		while ((number >>= 1) != 0)
-			power++;
-		
-		if ((1 << power) != initnumber)
-			throw new Exception("The input is not a power of 2!");
-		
-		return power;
-	}
 	
 	@Override
 	public String toString() {

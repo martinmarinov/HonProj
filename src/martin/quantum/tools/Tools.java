@@ -16,11 +16,11 @@ public final class Tools {
 	public static boolean SIMPLIFICATION_ENABLED = true;
 	
 	public static boolean VERBOSE = false;
-	public static boolean SILENT = false;
+	public static boolean SILENT = true;
 	public static boolean MATHEMATICA_FRIENDLY_OUTPUT = false;
 	
-	public final static HashMap<String, Complex> PI_rule = Tools.generatePairs(
-			new String[] { "Pi" }, new Complex[] { new Complex(Math.PI, 0) });
+	//public final static HashMap<String, Complex> PI_rule = Tools.generatePairs(
+	//		new String[] { "Pi" }, new Complex[] { new Complex(Math.PI, 0) });
 	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!
@@ -226,5 +226,18 @@ public final class Tools {
 	 */
 	public static final int oBZB(final int qubitid) {
 		return qubitid-1;
+	}
+	
+	public static int powerOfTwo(final int initnumber) throws Exception {
+		int power = 0;
+		int number = initnumber;
+		
+		while ((number >>= 1) != 0)
+			power++;
+		
+		if ((1 << power) != initnumber)
+			throw new Exception("The input is not a power of 2!");
+		
+		return power;
 	}
 }

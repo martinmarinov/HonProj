@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.awt.Color;
 
 public class GraphicalGUI {
 	
@@ -43,9 +44,12 @@ public class GraphicalGUI {
 	
 	private JFileChooser fileChooser = new JFileChooser(".");
 	
-	private MainGUI mgui = new MainGUI();
+	private EvaluatorGUI mgui = new EvaluatorGUI();
+	private ExperimentConductor expverf = new ExperimentConductor();
 	private JMenuItem mntmOpenGraphical;
 	private JMenuItem mntmSaveGraphical;
+	private JMenu mnTools;
+	private JMenuItem mntmExperimentVerifier;
 	
 	/**
 	 * Launch the application.
@@ -89,6 +93,7 @@ public class GraphicalGUI {
 		visualizer = new Visualizer();
 		visualizer.registerInventory(toolBar);
 		frmMeasurementBasedQuantum.getContentPane().add(visualizer);
+		toolBar.setBackground(new Color(99, 97, 122));
 		
 		frmMeasurementBasedQuantum.getContentPane().add(toolBar, BorderLayout.NORTH);
 		
@@ -157,6 +162,19 @@ public class GraphicalGUI {
 			}
 		});
 		mnSimulate.add(mntmTranslateToMcalc);
+		
+		mnTools = new JMenu("Tools");
+		menuBar.add(mnTools);
+		
+		mntmExperimentVerifier = new JMenuItem("Experiment verifier");
+		mntmExperimentVerifier.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				expverf.makeVisible();
+			}
+		});
+		mnTools.add(mntmExperimentVerifier);
 	}
 	
 	private void throwException(final Exception e) {

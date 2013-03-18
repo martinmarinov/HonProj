@@ -17,7 +17,7 @@ public class MathsParser {
 	/**
 	 * The classes ordered by precedence
 	 */
-	private static final Class<?>[] CLASSES = {MathExpression.class, MathNumber.class, MathExp.class, MathIm.class, MathSqrt.class, MathFract.class, MathSymbol.class};
+	private static final Class<?>[] CLASSES = {MathExpression.class, MathFract.class, MathNumber.class, MathExp.class, MathIm.class, MathSqrt.class, MathSymbol.class};
 	
 	/**
 	 * The private static function that each of the classes in {@link #CLASSES} must implement
@@ -58,6 +58,20 @@ public class MathsParser {
 		} catch (InvocationTargetException e) {
 			throw (Exception) e.getCause();
 		}
+	}
+	
+	/**
+	 * Parse an array of MathsItems
+	 * @param input
+	 * @return
+	 * @throws Exception
+	 */
+	public final static MathsItem[] items(final String input, final String delimiter) throws Exception {
+		final String[] split = input.split(delimiter);
+		final MathsItem[] ans = new MathsItem[split.length];
+		for (int i = 0; i < ans.length; i++)
+			ans[i] = parse(split[i]);
+		return ans;
 	}
 
 }

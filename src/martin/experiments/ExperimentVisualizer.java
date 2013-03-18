@@ -14,12 +14,12 @@ public class ExperimentVisualizer {
 	private final static int left_offset = 110;
 	private final static int vert_offset = 1;
 	private final static int text_offset = 5;
-	private final static int width = 500;
+	private final static int width = 620;
 	private final static int height = 50;
 	
-	private final static ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
+	private final ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
 	
-	public static void add(final String alabel, final Double[] a, final String blabel, final Double[] b) {
+	public void add(final String alabel, final Double[] a, final String blabel, final Double[] b) {
 		double max = 0;
 		double min = 1.0;
 		double sum = 0;
@@ -76,7 +76,7 @@ public class ExperimentVisualizer {
 		images.add(im);
 	}
 	
-	public static void dumpToFile(final String name) throws IOException {
+	public BufferedImage getImage() {
 		int width = 0;
 		int height = 0;
 		for (final BufferedImage im : images) {
@@ -94,8 +94,11 @@ public class ExperimentVisualizer {
 		}
 		g.dispose();
 		
-		ImageIO.write(res, "png", new File(name));
-		System.out.println("'"+name+"' saved!");
+		return res;
+	}
+	
+	public void dumpToFile(final String name) throws IOException {
+		ImageIO.write(getImage(), "png", new File(name));
 	}
 	
 	
