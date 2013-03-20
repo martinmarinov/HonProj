@@ -14,8 +14,9 @@ public class ExperimentVisualizer {
 	private final static int left_offset = 110;
 	private final static int vert_offset = 1;
 	private final static int text_offset = 5;
-	private final static int width = 620;
-	private final static int height = 50;
+	private final static int resid_offset = 55;
+	private final static int width = 610;
+	private final static int height = 40;
 	
 	private final ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
 	
@@ -23,11 +24,15 @@ public class ExperimentVisualizer {
 		double max = 0;
 		double min = 1.0;
 		double sum = 0;
+		double resdiff = 0;
 		for (int i = 0; i < a.length; i++) {
 			sum+=a[i];
 			if (a[i] > max) max = a[i];
 			if (a[i] < min) min = a[i];
+			resdiff += Math.abs(a[i]-b[i]);
 		}
+		resdiff /= (double) a.length;
+		resdiff *= 100; // in percent
 		final double asum = sum;
 		sum = 0;
 		for (int i = 0; i < b.length; i++) {
@@ -44,32 +49,34 @@ public class ExperimentVisualizer {
 		final Graphics g = im.createGraphics();
 
 		g.setColor(Color.white);
+		
 		g.fillRect(0, 0, width, height);
 		g.setColor(Color.black);
-		g.drawRect(0, 0, width, height);
+		g.drawString(String.format("%.4f%%",resdiff), width - resid_offset+text_offset, height / 2);
+		g.drawRect(0, 0, width - resid_offset, height);
 
 		g.drawString(alabel, text_offset, height / 4);
-		int av_width = width - left_offset;
-		float box_size = av_width / a.length;
+		int av_width = width - left_offset - resid_offset;
+		float box_size = av_width / (float) a.length;
 		for (int i = 0; i < a.length; i++) {
 			int col = (int) (250.0d * (a[i] - min) / range);
 			if (col > 255) col = 255;
 			if (col < 0) col = 0;
 
 			g.setColor(new Color(col, col, col));
-			g.fillRect((int) (left_offset+box_size*i), vert_offset, (int) box_size, height / 2 - vert_offset);
+			g.fillRect((int) (left_offset+box_size*i), vert_offset, (int) (box_size+1.0f), height / 2 - vert_offset);
 		}
 
 		g.setColor(Color.black);
 		g.drawString(blabel, text_offset, 3*height / 4);
-		float box_size2 = av_width / b.length;
+		float box_size2 = av_width / (float) b.length;
 		for (int i = 0; i < b.length; i++) {
 			int col = (int) (250.0d * (b[i] - min) / range);
 			if (col > 255) col = 255;
 			if (col < 0) col = 0;
 
 			g.setColor(new Color(col, col, col));
-			g.fillRect((int) (left_offset+box_size2*i), height/2, (int) box_size2, height / 2 - vert_offset);
+			g.fillRect((int) (left_offset+box_size2*i), height/2, (int) (box_size2+1.0f), height / 2 - vert_offset);
 		}
 
 		g.dispose();

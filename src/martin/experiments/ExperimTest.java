@@ -7,22 +7,76 @@ import java.util.HashMap;
 import martin.math.Complex;
 import martin.math.MathsItem;
 import martin.math.MathsParser;
+import martin.quantum.tools.Tools;
 
 public class ExperimTest {
+	
+	public static void main(String[] args) throws Exception {
+		final MathsItem[] items = MathsParser.items("1/2,0,0,exp(Im((n*Pi)/4))/2,0,0,0,0,0,0,0,0,Im(1)/2,0,0,-Im(exp(Im((n*Pi)/4)))/2", ",");
+		
+		double avg = 0;
+		double min = 30;
+		String maxs = "";
+		String mins = "";
+		double max = 0;
+		int c = 0;
+		
+		for (int n = 0; n < 8; n++) {
+			final Worksheet ws = new Worksheet("C:\\Users\\Martin\\Desktop\\data\\"+n+"_all.csv");
+			final HashMap<String, Complex> rule = Tools.generatePairs(new String[]{"Pi", "n"}, new Complex[]{new Complex(Math.PI, 0), new Complex(n, 0)});
+			final String[] res_rows = perform(items, ws, rule, null).csv.toString().split("\n");
+			
+			for (int r = 0; r < res_rows.length; r+=2) {
+				final String[] origs = res_rows[r].split(",");
+				final Double[] orig = new Double[origs.length-1];
+				double origsum = 0;
+				for (int i = 1; i < origs.length; i++) origsum += orig[i-1] = Double.parseDouble(origs[i]);
+				if (Math.abs(1-origsum) > 0.1) throw new Exception();
+				final String[] sims = res_rows[r+1].split(",");
+				final Double[] sim = new Double[sims.length-1];
+				double simsum = 0;
+				for (int i = 1; i < sims.length; i++) simsum += sim[i-1] = Double.parseDouble(sims[i]);
+				if (Math.abs(1-simsum) > 0.1) throw new Exception();
+				final Double[] res = new Double[sim.length];
+				double ressum = 0;
+				for (int i = 0; i < res.length; i++) ressum += res[i] = Math.abs(sim[i] - orig[i]);
+				
+				double avgres = ressum / (double) res.length;
+				if (avgres > max) {
+					max = avgres;
+					maxs = "Max "+avgres+" in "+origs[0]+" in file "+n+"_all.csv";
+				}
+				if (avgres < min) {
+					min = avgres;
+					mins = "Min "+avgres+" in "+origs[0]+" in file "+n+"_all.csv";
+				}
+				avg += avgres;
+				c++;
+			}
+			System.out.println(n+"_all.csv ready!");
+		}
+		
+		System.out.println("Average residual of all: "+avg / (double) c);
+		System.out.println(maxs);
+		System.out.println(mins);
+	}
 
 	public static ExperimentalResult perform(final String input_file, final String lab_cluster, final HashMap<String, Complex> rule, final ProgressListener listener) throws Exception {
-		final CSVExporter csv = new CSVExporter(",");
+		
 		final Worksheet ws = new Worksheet(input_file);
-		final ExperimentVisualizer vis = new ExperimentVisualizer();
 		
 		final MathsItem[] items = MathsParser.items(lab_cluster, ",");
 		final double init_norm = new LabCluster(items).getQuickProbability(rule);
 		if ( Math.abs(1.0d - init_norm) > 0.1d)
 			throw new Exception("Lab cluster input is not normalized to 1! (The norm is "+init_norm+")");
 		
-		//csv.putRow("", ws.storage.columns.toArray(new int[0])); // put header
-
-		long lastupdate = System.currentTimeMillis();
+		return perform(items, ws, rule, listener);
+	}
+	
+	private static ExperimentalResult perform(final MathsItem[] items, final Worksheet ws, final HashMap<String, Complex> rule, final ProgressListener listener1) throws Exception {
+		final ProgressListener listener = listener1 == null ? new ProgressListener() {public void onProgress(double percentage) {}} : listener1;
+		final ExperimentVisualizer vis = new ExperimentVisualizer();
+		final CSVExporter csv = new CSVExporter(",");
 		final int rows = ws.storage.getRowCount();
 		final int columns = ws.storage.getColCount();
 		final double total = rows * columns;
@@ -39,19 +93,17 @@ public class ExperimTest {
 					lc.perform(ws.storage.getRowHeader(r),
 							ws.storage.getColumnHeader(c));
 
-					originals.add((double) ws.storage.getValueAt(c, r));
-					simulated.add(lc.getQuickProbability(rule));
+					final double original = (double) ws.storage.getValueAt(c, r);
+					final double prediction = lc.getQuickProbability(rule);
+					
+					originals.add(original);
+					simulated.add(prediction);
 
 				} catch (Exception e) {}
 				
 				sofar++;
-				if ((sofar % 32) == 0) {
-					final long now = System.currentTimeMillis();
-					if (now - lastupdate > 100) {
-						lastupdate = now;
-						listener.onProgress(sofar / total);
-					}
-				}
+				if ((sofar % 64) == 0)
+					listener.onProgress(sofar / total);
 			}
 
 			if (!originals.isEmpty()) {
@@ -59,7 +111,7 @@ public class ExperimTest {
 				final Double[] origs = originals.toArray(new Double[0]);
 				final Double[] sims = simulated.toArray(new Double[0]);
 				
-				vis.add(rowhead+" originals", origs, rowhead+" simulated", sims);
+				vis.add(rowhead+" actual", origs, rowhead+" simulated", sims);
 				
 				csv.putRow(rowhead, origs);
 				csv.putRow("predicted", sims);

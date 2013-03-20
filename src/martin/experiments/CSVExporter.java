@@ -37,6 +37,11 @@ public class CSVExporter {
 		out.println();
 	}
 	
+	@Override
+	public String toString() {
+		return string.toString();
+	}
+	
 	public void saveToFile(final String filename) throws FileNotFoundException {
 		final PrintWriter out = new PrintWriter(filename);
 		out.write(string.toString());
