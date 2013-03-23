@@ -2,9 +2,11 @@ package martin.translatortest;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import martin.quantum.McalcDescription;
 
 public class QCGate {
 		public enum type {H, ZZ, JPI, JPI2, JPI4, JPI8};
@@ -87,7 +89,17 @@ public class QCGate {
 			return sb.toString();
 		}
 		
-		public static String printWebCicuit(final int qubit_count, final QCGate ... gate) {
+		private static int getQubitCount(final QCGate ... gate) {
+			int max = 0;
+			for (final QCGate g : gate) {
+				if (g.q1 > max) max = g.q1;
+				if (g.q2 > max) max = g.q2;
+			}
+			return max;
+		}
+		
+		public static String printWebCicuit(final QCGate ... gate) {
+			final int qubit_count = getQubitCount(gate);
 			final String[][] gs = new String[gate.length][];
 			for (int i = 0; i < gs.length; i++) gs[i] = gate[i].toWebFormat(qubit_count);
 			
@@ -114,9 +126,9 @@ public class QCGate {
 		 * @param translator_exe_path
 		 * @param gates
 		 * @return
-		 * @throws IOException
+		 * @throws Exception 
 		 */
-		public static String translateToMBQCRaw (final String translator_exe_path, final QCGate ... gates) throws IOException {
+		public static McalcDescription translateToMBQCRaw (final String translator_exe_path, final QCGate ... gates) throws Exception {
 			PrintWriter out = new PrintWriter("temp");
 			out.println(QCGate.printEinarCicuit(gates));
 			out.close();
@@ -125,7 +137,7 @@ public class QCGate {
 
 			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-			final StringBuilder answer = new StringBuilder();
+			final ArrayList<String> lines = new ArrayList<String>();
 			String line;
 			boolean lookfor = false;
 			while ((line = input.readLine()) != null) {
@@ -137,13 +149,165 @@ public class QCGate {
 				if (lookfor) {
 					if (line.trim().isEmpty())
 						break;
-					answer.append(line+"\n");
+					lines.add(line);
 				}
 			}
 			
 			p.destroy();
 
 			new File("temp").delete();
-			return answer.toString();
+			return parseMcalFromRaw(lines);
+		}
+		
+		private static McalcDescription parseMcalFromRaw(final ArrayList<String> lines) throws Exception {
+			final McalcDescription desc = new McalcDescription();
+			int last_qubit = 0;
+		
+			for (String line : lines) {
+				
+				final boolean input = line.startsWith("Input qubits:");
+				
+				int idx = line.indexOf(':');
+				if (idx >= 0) line = line.substring(idx+2);
+				
+				// parse inputs
+				if (input) {
+					final String[] ns = line.split(" ");
+					for (int i = 0; i < ns.length; i++)
+						if (!ns[i].equals(Integer.toString(i+1)))
+							throw new Exception("The input qubits must be in the beginning! Error on "+i);
+					last_qubit = ns.length;
+					
+					final int coeff_to_gen = 1 << ns.length;
+					
+					final StringBuilder sb = new StringBuilder();
+					char first = 'a';
+					sb.append(first);
+					
+					for (int i = 1; i < coeff_to_gen; i++) {
+						first++;
+						sb.append(", "+first);
+					}
+					
+					desc.inputs = sb.toString();
+					continue;
+				}
+				
+				// parse entanglement
+				if (line.startsWith("E")) {
+					line = line.substring(2);
+					final String[] ns = line.split(" ");
+					
+					final int q1 = Integer.parseInt(ns[0]);
+					if (q1 > last_qubit) last_qubit = q1;
+					final int q2 = Integer.parseInt(ns[1]);
+					if (q2 > last_qubit) last_qubit = q2;
+					
+					if (desc.entanglement == null || desc.entanglement.isEmpty())
+						desc.entanglement = "("+ns[0]+", "+ns[1]+")";
+					else
+						desc.entanglement += "; ("+ns[0]+", "+ns[1]+")";
+					continue;
+				}
+				
+				// parse measurement
+				if (line.startsWith("M(")) {
+					final int pos = line.indexOf(")");
+					final String ang = line.substring(2, pos);
+					
+					line = line.substring(pos+1);
+					line = line.replace(";", "");
+					line = line.trim();
+					
+					final int q = Integer.parseInt(line); // if error happens here, probably there is a correction defined as well
+					if (q > last_qubit) last_qubit = q;
+					
+					if (desc.measurements == null || desc.measurements.isEmpty())
+						desc.measurements = "("+q+", 0, 0, "+ang+")";
+					else
+						desc.measurements += "; ("+q+", 0, 0, "+ang+")";
+					continue;
+				}
+				
+				if (line.startsWith("X") || line.startsWith("Z")) {
+					char meas = line.toLowerCase().charAt(0);
+					line = line.substring(2);
+					line = line.replace(";", "");
+					line = line.trim();
+					final String[] ns = line.split(" ");
+					
+					final int q = Integer.parseInt(ns[0]);
+					if (q > last_qubit) last_qubit = q;
+					
+					final int corr = Integer.parseInt(ns[3]); 
+					if (corr > last_qubit) last_qubit = corr;
+					
+					if (desc.corrections == null || desc.corrections.isEmpty())
+						desc.corrections = "("+ns[0]+", "+meas+", "+ns[3]+")";
+					else
+						desc.corrections += "; ("+ns[0]+", "+meas+", "+ns[3]+")";
+					continue;
+				}
+				
+				throw new Exception("Unknown line: "+line);
+				
+			}
+			
+			desc.branches = "0";
+			for (int i = 1; i < last_qubit; i++)
+				desc.branches += ",0";
+			
+			desc.n = last_qubit;
+			return desc;
+		}
+		
+		public static QCGate[] generateCircuitFromEinar(final String desc) throws Exception {
+			final String[] lines = desc.split("\n");
+			final QCGate[] ans = new QCGate[lines.length];
+			
+			for (int l = 0; l < lines.length; l++) {
+				String line = lines[l];
+				
+				if (line.startsWith("ZZ")) {
+					line = line.substring(3);
+					final String[] vals = line.split(" ");
+					ans[l] =  new QCGate(type.ZZ, Integer.parseInt(vals[0].substring(1)), Integer.parseInt(vals[1].substring(1)));
+					continue;
+				}
+				
+				if (line.startsWith("H")) {
+					line = line.substring(2);
+					ans[l] =  new QCGate(type.H, Integer.parseInt(line.substring(1)));
+					continue;
+				}
+				
+				if (line.startsWith("J(pi)")) {
+					line = line.substring(6);
+					ans[l] =  new QCGate(type.JPI, Integer.parseInt(line.substring(1)));
+					continue;
+				}
+				
+				if (line.startsWith("J(pi/2)")) {
+					line = line.substring(8);
+					ans[l] =  new QCGate(type.JPI2, Integer.parseInt(line.substring(1)));
+					continue;
+				}
+				
+				if (line.startsWith("J(pi/4)")) {
+					line = line.substring(8);
+					ans[l] =  new QCGate(type.JPI4, Integer.parseInt(line.substring(1)));
+					continue;
+				}
+				
+				if (line.startsWith("J(pi/8)")) {
+					line = line.substring(8);
+					ans[l] =  new QCGate(type.JPI8, Integer.parseInt(line.substring(1)));
+					continue;
+				}
+				
+				throw new Exception(line+" is not supported!");
+			}
+			
+			return ans;
 		}
 }

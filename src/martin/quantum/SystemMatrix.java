@@ -76,7 +76,7 @@ public class SystemMatrix {
 		return id;
 	}
 
-	public int[] getIndexesFromId(int id) {
+	public static int[] getIndexesFromId(int id, int mNumbQubits) {
 
 		int[] idx = new int[mNumbQubits];
 		for (int i = 0; i < mNumbQubits; i++)
@@ -104,7 +104,7 @@ public class SystemMatrix {
 	}
 	
 	public String getBraKet(int id) {
-		final int[] idxes = getIndexesFromId(id);
+		final int[] idxes = getIndexesFromId(id, mNumbQubits);
 		String rep = "|";
 
 			for (int j = 0; j < idxes.length; j++)
@@ -117,18 +117,37 @@ public class SystemMatrix {
 		return rep;
 	}
 	
+	public static String getBraKet(int id, int mNumbQubits) {
+		final int[] idxes = getIndexesFromId(id, mNumbQubits);
+		String rep = "|";
+
+			for (int j = 0; j < idxes.length; j++)
+					rep += idxes[j];
+
+			rep += ">";
+		return rep;
+	}
+	
 	public String printValues(final HashMap<String, Complex> rules, final boolean normalize) {
 		String rep = "";
 		final double norm = normalize ? Math.sqrt(getQuickProbability(rules)) : 1.0d;
+		boolean first = true;
 
 		for (int i = 0; i < size; i++) {
 			
 			if (coeff[i].isZero())
 				continue;
 			
-			if (i != 0) rep += " + \n";
+			final Complex numb = Complex.divide(coeff[i].getValue(rules),norm);
+			if (numb.isZero())
+				continue;
 			
-			rep += Complex.divide(coeff[i].getValue(rules),norm)+" "+getBraKet(i);
+			if (!first)
+				rep += " + \n";
+			else
+				first = false;
+			
+			rep += numb+"\t"+getBraKet(i);
 		}
 
 		return rep;

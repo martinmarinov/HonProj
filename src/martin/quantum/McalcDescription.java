@@ -87,4 +87,17 @@ public class McalcDescription {
 	public void saveToFile(final String config_filename) throws Exception {
 		saveToFile(new File(config_filename));
 	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("prop_no: " + String.valueOf(n) +"\n");
+		sb.append("prop_branch: " + branches +"\n");
+		sb.append("prop_corr: " + corrections +"\n");
+		sb.append("prop_ent: " + entanglement +"\n");
+		sb.append("prop_in: " + inputs +"\n");
+		sb.append("prop_meas: " + measurements +"\n");
+		sb.append("prop_vars: " + variables +"\n");
+		return sb.toString();
+	}
 }
