@@ -1,8 +1,6 @@
 package martin.translatortest;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import martin.math.Complex;
 import martin.quantum.McalcDescription;
@@ -12,27 +10,6 @@ import martin.quantum.tools.Tools;
 
 public class TranslatorRunner {
 
-	private final static String translator_path = "C:\\Users\\Martin\\Desktop\\data\\einar\\ParallelQC.exe";
-	
-	public static void main(String[] args) throws Exception {
-		final String[] res = runTestFromFile(translator_path, "C:\\Users\\Martin\\Desktop\\data\\einar\\circ1.txt");
-		System.out.println(res[0]);
-		System.out.println(res[1]);
-	}
-	
-	/**
-	 * Runs a quantum circuit through Einar's circuit to MBQC translator.
-	 * It then runs the MBQC and outputs the result.
-	 * It also outputs the initial circuit in web emulator friendly form to be input in http://www.davyw.com/quantum
-	 * @param path_to_translator_exe the path to the exe "ParallelQC"
-	 * @param fname file containing a description of a quantum circuit in the format accepted by ParallelQC
-	 * @return first element is the web friendly view, second element is the result of running the circuit
-	 * @throws Exception
-	 */
-	public static String[] runTestFromFile(final String path_to_translator_exe, final String fname) throws Exception {
-		return runTestFromString(path_to_translator_exe, new Scanner(new File(fname)).useDelimiter("\\Z").next());
-	}
-	
 	/**
 	 * Runs a quantum circuit through Einar's circuit to MBQC translator.
 	 * It then runs the MBQC and outputs the result.
@@ -43,7 +20,7 @@ public class TranslatorRunner {
 	 * @throws Exception
 	 */
 	public static String[] runTestFromString(final String path_to_translator_exe, final String circ_desc) throws Exception {
-		final QCGate[] circuit = QCGate.generateCircuitFromEinar(circ_desc);
+		final QCGate[] circuit = QCGate.generateCircuitFromEinar(circ_desc.trim().replace("\r", "").replaceAll("\n+", "\n"));
 		final McalcDescription desc = QCGate.translateToMBQCRaw(path_to_translator_exe, circuit);
 		if (desc.n > 12) throw new Exception(desc.n+" are too many qubits to run!");
 		final SystemMatrix system = SimulationRunner.run(desc);

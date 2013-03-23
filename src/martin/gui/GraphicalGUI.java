@@ -47,6 +47,7 @@ public class GraphicalGUI {
 	
 	private EvaluatorGUI mgui = new EvaluatorGUI();
 	private ExperimentConductor expverf = new ExperimentConductor();
+	private CircuitSimulatorGUI qcemul = new CircuitSimulatorGUI();
 	private JMenuItem mntmOpenGraphical;
 	private JMenuItem mntmSaveGraphical;
 	private JMenu mnTools;
@@ -56,6 +57,7 @@ public class GraphicalGUI {
 	private JRadioButtonMenuItem rdbtnmntmPrinterFriendly;
 	private JMenuItem mntmExit;
 	private JMenuItem mntmNew;
+	private JMenuItem mntmQuantumCircuitEmulator;
 	
 	/**
 	 * Launch the application.
@@ -244,6 +246,14 @@ public class GraphicalGUI {
 			}
 		});
 		mnTools.add(mntmExperimentVerifier);
+		
+		mntmQuantumCircuitEmulator = new JMenuItem("Quantum Circuit emulator");
+		mntmQuantumCircuitEmulator.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				qcemul.makeVisible();
+			}
+		});
+		mnTools.add(mntmQuantumCircuitEmulator);
 	}
 	
 	private void throwException(final Exception e) {

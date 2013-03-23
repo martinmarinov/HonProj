@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -21,8 +22,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.awt.Color;
 
 public class ExperimentConductor {
@@ -94,8 +93,8 @@ public class ExperimentConductor {
 								btnSaveResultTo.setEnabled(true);
 								btnSaveResultTo_1.setEnabled(true);
 								panel.drawImage(expRes.image);
-							} catch (Exception e) {
-								e.printStackTrace();
+							} catch (Throwable e) {
+								throwException(e);
 							}
 						};
 					}.start();
@@ -124,8 +123,8 @@ public class ExperimentConductor {
 						
 						try {
 							ImageIO.write(expRes.image, getFileExt(fileName).toLowerCase(), new File(fileName));
-						} catch (IOException e) {
-							e.printStackTrace();
+						} catch (Throwable e) {
+							throwException(e);
 						}
 					}
 					
@@ -148,8 +147,8 @@ public class ExperimentConductor {
 						final String fileName = csvSaver.getSelectedFile().getAbsolutePath();
 						try {
 							expRes.csv.saveToFile(fileName);
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
+						} catch (Throwable e) {
+							throwException(e);
 						}
 					}
 					
@@ -225,5 +224,10 @@ public class ExperimentConductor {
 		    extension = fileName.substring(i+1);
 		}
 		return extension;
+	}
+	
+	private void throwException(final Throwable e) {
+		JOptionPane.showMessageDialog(frmExperimentalDataEvaluator, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		e.printStackTrace();
 	}
 }

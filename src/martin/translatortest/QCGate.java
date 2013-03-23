@@ -269,41 +269,44 @@ public class QCGate {
 				String line = lines[l];
 				
 				if (line.startsWith("ZZ")) {
-					line = line.substring(3);
+					line = line.substring(3).trim();
 					final String[] vals = line.split(" ");
 					ans[l] =  new QCGate(type.ZZ, Integer.parseInt(vals[0].substring(1)), Integer.parseInt(vals[1].substring(1)));
 					continue;
 				}
 				
 				if (line.startsWith("H")) {
-					line = line.substring(2);
+					line = line.substring(2).trim();
 					ans[l] =  new QCGate(type.H, Integer.parseInt(line.substring(1)));
 					continue;
 				}
 				
 				if (line.startsWith("J(pi)")) {
-					line = line.substring(6);
+					line = line.substring(6).trim();
 					ans[l] =  new QCGate(type.JPI, Integer.parseInt(line.substring(1)));
 					continue;
 				}
 				
 				if (line.startsWith("J(pi/2)")) {
-					line = line.substring(8);
+					line = line.substring(8).trim();
 					ans[l] =  new QCGate(type.JPI2, Integer.parseInt(line.substring(1)));
 					continue;
 				}
 				
 				if (line.startsWith("J(pi/4)")) {
-					line = line.substring(8);
+					line = line.substring(8).trim();
 					ans[l] =  new QCGate(type.JPI4, Integer.parseInt(line.substring(1)));
 					continue;
 				}
 				
 				if (line.startsWith("J(pi/8)")) {
-					line = line.substring(8);
+					line = line.substring(8).trim();
 					ans[l] =  new QCGate(type.JPI8, Integer.parseInt(line.substring(1)));
 					continue;
 				}
+				
+				if (line.trim().isEmpty())
+					continue;
 				
 				throw new Exception(line+" is not supported!");
 			}
