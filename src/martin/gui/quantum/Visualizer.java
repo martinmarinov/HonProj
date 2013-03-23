@@ -356,10 +356,10 @@ public class Visualizer extends JPanel {
 		
 		final StringBuilder sb = new StringBuilder();
 		
-		sb.append(var + dep[0].getId());
+		sb.append(var + Tools.zBOB(dep[0].getId()));
 		
 		for (int i = 1; i < dep.length; i++)
-			sb.append("+"+var+dep[i].getId());
+			sb.append("+"+var+Tools.zBOB(dep[i].getId()));
 		
 		return sb.toString();
 	}
@@ -435,16 +435,28 @@ public class Visualizer extends JPanel {
 		for (final Qubit q : qubit)
 			if (!q.perform_measurement) {
 				
-				final String textx = "("+Tools.zBOB(q.getId())+", x, "+getDependance(q, corrtype.X, "s")+")";
-				final String textz = "("+Tools.zBOB(q.getId())+", z, "+getDependance(q, corrtype.Z, "s")+")";
-				
-				if (firstitem) {
-					sb.append(textx);
-					firstitem = false;
-				} else
-					sb.append("; "+textx);
-				
-				sb.append("; "+textz);
+				final String xdep = getDependance(q, corrtype.X, "s");
+				final String zdep = getDependance(q, corrtype.Z, "s");
+
+				final String textx = xdep.equals("0") ? null : "("+Tools.zBOB(q.getId())+", x, "+xdep+")";
+				final String textz = zdep.equals("0") ? null : "("+Tools.zBOB(q.getId())+", z, "+zdep+")";
+
+
+				if (textx != null) {
+					if (firstitem) {
+						sb.append(textx);
+						firstitem = false;
+					} else
+						sb.append("; "+textx);
+				}
+
+				if (textz != null) {
+					if (firstitem) {
+						sb.append(textz);
+						firstitem = false;
+					} else
+						sb.append("; "+textz);
+				}
 			}
 		desc.corrections = sb.toString();
 		sb.setLength(0);
