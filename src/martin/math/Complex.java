@@ -105,4 +105,8 @@ public class Complex {
 	public double getSquare() {
 		return R*R + I*I;
 	}
+	
+	public static Complex divide(final Complex c, final double factor) {
+		return new Complex(c.R / factor, c.I / factor);
+	}
 }

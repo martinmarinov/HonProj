@@ -32,8 +32,6 @@ public class Qubit extends Item implements Comparable<Qubit> {
 	private final static Stroke DASHED_STROKE = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
 	        BasicStroke.JOIN_MITER, 2.0f, new float[]{2.0f}, 0.0f);
 	private final static Stroke CIRCLE_STROKE = new BasicStroke(4.0f);
-	private final static Color GRID_COLOR = new Color(255, 255, 255, 50);
-	private final static Color FILL_COLOR = new Color(255, 255, 255, 120);
 	private Font font = null;
 	String measurement_angle = "0";
 	boolean perform_measurement = false;
@@ -91,7 +89,7 @@ public class Qubit extends Item implements Comparable<Qubit> {
 		final Stroke orig = g.getStroke();
 		final Color c = g.getColor();
 		g.setStroke(DASHED_STROKE);
-		g.setColor(GRID_COLOR);
+		g.setColor(Visualizer.grid_color);
 		final int width = vis.getWidth();
 		final int height = vis.getHeight();
 		
@@ -131,7 +129,7 @@ public class Qubit extends Item implements Comparable<Qubit> {
 			
 		if (perform_measurement) {
 			final Color cbackup = g.getColor();
-			g.setColor(FILL_COLOR);
+			g.setColor(Visualizer.fill_color);
 			g.fillOval(x-QUBIT_SIZE, y-QUBIT_SIZE, QUBIT_SIZE*2, QUBIT_SIZE*2);
 			g.setColor(cbackup);
 		}

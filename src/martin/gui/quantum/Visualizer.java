@@ -46,8 +46,10 @@ public class Visualizer extends JPanel {
 	
 	private mousestate laststate = mousestate.none;
 	
-	private final static Color background = new Color(0x3e3b5a);
-	private final static Color foreground = Color.white;
+	public static Color background = new Color(0x3e3b5a);
+	public static Color foreground = Color.white;
+	public static Color fill_color = new Color(255, 255, 255, 120);
+	public static Color grid_color = new Color(Visualizer.fill_color.getRed(), Visualizer.fill_color.getBlue(), Visualizer.fill_color.getGreen(), 50);
 	
 	public ArrayList<Item> items = new ArrayList<Item>();
 	public ArrayList<JMenuItem> popup_items = new ArrayList<JMenuItem>();
@@ -201,7 +203,6 @@ public class Visualizer extends JPanel {
 		bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		g = bi.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setBackground(background);
 		g.clearRect(0, 0, width, height);
 		this.width = width;
 		this.height = height;
@@ -230,6 +231,7 @@ public class Visualizer extends JPanel {
 	}
 
 	public void paint() {
+		g.setBackground(background);
 		g.clearRect(0, 0, width, height);
 		
 		g.setColor(foreground);
@@ -483,37 +485,40 @@ public class Visualizer extends JPanel {
 	}
 	
 	public void loadFromFile(final File f) throws Exception {
-		final FileInputStream in = new FileInputStream(f);
-		final HashSet<String> passed = new HashSet<String>();
-		p.load(in);
-		in.close();
 		items.clear();
-		int c = 0;
-		
-		boolean notok = true;
-		while(notok) {
-			c++;
-			int items_c = 0;
-			notok = false;
-			for (final Item it : inv.items) {
-				final String className = it.getClass().getName();
-				if (passed.contains(className)) continue;
-				passed.add(className);
+		if (f != null) {
 
-				final int occurances = Integer.parseInt(p.getProperty(className, "0"));
-				items_c += occurances;
-				for (int i = 0; i < occurances; i++) {
-					final Item item = it.loadFromString(p.getProperty(className+"&"+i), this);
-					
-					if (item != null && !items.contains(item))
-						items.add(item);
-					else
-						notok = true;
+			final FileInputStream in = new FileInputStream(f);
+			final HashSet<String> passed = new HashSet<String>();
+			p.load(in);
+			in.close();
+			int c = 0;
+
+			boolean notok = true;
+			while(notok) {
+				c++;
+				int items_c = 0;
+				notok = false;
+				for (final Item it : inv.items) {
+					final String className = it.getClass().getName();
+					if (passed.contains(className)) continue;
+					passed.add(className);
+
+					final int occurances = Integer.parseInt(p.getProperty(className, "0"));
+					items_c += occurances;
+					for (int i = 0; i < occurances; i++) {
+						final Item item = it.loadFromString(p.getProperty(className+"&"+i), this);
+
+						if (item != null && !items.contains(item))
+							items.add(item);
+						else
+							notok = true;
+					}
 				}
+				if (c > items_c) throw new Exception("Corrupted file! Probably a missing reference!");
 			}
-			if (c > items_c) throw new Exception("Corrupted file! Probably a missing reference!");
 		}
-		
+
 		repaint();
 	}
 

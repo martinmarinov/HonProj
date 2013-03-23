@@ -14,6 +14,10 @@ public class ExperimTest {
 	public static void main(String[] args) throws Exception {
 		final MathsItem[] items = MathsParser.items("1/2,0,0,exp(Im((n*Pi)/4))/2,0,0,0,0,0,0,0,0,Im(1)/2,0,0,-Im(exp(Im((n*Pi)/4)))/2", ",");
 		
+		
+		final Integer[] bins = new Integer[50];
+		for (int i = 0; i < bins.length; i++) bins[i] = 0;
+		
 		double avg = 0;
 		double min = 30;
 		String maxs = "";
@@ -25,6 +29,7 @@ public class ExperimTest {
 			final Worksheet ws = new Worksheet("C:\\Users\\Martin\\Desktop\\data\\"+n+"_all.csv");
 			final HashMap<String, Complex> rule = Tools.generatePairs(new String[]{"Pi", "n"}, new Complex[]{new Complex(Math.PI, 0), new Complex(n, 0)});
 			final String[] res_rows = perform(items, ws, rule, null).csv.toString().split("\n");
+			final int initc = c;
 			
 			for (int r = 0; r < res_rows.length; r+=2) {
 				final String[] origs = res_rows[r].split(",");
@@ -50,15 +55,25 @@ public class ExperimTest {
 					min = avgres;
 					mins = "Min "+avgres+" in "+origs[0]+" in file "+n+"_all.csv";
 				}
+				
+				int binid = (int) ((bins.length-1) * (avgres - 0.008804020937532187) / (double) ( 0.10810810886323452 - 0.008804020937532187 ));
+				bins[binid]++;
+				
 				avg += avgres;
 				c++;
 			}
-			System.out.println(n+"_all.csv ready!");
+			System.out.println(n+"_all.csv ready! " + (c-initc) +" done");
 		}
+		
+		CSVExporter csv = new CSVExporter(",");
+		for (int i = 0; i < bins.length; i++)
+			csv.putRow("" + (0.008804020937532187+(i / (double) bins.length) * (0.10810810886323452 - 0.008804020937532187)), "" + bins[i]);
+		csv.saveToFile("bins.csv");
 		
 		System.out.println("Average residual of all: "+avg / (double) c);
 		System.out.println(maxs);
 		System.out.println(mins);
+		
 	}
 
 	public static ExperimentalResult perform(final String input_file, final String lab_cluster, final HashMap<String, Complex> rule, final ProgressListener listener) throws Exception {

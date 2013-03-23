@@ -229,7 +229,7 @@ public class EvaluatorGUI {
 					
 					Tools.logger.printf("Evaluated in %dms,  used %.4f MB\n", stop - start, (afterused - intused) / 1048576d);
 					
-					outNumerical.setText(system.printValues(rules)+"\nProbability: "+system.getQuickProbability(rules));					
+					outNumerical.setText(system.printValues(rules, true)+"\nProbability: "+system.getQuickProbability(rules));					
 					
 				} catch (Exception e) {
 					throwException(e);

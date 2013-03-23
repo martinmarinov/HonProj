@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.awt.Color;
+import javax.swing.JRadioButtonMenuItem;
 
 public class GraphicalGUI {
 	
@@ -50,6 +51,11 @@ public class GraphicalGUI {
 	private JMenuItem mntmSaveGraphical;
 	private JMenu mnTools;
 	private JMenuItem mntmExperimentVerifier;
+	private JMenu mnView;
+	private JRadioButtonMenuItem rdbtnmntmDefaultView;
+	private JRadioButtonMenuItem rdbtnmntmPrinterFriendly;
+	private JMenuItem mntmExit;
+	private JMenuItem mntmNew;
 	
 	/**
 	 * Launch the application.
@@ -119,6 +125,21 @@ public class GraphicalGUI {
 				}
 			}
 		});
+		
+		mntmNew = new JMenuItem("New");
+		mntmNew.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				try {
+					visualizer.loadFromFile(null);
+				} catch (Exception e) {
+					throwException(e);
+				}
+			}
+		});
+		mnFile.add(mntmNew);
+		mnFile.addSeparator();
 		mnFile.add(mntmOpenGraphical);
 		
 		mntmSaveGraphical = new JMenuItem("Save graphical");
@@ -146,6 +167,16 @@ public class GraphicalGUI {
 			}
 		});
 		mnFile.add(mntmSaveGraphical);
+		mnFile.addSeparator();
+		mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				System.exit(0);
+			}
+		});
+		mnFile.add(mntmExit);
 		
 		mnSimulate = new JMenu("Simulation");
 		menuBar.add(mnSimulate);
@@ -162,6 +193,44 @@ public class GraphicalGUI {
 			}
 		});
 		mnSimulate.add(mntmTranslateToMcalc);
+		
+		mnView = new JMenu("View");
+		menuBar.add(mnView);
+		
+		rdbtnmntmDefaultView = new JRadioButtonMenuItem("Default view");
+		rdbtnmntmDefaultView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				rdbtnmntmDefaultView.setSelected(true);
+				rdbtnmntmPrinterFriendly.setSelected(false);
+				
+				Visualizer.background = new Color(0x3e3b5a);
+				Visualizer.foreground = Color.white;
+				Visualizer.fill_color = new Color(255, 255, 255, 120);
+				Visualizer.grid_color = new Color(Visualizer.fill_color.getRed(), Visualizer.fill_color.getBlue(), Visualizer.fill_color.getGreen(), 50);
+			
+				visualizer.repaint();
+			}
+		});
+		rdbtnmntmDefaultView.setSelected(true);
+		mnView.add(rdbtnmntmDefaultView);
+		
+		rdbtnmntmPrinterFriendly = new JRadioButtonMenuItem("Printer friendly");
+		rdbtnmntmPrinterFriendly.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				rdbtnmntmDefaultView.setSelected(false);
+				rdbtnmntmPrinterFriendly.setSelected(true);
+				
+				Visualizer.background = Color.white;
+				Visualizer.foreground = Color.black;
+				Visualizer.fill_color = new Color(0, 0, 0, 30);
+				Visualizer.grid_color = new Color(Visualizer.fill_color.getRed(), Visualizer.fill_color.getBlue(), Visualizer.fill_color.getGreen(), 50);
+				
+				visualizer.repaint();
+			}
+		});
+		mnView.add(rdbtnmntmPrinterFriendly);
 		
 		mnTools = new JMenu("Tools");
 		menuBar.add(mnTools);
@@ -182,4 +251,10 @@ public class GraphicalGUI {
 		e.printStackTrace();
 	}
 	
+	public JRadioButtonMenuItem getRdbtnmntmDefaultView() {
+		return rdbtnmntmDefaultView;
+	}
+	public JRadioButtonMenuItem getRdbtnmntmPrinterFriendly() {
+		return rdbtnmntmPrinterFriendly;
+	}
 }

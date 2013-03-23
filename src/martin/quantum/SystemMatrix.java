@@ -117,8 +117,9 @@ public class SystemMatrix {
 		return rep;
 	}
 	
-	public String printValues(final HashMap<String, Complex> rules) {
+	public String printValues(final HashMap<String, Complex> rules, final boolean normalize) {
 		String rep = "";
+		final double norm = normalize ? Math.sqrt(getQuickProbability(rules)) : 1.0d;
 
 		for (int i = 0; i < size; i++) {
 			
@@ -127,7 +128,7 @@ public class SystemMatrix {
 			
 			if (i != 0) rep += " + \n";
 			
-			rep += coeff[i].getValue(rules)+" "+getBraKet(i);
+			rep += Complex.divide(coeff[i].getValue(rules),norm)+" "+getBraKet(i);
 		}
 
 		return rep;
