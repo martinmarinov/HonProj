@@ -19,9 +19,6 @@ public final class Tools {
 	public static boolean SILENT = true;
 	public static boolean MATHEMATICA_FRIENDLY_OUTPUT = false;
 	
-	//public final static HashMap<String, Complex> PI_rule = Tools.generatePairs(
-	//		new String[] { "Pi" }, new Complex[] { new Complex(Math.PI, 0) });
-	
 	/**
 	 * Parse an expression like "(blah)" to "blah", removes only the outer layer of brackets. Brackets are not compulsory!
 	 * @param input

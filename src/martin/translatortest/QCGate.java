@@ -51,10 +51,10 @@ public class QCGate {
 				res[q1-1] = "-[H]-";
 				break;
 			case ZZ:
-				res[q1-1] = "------T------";
+				res[q1-1] = 	"------†------";
 				for (int i = q1+1; i < q2; i++)
 					res[i-1]  = "------|------";
-				res[q2-1] = "-[H]-(+)-[H]-";
+				res[q2-1] = 	"-[H]-(+)-[H]-";
 				break;
 			case JPI:
 				res[q1-1] = "-[Z]-[H]-";
@@ -64,6 +64,7 @@ public class QCGate {
 				break;
 			case JPI4:
 				res[q1-1] = "-[R4]-[H]-";
+				break;
 			case JPI8:
 				res[q1-1] = "-[R8]-[H]-";
 				break;
@@ -219,13 +220,26 @@ public class QCGate {
 					line = line.replace(";", "");
 					line = line.trim();
 					
-					final int q = Integer.parseInt(line); // if error happens here, probably there is a correction defined as well
+					final String[] things = line.split(" ");
+					if (!(things.length == 1 || things.length == 4)) throw new Exception("Cannot parse M "+line);
+					
+					String s = "0";
+					String t = "0";
+					
+					if (things.length == 4) {
+						if (things[1].equals("s"))
+							s = "s"+things[3];
+						else if (things[1].equals("t"))
+							t = "t"+things[3];
+					}
+					
+					final int q = Integer.parseInt(things[0]); // if error happens here, probably there is a correction defined as well
 					if (q > last_qubit) last_qubit = q;
 					
 					if (desc.measurements == null || desc.measurements.isEmpty())
-						desc.measurements = "("+q+", 0, 0, "+ang+")";
+						desc.measurements = "("+q+", "+s+", "+t+", "+ang+")"; // (2, s1, t1, 0)
 					else
-						desc.measurements += "; ("+q+", 0, 0, "+ang+")";
+						desc.measurements += "; ("+q+", "+s+", "+t+", "+ang+")";
 					continue;
 				}
 				
@@ -239,13 +253,19 @@ public class QCGate {
 					final int q = Integer.parseInt(ns[0]);
 					if (q > last_qubit) last_qubit = q;
 					
-					final int corr = Integer.parseInt(ns[3]); 
+					int corr = Integer.parseInt(ns[3]); 
 					if (corr > last_qubit) last_qubit = corr;
+					String s = "s"+corr;
+					for (int i = 5; i < ns.length; i+=2) {
+						corr = Integer.parseInt(ns[i]); 
+						if (corr > last_qubit) last_qubit = corr;
+						s+=" + s"+corr;
+					}
 					
 					if (desc.corrections == null || desc.corrections.isEmpty())
-						desc.corrections = "("+ns[0]+", "+meas+", "+ns[3]+")";
+						desc.corrections = "("+ns[0]+", "+meas+", "+s+")";
 					else
-						desc.corrections += "; ("+ns[0]+", "+meas+", "+ns[3]+")";
+						desc.corrections += "; ("+ns[0]+", "+meas+", "+s+")";
 					continue;
 				}
 				

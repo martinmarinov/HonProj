@@ -57,8 +57,8 @@ public class Complex {
 	
 	@Override
 	public String toString() {
-		final String real = (int) R == R ? String.valueOf((int) R) : String.valueOf(R);
-		final String im = "Im(" + ( (int) I == I ? String.valueOf((int) I) : String.valueOf(I) ) + ")";
+		final String real = (int) R == R ? String.valueOf((int) R) : String.format("%.8f", R);
+		final String im = "Im(" + ( (int) I == I ? String.valueOf((int) I) : String.format("%.8f", I) ) + ")";
 		
 		if (I == 0)
 			return real;

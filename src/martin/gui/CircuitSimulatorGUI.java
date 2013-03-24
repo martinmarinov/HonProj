@@ -1,7 +1,5 @@
 package martin.gui;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -64,12 +62,13 @@ public class CircuitSimulatorGUI {
 		frmQuantumCircuitEvaluator.getContentPane().add(btnBrowseForExe);
 		
 		txtExeName = new JTextField();
+		txtExeName.setText("C:\\Users\\Martin\\Desktop\\data\\einar\\ParallelQC.exe");
 		txtExeName.setBounds(151, 43, 491, 22);
 		frmQuantumCircuitEvaluator.getContentPane().add(txtExeName);
 		txtExeName.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 147, 167, 260);
+		scrollPane.setBounds(12, 177, 167, 230);
 		frmQuantumCircuitEvaluator.getContentPane().add(scrollPane);
 		
 		txtInputCirc = new JTextPane();
@@ -97,7 +96,7 @@ public class CircuitSimulatorGUI {
 				}
 			}
 		});
-		btnLoadFromFile.setBounds(12, 109, 165, 25);
+		btnLoadFromFile.setBounds(12, 109, 167, 25);
 		frmQuantumCircuitEvaluator.getContentPane().add(btnLoadFromFile);
 		
 		JLabel lblWebDescriptionOf = new JLabel("Web description of the circuit:");
@@ -139,6 +138,15 @@ public class CircuitSimulatorGUI {
 		txtOutput = new JTextPane();
 		txtOutput.setEditable(false);
 		scrollPane_2.setViewportView(txtOutput);
+		
+		JButton btnGenerateRandom = new JButton("Generate random");
+		btnGenerateRandom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				txtInputCirc.setText(TranslatorRunner.generateRandomCircuitDesc());
+			}
+		});
+		btnGenerateRandom.setBounds(12, 139, 167, 25);
+		frmQuantumCircuitEvaluator.getContentPane().add(btnGenerateRandom);
 	}
 	
 	private void throwException(final Throwable e) {

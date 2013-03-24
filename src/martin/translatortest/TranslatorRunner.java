@@ -1,14 +1,18 @@
 package martin.translatortest;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import martin.math.Complex;
 import martin.quantum.McalcDescription;
 import martin.quantum.SimulationRunner;
 import martin.quantum.SystemMatrix;
 import martin.quantum.tools.Tools;
+import martin.translatortest.QCGate.type;
 
 public class TranslatorRunner {
+	
+	private final static Random r = new Random();
 
 	/**
 	 * Runs a quantum circuit through Einar's circuit to MBQC translator.
@@ -22,6 +26,7 @@ public class TranslatorRunner {
 	public static String[] runTestFromString(final String path_to_translator_exe, final String circ_desc) throws Exception {
 		final QCGate[] circuit = QCGate.generateCircuitFromEinar(circ_desc.trim().replace("\r", "").replaceAll("\n+", "\n"));
 		final McalcDescription desc = QCGate.translateToMBQCRaw(path_to_translator_exe, circuit);
+		//System.out.println(desc);
 		if (desc.n > 12) throw new Exception(desc.n+" are too many qubits to run!");
 		final SystemMatrix system = SimulationRunner.run(desc);
 		final int numb_inputs = Tools.powerOfTwo(desc.inputs.split(", ").length);
@@ -55,6 +60,47 @@ public class TranslatorRunner {
 		return SimulationRunner.parseVariablesAndValues(sb.toString());
 	}
 	
-
+	/**
+	 * Generates random circuit description
+	 * @return
+	 */
+	public static String generateRandomCircuitDesc() {
+		final int qubits = 2 + r.nextInt(2);
+		final int gates = 1 + r.nextInt(5);
+		
+		final QCGate[] circuit = new QCGate[gates];
+		int q1 = 1;
+		for (int i = 0; i < circuit.length; i++) {
+			circuit[i] = getRandomGate(qubits, q1);
+			q1 += r.nextInt(2);
+			if (q1 > qubits) q1 = qubits;
+		}
+		
+		return QCGate.printEinarCicuit(circuit);
+	}
+	
+	private static QCGate getRandomGate(final int qubits, final int q1) {
+		final type t = getRandomType();
+		
+		switch (t) {
+		case ZZ:
+			int q2 = 1 + r.nextInt(qubits);
+			while (q2 == q1) q2 = 1 + r.nextInt(qubits);
+			return new QCGate(t, q1, q2);
+		case H:
+		case JPI:
+		case JPI2:
+		case JPI4:
+		case JPI8:
+			return new QCGate(t, q1);
+		default:
+			return null;
+		}
+	}
+	
+	private static type getRandomType() {
+		final type[] values = type.values();
+		return values[r.nextInt(values.length)];
+	}
 
 }

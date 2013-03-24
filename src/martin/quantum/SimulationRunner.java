@@ -132,6 +132,9 @@ public final class SimulationRunner {
 
 			final Complex sval = sitem.getValue(genPairs(b, 's'));
 
+			if (sval.isNaN())
+				throw new Exception("No value for "+sitem+"!");
+			
 			final int s = ((int) sval.R) % 2;
 
 
@@ -153,7 +156,7 @@ public final class SimulationRunner {
 		final Complex[] bes = new Complex[ses.length];
 		int i = 0;
 		for (final Integer bv : b.keySet()) {
-			ses[i] = Character.toString(index)+bv;
+			ses[i] = Character.toString(index)+Tools.zBOB(bv);
 			bes[i] = new Complex(b.get(bv), 0);
 			i++;
 		}
