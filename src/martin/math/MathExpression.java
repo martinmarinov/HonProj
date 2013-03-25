@@ -9,7 +9,7 @@ import martin.quantum.tools.Tuple;
 
 public class MathExpression implements MathsItem {
 	
-	private final static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 50;//1000;
+	public static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 50;//1000;
 	
 	final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
 	public static boolean deep_simplify = true;

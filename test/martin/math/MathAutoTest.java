@@ -26,13 +26,13 @@ public class MathAutoTest {
 	private final static Complex[] values = {new Complex(-3, 5), new Complex(1, -2)};
 	
 	private final static double DOUBLE_RANGE = 5;
-	private final static int NO_OF_ELS = 50;
-	private final static int NO_OF_TRIES = 100;
+	private final static int NO_OF_ELS = 20;
+	private final static int NO_OF_TRIES = 10;
 	
 	private final static double DOUBLE_COMPARISON_ACCURACY = 0.001; // %0.1 of the number means it's accurate
 	
 	private final static int PROGRESS_BAR_SIZE = 18;
-	private final static int TEST_REPEATS = 100;
+	private final static int TEST_REPEATS = 10;
 	
 	private final static Holder[] items = new Holder[NO_OF_ELS];
 	private final static Random r = new Random();
