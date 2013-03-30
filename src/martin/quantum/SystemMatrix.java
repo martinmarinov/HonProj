@@ -17,6 +17,24 @@ public class SystemMatrix {
 	public final boolean[] measured;
 	public final int size;
 
+	/**
+	 * Initialises a qubit system with predetermined coefficients.
+	 * @param items the coefficients that the {@link SystemMatrix} will have. The id is the binary
+	 * representation of the braket. The number of items should be 2^n where n is the number of qubits in
+	 * the system.
+	 * @throws Exception
+	 */
+	public SystemMatrix(final MathsItem[] items) throws Exception {
+		this(Tools.powerOfTwo(items.length));
+		for (int i = 0; i < items.length; i++)
+			coeff[i].multiply(items[i].clone());
+		simplify();
+	}
+	
+	/**
+	 * Initialises a system matrix with a certain number of qubits. All coefficients are set to 1.
+	 * @param qubitCount
+	 */
 	public SystemMatrix(int qubitCount) {
 		mNumbQubits = qubitCount;
 		size = 1 << qubitCount;

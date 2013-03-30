@@ -16,7 +16,7 @@ public final class Tools {
 	public static boolean SIMPLIFICATION_ENABLED = true;
 	
 	public static boolean VERBOSE = false;
-	public static boolean SILENT = true;
+	public static boolean SILENT = false;
 	public static boolean MATHEMATICA_FRIENDLY_OUTPUT = false;
 	
 	/**

@@ -17,36 +17,36 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		quantumTeleport();
-		AltQunatumTeleport();
+		//AltQunatumTeleport();
 
 	}
 	
 	public static void quantumTeleport() throws Exception {
 		
-		Tools.logger.println();
-		Tools.logger.println("Standard quantum teleportation:");
-		
+		int b[] = new int[]{1, 1}; // which branches to take
 		SystemMatrix m = new SystemMatrix(3);
-		
 		m.performReverse(
-				new X(2), // make Z correction because we took |alpha - > branch in M0
-				new Z(2), // make X correction because we took |alpha - > branch in M1
-				
-				new M(1, 0, 0, new MathNumber(0), 1), // make a measurement of qubit 1 with alpha = 0, take |alpha - > branch
-				new X(1), // make X correction because we have taken |alpha - > branch
-				new M(0, 0, 0, new MathNumber(0), 1), // make a measurement of qubit 0 with alpha = 0, take |alpha - > branch
-				
+				new X(2, b[1]), // make X correction
+				new Z(2, b[0]), // make Z correction
+
+				// measure qubit 1 with alpha = 0, and t dependency b[0], take branch b[1]
+		new M(1, b[0], 0, new MathNumber(0), b[1]),
+				// measure qubit 0 with alpha = 0, take branch b[0]
+				new M(0, 0, 0, new MathNumber(0), b[0]), 
+
 				new E(1, 2), // entangle 1 and 2
 				new E(0, 1), // entangle 0 and 1
-				
+
 				new N(2), // qubit 2 in state |+>
 				new N(1), // qubit 1 in state |+>
-				new N(0, new MathSymbol("a"), new MathSymbol("b")) // my input qubit 0 in state a|0>+b|1>
-				);
-		
+
+		// initialize input qubit in state a|0>+ b|0>
+				new N(0, new MathSymbol("a"), new MathSymbol("b")));
+
 		m.performReverse(new AddCoeffTogether());
 		
-		Tools.logger.println(m);
+		System.out.println(m);
+
 	}
 	
 	public static void AltQunatumTeleport() throws Exception {

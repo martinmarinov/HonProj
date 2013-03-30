@@ -11,7 +11,6 @@ import martin.quantum.SystemMatrix;
 
 public class M implements Operator {
 
-	// private final static MathsItem Pi = new MathSymbol("Pi");
 	protected final static MathsItem MINUS_ONE = new MathNumber(-1);
 	protected final static MathsItem ONE_OVER_SQRT_2 = new MathFract(
 			new MathNumber(1), new MathSqrt(new MathNumber(2)));
@@ -47,8 +46,8 @@ public class M implements Operator {
 		final int state1 = (i >> (sm.mNumbQubits - qubitId - 1)) & 1;
 
 		if (state1 == 1) {
-			// 1/sqrt(2)
-
+			// if the state of the qubit is 1, multiply by the exp coefficient
+			
 			final MathExpression angle = new MathExpression();
 			angle.add(alpha);
 			if (s == 1)

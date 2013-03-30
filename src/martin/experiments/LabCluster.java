@@ -6,58 +6,11 @@ import martin.operators.M;
 import martin.operators.Operator;
 import martin.operators.ZM;
 import martin.quantum.SystemMatrix;
-import martin.quantum.tools.Tools;
 
 public class LabCluster extends SystemMatrix {
 	
 	public LabCluster(final MathsItem[] items) throws Exception {
-		super(Tools.powerOfTwo(items.length));
-		for (int i = 0; i < items.length; i++)
-			coeff[i].multiply(items[i].clone());
-		simplify();
-	}
-	
-	public LabCluster(int n) {
-		super(4);
-
-		try {
-			final MathsItem zero = MathsParser.parse("0");
-			
-			final MathsItem firstcoeff = MathsParser.parse("exp(Im((" + n + "*Pi)/4))");
-			final MathsItem coeffi = MathsParser.parse("Im(1)");
-			final MathsItem secondcoeff = MathsParser.parse("-Im(exp(Im((" + n + "*Pi)/4)))");
-
-			coeff[1].multiply(zero);
-			coeff[2].multiply(zero);
-
-			coeff[3].multiply(firstcoeff);
-
-			coeff[4].multiply(zero);
-			coeff[5].multiply(zero);
-			coeff[6].multiply(zero);
-			coeff[7].multiply(zero);
-			coeff[8].multiply(zero);
-			coeff[9].multiply(zero);
-			coeff[10].multiply(zero);
-			coeff[11].multiply(zero);
-
-			coeff[12].multiply(coeffi);
-
-			coeff[13].multiply(zero);
-			coeff[14].multiply(zero);
-
-			coeff[15].multiply(secondcoeff);
-
-			final MathsItem oneoversqrt2 = MathsParser.parse("1/2");
-
-			for (int i = 0; i < size; i++)
-				coeff[i].multiply(oneoversqrt2);
-
-			simplify();
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		super(items);
 	}
 
 	/**

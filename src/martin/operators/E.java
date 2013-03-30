@@ -4,11 +4,21 @@ import martin.math.MathNumber;
 import martin.math.MathsItem;
 import martin.quantum.SystemMatrix;
 
+/**
+ * This is the entanglement operator. It entangles two qubits.
+ * @author Martin
+ *
+ */
 public class E implements Operator {
 	
 	private final int bitId1, bitId2;
 	private final static MathsItem MINUS_ONE = new MathNumber(-1);
 	
+	/**
+	 * Entangle the two qubits together according to the MCalc definition
+	 * @param bitId1
+	 * @param bitId2
+	 */
 	public E(int bitId1, int bitId2) {
 		this.bitId1 = bitId1;
 		this.bitId2 = bitId2;
@@ -24,7 +34,7 @@ public class E implements Operator {
 			int state2 = (i >> (s.mNumbQubits - bitId2 - 1)) & 1; // state of second bit
 			
 			if (state1 == 1 && state2 == 1)
-				s.coeff[i].multiply(MINUS_ONE);
+				s.coeff[i].multiply(MINUS_ONE); // do control Z
 			
 			s.coeff[i].simplify();
 		}
