@@ -1,0 +1,23 @@
+#---MBQC Graphical Pattern description---
+#Sun Mar 31 14:59:54 BST 2013
+martin.gui.quantum.Qubit=6
+martin.gui.quantum.Qubit&5=550\u0000150\u0000normal\u00006\u00000\u0000false
+martin.gui.quantum.Qubit&4=450\u0000150\u0000normal\u00005\u00000\u0000true
+martin.gui.quantum.Qubit&3=450\u0000350\u0000normal\u00004\u00000\u0000false
+martin.gui.quantum.Qubit&2=50\u0000350\u0000input\u00002\u00000\u0000true
+martin.gui.quantum.Qubit&1=250\u0000350\u0000normal\u00003\u00000\u0000true
+martin.gui.quantum.Qubit&0=250\u0000150\u0000input\u00001\u00000\u0000true
+martin.gui.quantum.Entangler&4=1\u00003
+martin.gui.quantum.Entangler&3=3\u00004
+martin.gui.quantum.Corrector&6=2\u00001\u0000Z\u0000107
+martin.gui.quantum.Entangler&2=2\u00003
+martin.gui.quantum.Corrector&5=2\u00004\u0000Z\u0000-65
+martin.gui.quantum.Entangler&1=5\u00006
+martin.gui.quantum.Corrector&4=1\u00006\u0000Z\u0000-66
+martin.gui.quantum.Entangler&0=1\u00005
+martin.gui.quantum.Corrector&3=3\u00004\u0000X\u000059
+martin.gui.quantum.Corrector=7
+martin.gui.quantum.Entangler=5
+martin.gui.quantum.Corrector&2=2\u00003\u0000X\u000061
+martin.gui.quantum.Corrector&1=5\u00006\u0000X\u000059
+martin.gui.quantum.Corrector&0=1\u00005\u0000X\u000068

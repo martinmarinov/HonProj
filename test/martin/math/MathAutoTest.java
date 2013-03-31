@@ -50,7 +50,7 @@ public class MathAutoTest {
 
 			if (disableSimplification)  {
 				Tools.SIMPLIFICATION_ENABLED= false;
-				MathExpression.deep_simplify = false;
+				MathExpression.DEEP_SIMPLIFY = false;
 			}
 
 			for (int i = 0; i < NO_OF_ELS; i++) {

@@ -1,9 +1,0 @@
-#---MBQC Pattern description---
-#Thu Feb 14 15:37:10 GMT 2013
-prop_in=a, b, c, d
-prop_meas=(1, 0, 0, 0); (2, 0, t0, 0); (3, s3, t0+t1, 0); (4, s0, 0, 0); (5, s1, t3, 0); (7, s2, t4+t3, 0)
-prop_vars=
-prop_ent=(1, 4); (2, 4); (4, 3); (2, 5); (5, 6); (5, 3); (3, 7); (7, 8); (6, 7)
-prop_corr=(6, x, s4); (6, z, s1+s2); (8, x, s6); (8, z, s2)
-prop_branch=1,1,1,1,1,1,1,1
-prop_no=8

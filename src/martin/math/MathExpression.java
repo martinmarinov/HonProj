@@ -12,7 +12,7 @@ public class MathExpression implements MathsItem {
 	public static int MAX_NUMBER_OF_SIMPLIFICAITON_STEPS = 50;//1000;
 	
 	final HashSet<HashSet<MathsItem>> items = new HashSet<HashSet<MathsItem>>();
-	public static boolean deep_simplify = true;
+	public static boolean DEEP_SIMPLIFY = true;
 
 	@Override
 	public boolean hasNegativeSign() {
@@ -340,7 +340,7 @@ public class MathExpression implements MathsItem {
 		
 			boolean happened = false;
 			
-			if (deep_simplify) deepSimplify();
+			if (DEEP_SIMPLIFY) deepSimplify();
 			
 			for (final HashSet<MathsItem> m : items)
 				for (final MathsItem it : m)

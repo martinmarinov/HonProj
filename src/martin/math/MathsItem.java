@@ -34,7 +34,6 @@ public interface MathsItem {
 	
 	public Complex getValue(final HashMap<String, Complex> rules);
 	
-	// TODO! Optimize clonging! Cloning must be done ONLY when storing!
 	public MathsItem clone();
 	
 	/**

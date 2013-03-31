@@ -23,7 +23,7 @@ public class MathTest {
 		
 		if (disableSimplification)  {
 			Tools.SIMPLIFICATION_ENABLED = false;
-			MathExpression.deep_simplify = false;
+			MathExpression.DEEP_SIMPLIFY = false;
 		}
 
 		Tools.logger.println(string + " - ORIGINAL\n");

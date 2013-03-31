@@ -1,0 +1,36 @@
+#---MBQC Graphical Pattern description---
+#Sun Mar 31 15:01:53 BST 2013
+martin.gui.quantum.Qubit=7
+prop_ent=(1, 4); (2, 4); (4, 3); (2, 5); (5, 6); (5, 3); (3, 7); (7, 8); (6, 7)
+martin.gui.quantum.Qubit&6=650\u0000350\u0000normal\u00007\u00000\u0000false
+martin.gui.quantum.Qubit&5=450\u0000150\u0000normal\u00006\u00000\u0000false
+martin.gui.quantum.Qubit&4=450\u0000350\u0000normal\u00005\u00000\u0000true
+martin.gui.quantum.Qubit&3=350\u0000350\u0000normal\u00004\u00000\u0000true
+martin.gui.quantum.Qubit&2=250\u0000350\u0000normal\u00003\u00000\u0000true
+martin.gui.quantum.Qubit&1=250\u0000150\u0000input\u00002\u00000\u0000true
+martin.gui.quantum.Entangler&6=5\u00007
+martin.gui.quantum.Entangler&5=6\u00005
+martin.gui.quantum.Qubit&0=50\u0000350\u0000input\u00001\u00000\u0000true
+martin.gui.quantum.Corrector&9=4\u00006\u0000Z\u000041
+martin.gui.quantum.Entangler&4=4\u00005
+martin.gui.quantum.Corrector&8=4\u00007\u0000Z\u0000-100
+martin.gui.quantum.Entangler&3=3\u00004
+martin.gui.quantum.Corrector&7=3\u00005\u0000Z\u0000-71
+martin.gui.quantum.Entangler&2=2\u00003
+martin.gui.quantum.Corrector&6=1\u00004\u0000Z\u0000-100
+martin.gui.quantum.Entangler&1=1\u00003
+martin.gui.quantum.Corrector&5=1\u00002\u0000Z\u000071
+martin.gui.quantum.Entangler&0=2\u00006
+martin.gui.quantum.Corrector&4=5\u00007\u0000X\u0000100
+prop_corr=(6, x, s4); (6, z, s1+s2); (8, x, s6); (8, z, s2)
+martin.gui.quantum.Corrector&3=4\u00005\u0000X\u000024
+martin.gui.quantum.Corrector=10
+martin.gui.quantum.Entangler=7
+martin.gui.quantum.Corrector&2=3\u00004\u0000X\u000023
+martin.gui.quantum.Corrector&1=1\u00003\u0000X\u0000100
+prop_vars=
+prop_no=8
+martin.gui.quantum.Corrector&0=2\u00006\u0000X\u000084
+prop_meas=(1, 0, 0, 0); (2, 0, t0, 0); (3, s3, t0+t1, 0); (4, s0, 0, 0); (5, s1, t3, 0); (7, s2, t4+t3, 0)
+prop_branch=1,1,1,1,1,1,1,1
+prop_in=a, b, c, d
