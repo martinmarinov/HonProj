@@ -1,0 +1,1 @@
+Those are graphical patterns. You could load them from the main GUI.
