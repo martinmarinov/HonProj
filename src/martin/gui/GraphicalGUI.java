@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Martin Marinov.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Contributors:
+ *     Martin - initial API and implementation
+ ******************************************************************************/
 package martin.gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -13,6 +23,7 @@ import martin.gui.quantum.Corrector.corrtype;
 import martin.gui.quantum.Qubit.type;
 import martin.gui.quantum.Visualizer;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -48,6 +59,9 @@ public class GraphicalGUI {
 	private EvaluatorGUI mgui = new EvaluatorGUI();
 	private ExperimentConductor expverf = new ExperimentConductor();
 	private CircuitSimulatorGUI qcemul = new CircuitSimulatorGUI();
+	private JDialog license = new LicenseDialog();
+	private JDialog about = new AboutDialog();
+	
 	private JMenuItem mntmOpenGraphical;
 	private JMenuItem mntmSaveGraphical;
 	private JMenu mnTools;
@@ -58,6 +72,10 @@ public class GraphicalGUI {
 	private JMenuItem mntmExit;
 	private JMenuItem mntmNew;
 	private JMenuItem mntmQuantumCircuitEmulator;
+	private JMenuItem mntmLicense;
+	private JMenuItem mntmAbout;
+	
+	
 	
 	/**
 	 * Launch the application.
@@ -254,6 +272,22 @@ public class GraphicalGUI {
 			}
 		});
 		mnTools.add(mntmQuantumCircuitEmulator);
+		mnTools.addSeparator();
+		mntmLicense = new JMenuItem("License");
+		mntmLicense.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				license.setVisible(true);
+			}
+		});
+		mnTools.add(mntmLicense);
+		
+		mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				about.setVisible(true);
+			}
+		});
+		mnTools.add(mntmAbout);
 	}
 	
 	private void throwException(final Exception e) {
